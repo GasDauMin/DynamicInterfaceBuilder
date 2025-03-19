@@ -1,0 +1,14 @@
+<Theme>
+    <Item name='Background'>#F0F0F0</Item>
+    <Item name='Foreground'>#000000</Item>
+    <Item name='Panel'>#E8E8E8</Item>
+    <Item name='ControlBack'>#FFFFFF</Item>
+    <Item name='ControlFore'>#000000</Item>
+    <Item name='ButtonBack'>#DFDFDF</Item>
+    <Item name='ButtonFore'>#000000</Item>
+    <Item name='ButtonHover'>#D0D0D0</Item>
+    <Item name='Description'>#505050</Item>
+    <Item name='Error'>#E81123</Item>
+    <Item name='Success'>#107C10</Item>
+    <Item name='Warning'>#FF8C00</Item>
+</Theme>
