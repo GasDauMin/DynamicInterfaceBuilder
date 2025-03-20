@@ -1,0 +1,14 @@
+{
+    "Background": "#F0F0F0",
+    "Foreground": "#000000",
+    "Panel": "#E8E8E8", 
+    "ControlBack": "#FFFFFF",
+    "ControlFore": "#000000",
+    "ButtonBack": "#DFDFDF",
+    "ButtonFore": "#000000",
+    "ButtonHover": "#D0D0D0",
+    "Description": "#505050",
+    "Error": "#E81123",
+    "Success": "#107C10",
+    "Warning": "#FF8C00"
+}
