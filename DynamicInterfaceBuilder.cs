@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
-using System.Xml;
-using Microsoft.Win32;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Reflection;
-using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace TheToolkit
 {
@@ -17,15 +10,212 @@ namespace TheToolkit
     {
     }
 
+    public class ConfigManager
+    {
+        public string ConfigFile { get; set; } 
+        public string ConfigPath { get; set; }
+
+        public ConfigManager()
+        {   
+            string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
+
+            ConfigFile = DynamicInterfaceBuilder.DefaultConfigFile;
+            ConfigPath = Path.Combine(assemblyDirectory, ConfigFile);
+        }
+        
+        public void SaveConfiguration(object target)
+        {
+            SaveConfiguration(target, ConfigPath);
+        }
+
+        public void SaveConfiguration(object target, string path)
+        {
+            var configValues = new Dictionary<string, object>();
+            SaveConfigProperties(target, configValues);
+            
+            string json = JsonConvert.SerializeObject(configValues, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(path, json);
+        }
+        
+        private void SaveConfigProperties(object target, Dictionary<string, object> configValues)
+        {
+            var properties = target.GetType().GetProperties()
+                .Where(p => p.GetCustomAttribute<ConfigPropertyAttribute>() != null);
+            
+            foreach (var property in properties)
+            {
+                object? value = property.GetValue(target);
+                if (value != null)
+                {
+                    if (IsComplexType(property.PropertyType))
+                    {
+                        // Handle complex types recursively
+                        var nestedValues = new Dictionary<string, object>();
+                        SaveConfigProperties(value, nestedValues);
+                        configValues[property.Name] = nestedValues;
+                    }
+                    else
+                    {
+                        configValues[property.Name] = value;
+                    }
+                }
+            }
+        }
+    
+        public void LoadConfiguration(object target)
+        {
+            LoadConfiguration(target, ConfigPath);
+        }
+
+        public void LoadConfiguration(object target, string path)
+        {
+            if (File.Exists(path))
+            {
+                string json = File.ReadAllText(path);
+                var config = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                
+                if (config != null)
+                {
+                    LoadConfigProperties(target, config);
+                }
+            }
+        }
+        
+        private void LoadConfigProperties(object target, Dictionary<string, object> config)
+        {
+            var properties = target.GetType().GetProperties()
+                .Where(p => p.GetCustomAttribute<ConfigPropertyAttribute>() != null);
+            
+            foreach (var property in properties)
+            {
+                if (config.TryGetValue(property.Name, out object? value) && value != null)
+                {
+                    if (value is JObject jObject)
+                    {
+                        // Handle complex types
+                        var nestedObj = property.GetValue(target);
+                        if (nestedObj == null)
+                        {
+                            nestedObj = Activator.CreateInstance(property.PropertyType);
+                            property.SetValue(target, nestedObj);
+                        }
+                        
+                        // Convert JObject to Dictionary for recursive processing
+                        var nestedConfig = jObject.ToObject<Dictionary<string, object>>();
+                        if (nestedConfig != null && nestedObj != null)
+                        {
+                            LoadConfigProperties(nestedObj, nestedConfig);
+                        }
+                    }
+                    else
+                    {
+                        // Handle primitive types
+                        var convertedValue = Convert.ChangeType(value, property.PropertyType);
+                        property.SetValue(target, convertedValue);
+                    }
+                }
+            }
+        }
+
+        private bool IsComplexType(Type type)
+        {
+            return type != typeof(string) && !type.IsPrimitive && !type.IsEnum 
+                && type != typeof(decimal) && type != typeof(DateTime)
+                && !type.IsArray && type != typeof(Guid);
+        }
+    }
+
+    public class ThemeManager
+    {       
+        public Dictionary<string, Dictionary<string, string>> Themes => _themes;
+        public string RootThemePath { get; set; }
+
+        private Dictionary<string, Dictionary<string, string>> _themes = new();
+        private Dictionary<string, Color> _colors = new();
+
+        public ThemeManager()
+        {
+            string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
+
+            RootThemePath = Path.Combine(assemblyDirectory, "Themes");
+
+            LoadThemes();
+        }
+
+        public void SetTheme(string theme)
+        {
+            if (_themes.ContainsKey(theme))
+            {
+                _colors = _themes[theme].ToDictionary(kvp => kvp.Key, kvp => ColorTranslator.FromHtml(kvp.Value));
+            }
+        } 
+
+        public void LoadThemes()
+        {
+            _themes.Clear();
+            _themes["Default"] = new Dictionary<string, string>() {
+                { "Background", "#303030" },
+                { "Foreground", "#FFFFFF" },
+                { "Panel", "#454545" },
+                { "ControlBack", "#606060" },
+                { "ControlFore", "#FFFFFF" },
+                { "ButtonBack", "#606060" },
+                { "ButtonFore", "#FFFFFF" },
+                { "ButtonHover", "#808080" },
+                { "Description", "#D3D3D3" },
+                { "Error", "#E81123" },
+                { "Success", "#107C10" },
+                { "Warning", "#FF8C00" }
+            };
+
+            Debug.WriteLine($"Root theme path: {RootThemePath}");
+            if (Directory.Exists(RootThemePath))
+            {
+                string[] themeFiles = Directory.GetFiles(RootThemePath, "*.json");
+                foreach (string themeFile in themeFiles)
+                {
+                    string themeName = Path.GetFileNameWithoutExtension(themeFile);
+                    string themeContent = File.ReadAllText(themeFile);
+                    try 
+                    {
+                        var theme = JsonConvert.DeserializeObject<Dictionary<string, string>>(themeContent);
+                        if (theme != null)
+                        {
+                            _themes[themeName] = theme;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error loading theme {themeName}: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        public System.Drawing.Color GetColor(string name)
+        {      
+            if (_colors.ContainsKey(name))
+            {
+                return _colors[name];
+            }
+
+            return Color.Black;
+        }  
+    }
+
     public class DynamicInterfaceBuilder
     {
         #region Constants
 
-        const string DefaultTitle = "Dynamic Interface Builder";
-        const int DefaultWidth = 800;
-        const int DefaultHeight = 600;
-        const string DefaultTheme = "Default";
-        const string DefaultConfigFile = "DynamicInterfaceBuilder.properties.json";
+        public const string DefaultTheme = "Default";
+        public const string DefaultTitle = "Dynamic Interface Builder";
+        public const int DefaultWidth = 800;
+        public const int DefaultHeight = 600;
+        public const int DefaultMargin = 5;
+        public const int DefaultPadding = 5;
+        public const string DefaultConfigFile = "DynamicInterfaceBuilder.properties.json";
         
         #endregion
 
@@ -39,184 +229,114 @@ namespace TheToolkit
         
         [ConfigProperty]
         public required int Height { get; set; }
+
+        [ConfigProperty]
+        public int Margin { get; set; }
         
         [ConfigProperty]
-        public required string Theme { get; set; }
+        public int Padding { get; set; }
 
         [ConfigProperty]
-        public string ConfigFile { get; set; } 
+        public required string Theme { 
+            get => _theme;
+            set {
+                _theme = value;
+                _themeManager.SetTheme(_theme);
+            }
+        }
+        
 
-        [ConfigProperty]
-        public string ConfigPath { get; set; }
 
-        protected string assemblyLocation;
-        protected string assemblyDirectory;
+        public Dictionary<string, string> Parameters { get; set; } = new();
+        public Dictionary<string, object> Results { get; set; } = new();
+        public Dictionary<string, Dictionary<string, string>> Themes { get; set; } = new();
 
-        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>();
-        public Dictionary<string, object> Results { get; set; } = new Dictionary<string, object>();
-        public Dictionary<string, object> Themes { get; set; } = new Dictionary<string, object>();
-
+        private ConfigManager _configManager;
+        private ThemeManager _themeManager;
+        private string _theme;
+        
         #endregion
 
         #region Constructors
         public DynamicInterfaceBuilder()
-            : this(DefaultTitle, DefaultWidth, DefaultHeight, DefaultTheme)
+            : this(DefaultTitle, DefaultWidth, DefaultHeight, DynamicInterfaceBuilder.DefaultTheme)
         {
         }
 
-        public DynamicInterfaceBuilder(string title = DefaultTitle, int width = DefaultWidth, int height = DefaultHeight, string theme = DefaultTheme)
+        public DynamicInterfaceBuilder(string title = DefaultTitle, int width = DefaultWidth, int height = DefaultHeight, string theme = DynamicInterfaceBuilder.DefaultTheme)
         {
             Title = title;
             Width = width;
             Height = height;
-            Theme = theme;
-            
-            assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
 
-            ConfigFile = DefaultConfigFile;
-            ConfigPath = Path.Combine(assemblyDirectory, ConfigFile);
+            Margin = DefaultMargin;
+            Padding = DefaultPadding;
 
-            LoadThemes();
+            // Initialize config manager
+
+            _configManager = new ConfigManager();
+
+            // Initialize theme manager
+
+            _theme = theme;
+            _themeManager = new ThemeManager();
+            _themeManager.SetTheme(_theme);
         }
 
         #endregion
 
-        #region Configurations
+        #region Forms
 
-        public void ResetToDefaults()
+        public void BuildForm()
+        {
+            Form form = new()
+            {
+                Text = Title,
+                Width = Width,
+                Height = Height,
+                StartPosition = FormStartPosition.CenterScreen,
+                FormBorderStyle = FormBorderStyle.FixedSingle,
+                MaximizeBox = false,
+                MinimizeBox = false
+            };
+
+            form.MaximizeBox = false;
+            form.BackColor = GetThemeColor("Background");
+            form.ForeColor = GetThemeColor("Foreground");
+
+            form.Controls.Add(BuildPanel());
+            form.ShowDialog();
+        }
+
+        protected Panel BuildPanel()
+        {
+            Panel panel = new()
+            {
+                BackColor = GetThemeColor("Panel")
+            };
+
+            return panel;
+        }
+
+        #endregion
+
+        #region Functions
+
+        public void ResetDefaults()
         {
             Title = DefaultTitle;
             Width = DefaultWidth;
             Height = DefaultHeight;
-            Theme = DefaultTheme;
             
             Parameters.Clear();
         }
 
-        public void LoadConfiguration(string configPath = DefaultConfigFile)
-        {
-            if (File.Exists(ConfigPath))
-            {
-                string json = File.ReadAllText(ConfigPath);
-                Dictionary<string, object>? config = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-                
-                if (config != null)
-                {
-                    var properties = GetType().GetProperties()
-                        .Where(p => p.GetCustomAttribute<ConfigPropertyAttribute>() != null);
-                    
-                    foreach (var property in properties)
-                    {
-                        if (config.TryGetValue(property.Name, out object? value) && value != null)
-                        {
-                            // Convert JToken or primitive type to property type
-                            var convertedValue = Convert.ChangeType(value, property.PropertyType);
-                            property.SetValue(this, convertedValue);
-                        }
-                    }
-                }
-            }
-        }
-        
-        public void SaveConfiguration(string configPath = DefaultConfigFile)
-        {
-            var configValues = new Dictionary<string, object>();
-            
-            var properties = GetType().GetProperties()
-                .Where(p => p.GetCustomAttribute<ConfigPropertyAttribute>() != null);
-            
-            foreach (var property in properties)
-            {
-                object? value = property.GetValue(this);
-                if (value != null)
-                {
-                    configValues[property.Name] = value;
-                }
-            }
+        public Color GetThemeColor(string name) => _themeManager.GetColor(name);
 
-            string json = JsonConvert.SerializeObject(configValues, Newtonsoft.Json.Formatting.Indented);
-            File.WriteAllText(ConfigPath, json);
-        }
-
-        #endregion
-
-        #region Theme management
-
-        public void LoadThemes()
-        {
-            Themes = new Dictionary<string, object>
-            {
-                ["Default"] = new Dictionary<string, object>() {
-                    { "Background", "#303030" },
-                    { "Foreground", "#FFFFFF" },
-                    { "Panel", "#454545" },
-                    { "ControlBack", "#606060" },
-                    { "ControlFore", "#FFFFFF" },
-                    { "ButtonBack", "#606060" },
-                    { "ButtonFore", "#FFFFFF" },
-                    { "ButtonHover", "#808080" },
-                    { "Description", "#D3D3D3" },
-                    { "Error", "#E81123" },
-                    { "Success", "#107C10" },
-                    { "Warning", "#FF8C00" }
-                }
-            };
-
-            string rootThemePath = Path.Combine(assemblyDirectory, "Themes");
-            Debug.WriteLine($"Root theme path: {rootThemePath}");
-            if (Directory.Exists(rootThemePath))
-            {
-                string[] themeFiles = Directory.GetFiles(rootThemePath, "*.json");
-                foreach (string themeFile in themeFiles)
-                {
-                    string themeName = Path.GetFileNameWithoutExtension(themeFile);
-                    string themeContent = File.ReadAllText(themeFile);
-                    try 
-                    {
-                        var theme = JsonConvert.DeserializeObject<Dictionary<string, object>>(themeContent);
-                        if (theme != null)
-                        {
-                            Themes[themeName] = theme;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Error loading theme {themeName}: {ex.Message}");
-                    }
-                }
-            }
-        }
-
-        private bool IsDarkMode()
-        {
-            Debug.WriteLine("Checking system dark mode setting...");
-            bool ret = true;
-
-            try
-            {
-                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"))
-                {
-                    Debug.WriteLine($"Registry key opened: {key != null}");
-                    if (key != null)
-                    {
-                        object? value = key.GetValue("AppsUseLightTheme");
-                        Debug.WriteLine($"Theme value: {value}");
-                        if (value != null && value is int intValue && intValue == 1)
-                        {
-                            ret = false;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error checking dark mode: {ex.Message}");
-            }
-
-            Debug.WriteLine($"Dark mode result: {ret}");
-            return ret;
-        }
+        public void SaveConfiguration() => _configManager.SaveConfiguration(this);
+        public void SaveConfiguration(string path) => _configManager.SaveConfiguration(this, path);
+        public void LoadConfiguration() => _configManager.LoadConfiguration(this);
+        public void LoadConfiguration(string path) => _configManager.LoadConfiguration(this, path); 
 
         #endregion
     }   

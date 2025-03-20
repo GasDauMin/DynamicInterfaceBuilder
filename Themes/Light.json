@@ -1,7 +1,7 @@
 {
     "Background": "#F0F0F0",
     "Foreground": "#000000",
-    "Panel": "#E8E8E8", 
+    "Panel": "#dddddd", 
     "ControlBack": "#FFFFFF",
     "ControlFore": "#000000",
     "ButtonBack": "#DFDFDF",

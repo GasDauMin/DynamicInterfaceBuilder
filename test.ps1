@@ -8,10 +8,14 @@ try {
     # Create an instance of the builder
     $builder = New-Object TheToolkit.DynamicInterfaceBuilder("OMG")
 
-    # Set properties
-    $builder.Title = "Custom Interface"
+    # # Set properties
+    $builder.Title = "TETS"
     $builder.Width = 1024
     $builder.Height = 768
+    $builder.Theme = "Light"
+
+    $builder.Margin = 44
+    $builder.Padding = 55
 
     $builder.SaveConfiguration()
     $builder.LoadConfiguration()
@@ -19,7 +23,8 @@ try {
     # Add parameters (example)
     $builder.Parameters["InputFile"] = "test.txt"
     $builder.Parameters["OutputPath"] = "C:\output"
-
+    $builder.BuildForm()
+    
     # Display the current settings
     Write-Host "Interface Settings:"
     Write-Host "Title: $($builder.Title)"
