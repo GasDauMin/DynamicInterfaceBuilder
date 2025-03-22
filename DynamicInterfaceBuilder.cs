@@ -213,6 +213,8 @@ namespace TheToolkit
         public const string DefaultTitle = "Dynamic Interface Builder";
         public const int DefaultWidth = 800;
         public const int DefaultHeight = 600;
+        public const int DefaultFontSize = 12;
+        public const int DefaultSpacing = 5;
         public const int DefaultMargin = 5;
         public const int DefaultPadding = 5;
         public const string DefaultConfigFile = "DynamicInterfaceBuilder.properties.json";
@@ -231,12 +233,18 @@ namespace TheToolkit
         public required int Height { get; set; }
 
         [ConfigProperty]
+        public int FontSize { get; set; }
+
+        [ConfigProperty]
         public int Margin { get; set; }
         
         [ConfigProperty]
         public int Padding { get; set; }
 
         [ConfigProperty]
+        public int Spacing { get; set; }
+
+        [ConfigProperty]    
         public required string Theme { 
             get => _theme;
             set {
@@ -244,8 +252,6 @@ namespace TheToolkit
                 _themeManager.SetTheme(_theme);
             }
         }
-        
-
 
         public Dictionary<string, string> Parameters { get; set; } = new();
         public Dictionary<string, object> Results { get; set; } = new();
@@ -271,6 +277,8 @@ namespace TheToolkit
 
             Margin = DefaultMargin;
             Padding = DefaultPadding;
+            Spacing = DefaultSpacing;
+            FontSize = DefaultFontSize;
 
             // Initialize config manager
 
@@ -287,7 +295,13 @@ namespace TheToolkit
 
         #region Forms
 
-        public void BuildForm()
+        public DialogResult RunForm()
+        {
+            var form = BuildForm();
+            return form.ShowDialog();
+        }
+        
+        protected Form BuildForm()
         {
             Form form = new()
             {
@@ -297,25 +311,44 @@ namespace TheToolkit
                 StartPosition = FormStartPosition.CenterScreen,
                 FormBorderStyle = FormBorderStyle.FixedSingle,
                 MaximizeBox = false,
-                MinimizeBox = false
+                MinimizeBox = true,
+                Padding = new Padding(Margin), // Add form-level padding
+                BackColor = GetThemeColor("Background"),
+                ForeColor = GetThemeColor("Foreground")
             };
 
-            form.MaximizeBox = false;
-            form.BackColor = GetThemeColor("Background");
-            form.ForeColor = GetThemeColor("Foreground");
+            var container = BuildContainer();
 
-            form.Controls.Add(BuildPanel());
-            form.ShowDialog();
+            
+            
+            form.Controls.Add(container);
+
+            return form;
         }
 
-        protected Panel BuildPanel()
+        protected FlowLayoutPanel BuildContainer()
         {
-            Panel panel = new()
+            FlowLayoutPanel container = new()
             {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                AutoSize = true,
+                AutoScroll = true,
+                Padding = new Padding(Padding), // Add padding inside flow layout
+                Margin = new Padding(Margin), // Add margin around flow layout
                 BackColor = GetThemeColor("Panel")
             };
 
-            return panel;
+            container.SetFlowBreak(container, true);
+            container.Padding = new Padding(
+                container.Padding.Left,
+                container.Padding.Top,
+                container.Padding.Right,
+                container.Padding.Bottom + Spacing
+            );
+
+            return container;
         }
 
         #endregion
