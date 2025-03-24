@@ -1,4 +1,4 @@
-namespace DynamicInterfaceBuilder.Forms
+namespace DynamicInterfaceBuilder
 {
     public enum FormElementType
     {

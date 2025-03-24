@@ -21,12 +21,19 @@ $builder.LoadConfiguration()
 
 # Add parameters (example)
 $builder.Parameters["InputFile"] = @{
-    Type = "TextBox"
+    Type = [DynamicInterfaceBuilder.FormElementType]::TextBox
     Label = "Input File"
     Description = "The input file to process"
     Required = $true
-    Mandatory = $true
+    Validation  = @{
+        Rules = @(
+            @{ Type = "Required"; Message = "Input file is required." },
+            @{ Type = "Regex"; Pattern = "^[a-zA-Z0-9_\\-]+\\.txt$"; Message = "Only .txt files are allowed." },
+            @{ Type = "FileExists"; Message = "File must exist." }
+        )
+    }
 }
+
 $builder.Parameters["OutputPath"] = "C:\output"
 $builder.RunForm()
 

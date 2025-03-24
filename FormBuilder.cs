@@ -6,28 +6,28 @@ namespace DynamicInterfaceBuilder
     {
         #region Properties
 
-        [Managers.ConfigProperty]
+        [ConfigProperty]
         public required string Title { get; set; }
         
-        [Managers.ConfigProperty]
+        [ConfigProperty]
         public required int Width { get; set; }
         
-        [Managers.ConfigProperty]
+        [ConfigProperty]
         public required int Height { get; set; }
 
-        [Managers.ConfigProperty]
+        [ConfigProperty]
         public int FontSize { get; set; }
 
-        [Managers.ConfigProperty]
+        [ConfigProperty]
         public int Margin { get; set; }
         
-        [Managers.ConfigProperty]
+        [ConfigProperty]
         public int Padding { get; set; }
 
-        [Managers.ConfigProperty]
+        [ConfigProperty]
         public int Spacing { get; set; }
 
-        [Managers.ConfigProperty]    
+        [ConfigProperty]    
         public required string Theme { 
             get => _theme;
             set {
@@ -42,6 +42,7 @@ namespace DynamicInterfaceBuilder
 
         private Managers.ConfigManager _configManager;
         private Managers.ThemeManager _themeManager;
+        private Managers.ParametersManager _parametersManager;
         private string _theme;
         
         #endregion
@@ -73,6 +74,10 @@ namespace DynamicInterfaceBuilder
             _theme = theme;
             _themeManager = new Managers.ThemeManager();
             _themeManager.SetTheme(_theme);
+
+            // Initialize parameters manager
+
+            _parametersManager = new Managers.ParametersManager();
         }
 
         #endregion
@@ -138,14 +143,6 @@ namespace DynamicInterfaceBuilder
         #endregion
 
         #region Functions
-
-        public void TestHashtable(Hashtable parameters)
-        {
-            foreach (DictionaryEntry entry in parameters)
-            {
-                Console.WriteLine($"{entry.Key}: {entry.Value}");
-            }
-        }
         
         public void ResetDefaults()
         {

@@ -4,11 +4,6 @@ using Newtonsoft.Json.Linq;
 
 namespace DynamicInterfaceBuilder.Managers
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ConfigPropertyAttribute : Attribute
-    {
-    }
-
     public class ConfigManager
     {
         public string ConfigFile { get; set; } 
