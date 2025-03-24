@@ -1,5 +1,5 @@
 
-namespace TheToolkit
+namespace DynamicInterfaceBuilder
 {
     public static class Constants
     {
@@ -11,6 +11,6 @@ namespace TheToolkit
         public const int DefaultSpacing = 5;
         public const int DefaultMargin = 5;
         public const int DefaultPadding = 5;
-        public const string DefaultConfigFile = "DynamicInterfaceBuilder.properties.json";
+        public const string DefaultConfigFile = "FormBuilder.properties.json";
     }
 }

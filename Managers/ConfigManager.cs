@@ -2,8 +2,13 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace TheToolkit
+namespace DynamicInterfaceBuilder.Managers
 {
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ConfigPropertyAttribute : Attribute
+    {
+    }
+
     public class ConfigManager
     {
         public string ConfigFile { get; set; } 

@@ -6,8 +6,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>TheToolkit</RootNamespace>
-    <AssemblyName>DynamicInterfaceBuilder</AssemblyName>
+    <RootNamespace>DynamicInterfaceBuilder</RootNamespace>
+    <AssemblyName>FormBuilder</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

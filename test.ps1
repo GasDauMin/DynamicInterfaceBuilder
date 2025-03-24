@@ -2,10 +2,10 @@
 $scriptPath = $PSScriptRoot
 
 # Load the assembly
-Add-Type -Path "$scriptPath\bin\Debug\net7.0-windows\DynamicInterfaceBuilder.dll"
+Add-Type -Path "$scriptPath\bin\Debug\net7.0-windows\FormBuilder.dll"
 
 # Create an instance of the builder
-$builder = New-Object TheToolkit.DynamicInterfaceBuilder("OMG")
+$builder = New-Object DynamicInterfaceBuilder.FormBuilder("OMG")
 
 # Set properties
 $builder.Title = "TETS"

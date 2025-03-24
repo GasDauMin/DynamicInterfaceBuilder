@@ -1,38 +1,33 @@
 using System.Collections;
 
-namespace TheToolkit
+namespace DynamicInterfaceBuilder
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ConfigPropertyAttribute : Attribute
-    {
-    }
-
-    public class DynamicInterfaceBuilder
+    public class FormBuilder
     {
         #region Properties
 
-        [ConfigProperty]
+        [Managers.ConfigProperty]
         public required string Title { get; set; }
         
-        [ConfigProperty]
+        [Managers.ConfigProperty]
         public required int Width { get; set; }
         
-        [ConfigProperty]
+        [Managers.ConfigProperty]
         public required int Height { get; set; }
 
-        [ConfigProperty]
+        [Managers.ConfigProperty]
         public int FontSize { get; set; }
 
-        [ConfigProperty]
+        [Managers.ConfigProperty]
         public int Margin { get; set; }
         
-        [ConfigProperty]
+        [Managers.ConfigProperty]
         public int Padding { get; set; }
 
-        [ConfigProperty]
+        [Managers.ConfigProperty]
         public int Spacing { get; set; }
 
-        [ConfigProperty]    
+        [Managers.ConfigProperty]    
         public required string Theme { 
             get => _theme;
             set {
@@ -45,20 +40,20 @@ namespace TheToolkit
         public Dictionary<string, object> Results { get; set; } = new();
         public Dictionary<string, Dictionary<string, string>> Themes { get; set; } = new();
 
-        private ConfigManager _configManager;
-        private ThemeManager _themeManager;
+        private Managers.ConfigManager _configManager;
+        private Managers.ThemeManager _themeManager;
         private string _theme;
         
         #endregion
 
         #region Constructors
 
-        public DynamicInterfaceBuilder()
+        public FormBuilder()
             : this(Constants.DefaultTitle, Constants.DefaultWidth, Constants.DefaultHeight, Constants.DefaultTheme)
         {
         }
 
-        public DynamicInterfaceBuilder(string title = Constants.DefaultTitle, int width = Constants.DefaultWidth, int height = Constants.DefaultHeight, string theme = Constants.DefaultTheme)
+        public FormBuilder(string title = Constants.DefaultTitle, int width = Constants.DefaultWidth, int height = Constants.DefaultHeight, string theme = Constants.DefaultTheme)
         {
             Title = title;
             Width = width;
@@ -71,12 +66,12 @@ namespace TheToolkit
 
             // Initialize config manager
 
-            _configManager = new ConfigManager();
+            _configManager = new Managers.ConfigManager();
 
             // Initialize theme manager
 
             _theme = theme;
-            _themeManager = new ThemeManager();
+            _themeManager = new Managers.ThemeManager();
             _themeManager.SetTheme(_theme);
         }
 

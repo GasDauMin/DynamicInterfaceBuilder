@@ -1,4 +1,4 @@
-namespace TheToolkit
+namespace DynamicInterfaceBuilder.Forms
 {
     public class FormElementValidation
     {
