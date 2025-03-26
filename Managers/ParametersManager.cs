@@ -1,14 +1,13 @@
 using System.Collections;
-
-namespace DynamicInterfaceBuilder.Managers
+namespace DynamicInterfaceBuilder
 {
     public class ParametersManager
     {    
         public Dictionary<string, object> Parameters { get; set; } = new();
+        public Dictionary<string, FormElement> FormElements { get; set; } = new();
 
         public ParametersManager()
         {
-            Parameters = new Dictionary<string, object>();
         }
         
         public void ParseParameters(Dictionary<string, object> parameters)
@@ -23,6 +22,10 @@ namespace DynamicInterfaceBuilder.Managers
 
                 ParseParameter(entry.Key, entry.Value);
             }
+        }
+
+        public void ParseParameter(string id, object data)
+        {
 
             /*
                 $builder.Parameters["InputFile"] = @{
@@ -39,15 +42,49 @@ namespace DynamicInterfaceBuilder.Managers
                     }
                 }
             */
-        }
 
-        public void ParseParameter(string id, object value)
-        {
-            if (value == null || value.GetType() != typeof(Hashtable))
+            // Check if data is correct
+
+            if (data == null)
                 return;
 
-            var parameter = Parameters[id] = value;
+            if (data is not Hashtable parameter)
+                return;
             
+            if (parameter["Type"] is not FormElementType type)   
+                return;
+
+            // Construct the form element
+
+            FormElement element = FormElement.Construct(id, type);
+
+            foreach (DictionaryEntry parameterEntry in parameter)
+            {
+                if (parameterEntry.Key.ToString() == "Validation" && parameterEntry.Value is System.Object[] rules)
+                {
+                    foreach (var rule in rules.OfType<Hashtable>())
+                    {
+                        foreach (DictionaryEntry ruleEntry in rule)
+                        {
+                            Console.WriteLine($"  {ruleEntry.Key}: {ruleEntry.Value}");
+                        }
+                    }
+                }
+                else
+                {
+                    switch (parameterEntry.Key.ToString())
+                    {
+                        case "Label":
+                            element.Label = parameterEntry.Value as string;
+                            break;
+                        case "Description":
+                            element.Description = parameterEntry.Value as string;
+                            break;
+                    }
+                }
+            }
+
+            FormElements[id] = element;
         }
     }
 }

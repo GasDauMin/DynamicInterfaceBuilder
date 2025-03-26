@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Newtonsoft.Json;
 
-namespace DynamicInterfaceBuilder.Managers
+namespace DynamicInterfaceBuilder
 {
     public class ThemeManager
     {       

@@ -2,7 +2,7 @@
 $scriptPath = $PSScriptRoot
 
 # Load the assembly
-Add-Type -Path "$scriptPath\bin\Debug\net7.0-windows\FormBuilder.dll"
+Add-Type -Path "$scriptPath\bin\Debug\net9.0-windows\FormBuilder.dll"
 
 # Create an instance of the builder
 $builder = New-Object DynamicInterfaceBuilder.FormBuilder("OMG")
@@ -24,14 +24,11 @@ $builder.Parameters["InputFile"] = @{
     Type = [DynamicInterfaceBuilder.FormElementType]::TextBox
     Label = "Input File"
     Description = "The input file to process"
-    Required = $true
-    Validation  = @{
-        Rules = @(
-            @{ Type = "Required"; Message = "Input file is required." },
-            @{ Type = "Regex"; Pattern = "^[a-zA-Z0-9_\\-]+\\.txt$"; Message = "Only .txt files are allowed." },
-            @{ Type = "FileExists"; Message = "File must exist." }
-        )
-    }
+    Validation  = @(
+        @{ Type = "Required"; Value = $true; Message = "Input file is required." },
+        @{ Type = "Regex"; Value = "^[a-zA-Z0-9_\\-]+\\.txt$"; Message = "Only .txt files are allowed." },
+        @{ Type = "FileExists"; Value = $true; Message = "File must exist." }
+    )
 }
 
 $builder.Parameters["OutputPath"] = "C:\output"

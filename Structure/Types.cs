@@ -11,4 +11,12 @@ namespace DynamicInterfaceBuilder
         FolderBox,
         ListBox,
     }
+
+    public enum FormValidationType
+    {
+        Required,
+        Regex,
+        FileExists,
+        DirectoryExists
+    }
 }

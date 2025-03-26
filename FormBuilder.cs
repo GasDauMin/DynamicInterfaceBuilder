@@ -37,14 +37,56 @@ namespace DynamicInterfaceBuilder
         }
 
         public Dictionary<string, object> Parameters { get; set; } = new();
-        public Dictionary<string, object> Results { get; set; } = new();
+        public Dictionary<string, FormElement> FormElements { get; set; } = new();
         public Dictionary<string, Dictionary<string, string>> Themes { get; set; } = new();
 
-        private Managers.ConfigManager _configManager;
-        private Managers.ThemeManager _themeManager;
-        private Managers.ParametersManager _parametersManager;
+        private ConfigManager _configManager;
+        private ThemeManager _themeManager;
+        private ParametersManager _parametersManager;
         private string _theme;
         
+        #endregion
+
+        #region Main 
+
+        static void Main()
+        {
+            FormBuilder formBuilder = new()
+            {
+                Title = Constants.DefaultTitle,
+                Width = Constants.DefaultWidth, 
+                Height = Constants.DefaultHeight,
+                Theme = Constants.DefaultTheme
+            };
+            
+            formBuilder.Parameters["InputFile"] = new Hashtable
+            {
+                { "Type", FormElementType.TextBox },
+                { "Label", "Input File" },
+                { "Description", "The input file to process" },
+                { "Required", true },
+                { "Validation", new[]
+                    {
+                        new Hashtable { 
+                            { "Type", "Required" }, 
+                            { "Message", "Input file is required." }
+                        },
+                        new Hashtable {
+                            { "Type", "Regex" },
+                            { "Pattern", @"^[a-zA-Z0-9_\-]+\.txt$" },
+                            { "Message", "Only .txt files are allowed." }
+                        },
+                        new Hashtable {
+                            { "Type", "FileExists" }, 
+                            { "Message", "File must exist."} 
+                        }
+                    }
+                }
+            };
+
+            formBuilder.RunForm();
+        }
+
         #endregion
 
         #region Constructors
@@ -67,17 +109,17 @@ namespace DynamicInterfaceBuilder
 
             // Initialize config manager
 
-            _configManager = new Managers.ConfigManager();
+            _configManager = new ConfigManager();
 
             // Initialize theme manager
 
             _theme = theme;
-            _themeManager = new Managers.ThemeManager();
+            _themeManager = new ThemeManager();
             _themeManager.SetTheme(_theme);
 
             // Initialize parameters manager
 
-            _parametersManager = new Managers.ParametersManager();
+            _parametersManager = new ParametersManager();
         }
 
         #endregion
@@ -92,6 +134,8 @@ namespace DynamicInterfaceBuilder
         
         protected Form BuildForm()
         {
+            _parametersManager.ParseParameters(Parameters);
+
             Form form = new()
             {
                 Text = Title,
@@ -108,7 +152,11 @@ namespace DynamicInterfaceBuilder
 
             var container = BuildContainer();
             
-
+            FormElements = _parametersManager.FormElements;
+            foreach (var element in FormElements.Values)
+            {
+                
+            }
             
             form.Controls.Add(container);
 
@@ -161,5 +209,5 @@ namespace DynamicInterfaceBuilder
         public void LoadConfiguration(string path) => _configManager.LoadConfiguration(this, path); 
 
         #endregion
-    }   
+    }  
 }

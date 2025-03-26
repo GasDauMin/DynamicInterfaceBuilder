@@ -1,4 +1,3 @@
-
 namespace DynamicInterfaceBuilder
 {
     public static class Constants

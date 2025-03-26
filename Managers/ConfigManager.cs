@@ -2,7 +2,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace DynamicInterfaceBuilder.Managers
+namespace DynamicInterfaceBuilder
 {
     public class ConfigManager
     {

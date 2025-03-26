@@ -1,4 +1,4 @@
-namespace DynamicInterfaceBuilder.Forms
+namespace DynamicInterfaceBuilder
 {
     public class FormElementValidation
     {
@@ -9,22 +9,21 @@ namespace DynamicInterfaceBuilder.Forms
             this.Element = element;
         }   
 
-        public bool Validate(FormElement? element = null, bool runtime = false)
+        public bool Validate(bool runtime = false)
         {
-            element ??= Element;
-            if (element == null)
+            if (Element == null)
                 return false;
 
-            return element.Type switch
+            return Element.Type switch
             {
-                FormElementType.TextBox     => Validate_TextBox(element as FormElement_TextBox, runtime),
-                FormElementType.RadioButton => Validate_RadioButton(element as FormElement_RadioButton, runtime),
-                FormElementType.ComboBox    => Validate_ComboBox(element as FormElement_ComboBox, runtime),
-                FormElementType.Numeric     => Validate_Numeric(element as FormElement_Numeric, runtime),
-                FormElementType.CheckBox    => Validate_CheckBox(element as FormElement_CheckBox, runtime),
-                FormElementType.FileBox     => Validate_FileBox(element as FormElement_FileBox, runtime),
-                FormElementType.FolderBox   => Validate_FolderBox(element as FormElement_FolderBox, runtime),
-                FormElementType.ListBox     => Validate_ListBox(element as FormElement_ListBox, runtime),
+                FormElementType.TextBox     => Validate_TextBox(Element as FormElement_TextBox, runtime),
+                FormElementType.RadioButton => Validate_RadioButton(Element as FormElement_RadioButton, runtime),
+                FormElementType.ComboBox    => Validate_ComboBox(Element as FormElement_ComboBox, runtime),
+                FormElementType.Numeric     => Validate_Numeric(Element as FormElement_Numeric, runtime),
+                FormElementType.CheckBox    => Validate_CheckBox(Element as FormElement_CheckBox, runtime),
+                FormElementType.FileBox     => Validate_FileBox(Element as FormElement_FileBox, runtime),
+                FormElementType.FolderBox   => Validate_FolderBox(Element as FormElement_FolderBox, runtime),
+                FormElementType.ListBox     => Validate_ListBox(Element as FormElement_ListBox, runtime),
                 _ => true,
             };
         }
