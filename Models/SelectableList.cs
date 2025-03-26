@@ -1,13 +1,6 @@
 namespace DynamicInterfaceBuilder
 {
-    public interface IListBase
-    {
-        string[]? Value { get; set; }
-        int DefaultIndex { get; set; }
-        string DefaultValue { get; set; }
-    }
-
-    public class ListBase
+    public class SelectableList
     {
         public string[]? Value { get; set; }
 

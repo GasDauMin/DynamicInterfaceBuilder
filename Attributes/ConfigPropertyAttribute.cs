@@ -4,4 +4,4 @@ namespace DynamicInterfaceBuilder
     public class ConfigPropertyAttribute : Attribute
     {
     }
-}  
+}

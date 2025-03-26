@@ -15,7 +15,7 @@ namespace DynamicInterfaceBuilder
             Name = name;
             Type = type;
 
-            Validation = new FormElementValidation(this);
+            Validation = new FormElementValidation();
         }
 
         public static FormElement Construct(string name, FormElementType type)
@@ -36,7 +36,7 @@ namespace DynamicInterfaceBuilder
 
         public bool Validate(bool runtime = false)
         {
-            return Validation.Validate(runtime);
+            return Validation.Validate(this,runtime);
         }
     }
 
@@ -94,13 +94,13 @@ namespace DynamicInterfaceBuilder
         }
     }
     
-    public class FormElement_RadioButton : FormElement, IListBase
+    public class FormElement_RadioButton : FormElement, ISelectableList
     {        
-        private readonly ListBase _listBase = new();
+        private readonly SelectableList _selectableList = new();
         
-        public string[]? Value { get => _listBase.Value; set => _listBase.Value = value; }
-        public int DefaultIndex { get => _listBase.DefaultIndex; set => _listBase.DefaultIndex = value; }   
-        public string DefaultValue { get => _listBase.DefaultValue; set => _listBase.DefaultValue = value; }
+        public string[]? Value { get => _selectableList.Value; set => _selectableList.Value = value; }
+        public int DefaultIndex { get => _selectableList.DefaultIndex; set => _selectableList.DefaultIndex = value; }   
+        public string DefaultValue { get => _selectableList.DefaultValue; set => _selectableList.DefaultValue = value; }
         
         public FormElement_RadioButton(string name) : base(name, FormElementType.RadioButton)
         {
@@ -113,13 +113,13 @@ namespace DynamicInterfaceBuilder
         }
     }
 
-    public class FormElement_ComboBox : FormElement, IListBase
+    public class FormElement_ComboBox : FormElement, ISelectableList
     {        
-        private readonly ListBase _listBase = new();
+        private readonly SelectableList _selectableList = new();
         
-        public string[]? Value { get => _listBase.Value; set => _listBase.Value = value; }
-        public int DefaultIndex { get => _listBase.DefaultIndex; set => _listBase.DefaultIndex = value; }   
-        public string DefaultValue { get => _listBase.DefaultValue; set => _listBase.DefaultValue = value; }
+        public string[]? Value { get => _selectableList.Value; set => _selectableList.Value = value; }
+        public int DefaultIndex { get => _selectableList.DefaultIndex; set => _selectableList.DefaultIndex = value; }   
+        public string DefaultValue { get => _selectableList.DefaultValue; set => _selectableList.DefaultValue = value; }
         
         public FormElement_ComboBox(string name) : base(name, FormElementType.ComboBox)
         {
