@@ -64,9 +64,34 @@ namespace DynamicInterfaceBuilder
                 {
                     foreach (var rule in rules.OfType<Hashtable>())
                     {
+                        FormElementValidationRule validationRule = new();
+
                         foreach (DictionaryEntry ruleEntry in rule)
                         {
-                            Console.WriteLine($"  {ruleEntry.Key}: {ruleEntry.Value}");
+                            switch (ruleEntry.Key.ToString())
+                            {
+                                case "Type":
+                                    validationRule.Type = ruleEntry.Value?.ToString() switch
+                                    {
+                                        "Required" => FormElementValidationType.Required,
+                                        "Regex" => FormElementValidationType.Regex,
+                                        "FileExists" => FormElementValidationType.FileExists,
+                                        "DirectoryExists" => FormElementValidationType.DirectoryExists,
+                                        _ => FormElementValidationType.None,
+                                    };
+                                    break;
+                                case "Value":
+                                    validationRule.Value = ruleEntry.Value;
+                                    break;
+                                case "Message":
+                                    validationRule.Message = ruleEntry.Value as string;
+                                    break;
+                            }
+                        }
+
+                        if (validationRule.Type != FormElementValidationType.None)
+                        {
+                            element.Validation.Rules.Add(validationRule);
                         }
                     }
                 }

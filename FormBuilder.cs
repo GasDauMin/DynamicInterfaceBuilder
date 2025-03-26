@@ -68,16 +68,18 @@ namespace DynamicInterfaceBuilder
                 { "Validation", new[]
                     {
                         new Hashtable { 
-                            { "Type", "Required" }, 
+                            { "Type", "Required" },
+                            { "Value", true },
                             { "Message", "Input file is required." }
                         },
                         new Hashtable {
                             { "Type", "Regex" },
-                            { "Pattern", @"^[a-zA-Z0-9_\-]+\.txt$" },
+                            { "Value", @"^[a-zA-Z0-9_\-]+\.txt$" },
                             { "Message", "Only .txt files are allowed." }
                         },
                         new Hashtable {
-                            { "Type", "FileExists" }, 
+                            { "Type", "FileExists" },
+                            { "Value", true },
                             { "Message", "File must exist."} 
                         }
                     }

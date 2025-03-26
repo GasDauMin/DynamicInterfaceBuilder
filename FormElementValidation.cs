@@ -2,7 +2,7 @@ namespace DynamicInterfaceBuilder
 {
     public class FormElementValidation
     {
-        public List<FormValidationType> Rules { get; set; } = new();
+        public List<FormElementValidationRule> Rules { get; set; } = [];
         public FormElementValidation()
         {
         }   

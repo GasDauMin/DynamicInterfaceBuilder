@@ -2,7 +2,7 @@ namespace DynamicInterfaceBuilder
 {    
     public abstract class FormElement
     {
-        public readonly FormElementValidation Validation;
+        public readonly FormElementValidation Validation = new();
 
         public string Name { get; set; }
         public string? Label { get; set; }
@@ -14,8 +14,6 @@ namespace DynamicInterfaceBuilder
         {
             Name = name;
             Type = type;
-
-            Validation = new FormElementValidation();
         }
 
         public static FormElement Construct(string name, FormElementType type)
