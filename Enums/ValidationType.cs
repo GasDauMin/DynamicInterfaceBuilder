@@ -1,6 +1,6 @@
 namespace DynamicInterfaceBuilder
 {
-    public enum FormElementValidationType
+    public enum ValidationType
     {
         None,
         Required,

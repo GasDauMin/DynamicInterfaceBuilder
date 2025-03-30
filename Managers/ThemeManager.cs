@@ -4,15 +4,19 @@ using Newtonsoft.Json;
 namespace DynamicInterfaceBuilder
 {
     public class ThemeManager
-    {       
+    {   
+        public readonly FormBuilder FormBuilder;
+
         public Dictionary<string, Dictionary<string, string>> Themes => _themes;
         public string RootThemePath { get; set; }
 
         private Dictionary<string, Dictionary<string, string>> _themes = new();
         private Dictionary<string, Color> _colors = new();
 
-        public ThemeManager()
+        public ThemeManager(FormBuilder formBuilder)
         {
+            FormBuilder = formBuilder;
+
             string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
 

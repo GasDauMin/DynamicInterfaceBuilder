@@ -6,11 +6,15 @@ namespace DynamicInterfaceBuilder
 {
     public class ConfigManager
     {
+        public readonly FormBuilder FormBuilder;
+        
         public string ConfigFile { get; set; } 
         public string ConfigPath { get; set; }
 
-        public ConfigManager()
+        public ConfigManager(FormBuilder formBuilder)
         {   
+            FormBuilder = formBuilder;
+
             string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
 

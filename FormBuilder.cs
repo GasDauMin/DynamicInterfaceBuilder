@@ -37,7 +37,7 @@ namespace DynamicInterfaceBuilder
         }
 
         public Dictionary<string, object> Parameters { get; set; } = new();
-        public Dictionary<string, FormElement> FormElements { get; set; } = new();
+        public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
         public Dictionary<string, Dictionary<string, string>> Themes { get; set; } = new();
 
         private ConfigManager _configManager;
@@ -64,6 +64,7 @@ namespace DynamicInterfaceBuilder
                 { "Type", FormElementType.TextBox },
                 { "Label", "Input File" },
                 { "Description", "The input file to process" },
+                { "DefaultValue", "C:\\Users\\GasDauMin\\Downloads\\OllamaSetup.exe" },
                 { "Required", true },
                 { "Validation", new[]
                     {
@@ -84,6 +85,22 @@ namespace DynamicInterfaceBuilder
                         }
                     }
                 }
+            };
+
+            formBuilder.Parameters["Test1"] = new Hashtable
+            {
+                { "Type", FormElementType.TextBox },
+                { "Label", "Testas #1" },
+                { "Description", "The input file to process" },
+                { "Required", false }
+            };
+
+            formBuilder.Parameters["Test2"] = new Hashtable
+            {
+                { "Type", FormElementType.TextBox },
+                { "Label", "Testas #2" },
+                { "Description", "The input file to process" },
+                { "Required", true }
             };
 
             formBuilder.RunForm();
@@ -111,17 +128,17 @@ namespace DynamicInterfaceBuilder
 
             // Initialize config manager
 
-            _configManager = new ConfigManager();
+            _configManager = new ConfigManager(this);
 
             // Initialize theme manager
 
             _theme = theme;
-            _themeManager = new ThemeManager();
+            _themeManager = new ThemeManager(this);
             _themeManager.SetTheme(_theme);
 
             // Initialize parameters manager
 
-            _parametersManager = new ParametersManager();
+            _parametersManager = new ParametersManager(this);
         }
 
         #endregion
@@ -157,7 +174,7 @@ namespace DynamicInterfaceBuilder
             FormElements = _parametersManager.FormElements;
             foreach (var element in FormElements.Values)
             {
-                
+                container.Controls.Add(element.BuildControl());
             }
             
             form.Controls.Add(container);

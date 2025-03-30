@@ -1,9 +1,10 @@
 namespace DynamicInterfaceBuilder
 {
-    public class FormElementValidationRule
+    public class ValidationRule
     {
-        public FormElementValidationType Type { get; set; }
+        public ValidationType Type { get; set; }
         public object? Value { get; set; }
         public string? Message { get; set; }
+        public bool? Runtime { get; set; }
     }
 }

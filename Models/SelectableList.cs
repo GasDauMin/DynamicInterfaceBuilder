@@ -1,10 +1,10 @@
 namespace DynamicInterfaceBuilder
 {
-    public class SelectableList
+    public class SelectableList<T>
     {
-        public string[]? Value { get; set; }
+        public T[]? Items { get; set; }
 
-        private string _defaultValue = "";
+        private T? _defaultValue;
         private int _defaultIndex = 0;
 
         public int DefaultIndex
@@ -13,30 +13,31 @@ namespace DynamicInterfaceBuilder
             set
             {
                 _defaultIndex = value;
-                if (Value != null && value >= 0 && value < Value.Length)
+                if (Items != null && value >= 0 && value < Items.Length)
                 {
-                    _defaultValue = Value[value];
+                    _defaultValue = Items[value];
                 }
                 else
                 {
-                    _defaultValue = "";
+                    _defaultValue = default;
                     _defaultIndex = 0;
                 }
             }
         }
 
-        public string DefaultValue
+        public T? DefaultValue
         {
             get => _defaultValue;
             set
             {
                 _defaultValue = value;
-                if (Value != null && Array.Exists(Value, item => item == value))
+                if (Items != null && Array.Exists(Items, item => EqualityComparer<T>.Default.Equals(item, value)))
                 {
-                    _defaultIndex = Array.IndexOf(Value, value);
+                    _defaultIndex = Array.IndexOf(Items, value);
                 }
                 else
                 {
+                    _defaultValue = default;
                     _defaultIndex = 0;
                 }
             }

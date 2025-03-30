@@ -1,9 +1,9 @@
 namespace DynamicInterfaceBuilder
 {
-    public interface ISelectableList
+    public interface ISelectableList<T>
     {
-        string[]? Value { get; set; }
+        T[]? Items { get; set; }
         int DefaultIndex { get; set; }
-        string DefaultValue { get; set; }
+        T? DefaultValue { get; set; }
     }
 }
