@@ -16,7 +16,11 @@ namespace DynamicInterfaceBuilder
                 Dock = DockStyle.Top,
                 AutoSize = true,
                 ColumnCount = 2,
-                RowCount = 1
+                RowCount = 1,
+                // BackColor = Color.Red,
+                
+                Margin = new Padding(0, 0, 0, 0),
+                Padding = new Padding(0, 0, 0, 0),
             };
 
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
@@ -28,8 +32,9 @@ namespace DynamicInterfaceBuilder
                 {
                     Name = $"{Name}_Label",
                     Text = Label,
+                    AutoSize = true,
                     TextAlign = ContentAlignment.MiddleLeft,
-                    Dock = DockStyle.Fill
+                    Dock = DockStyle.Fill,
                 };
 
                 panel.Controls.Add(label, 0, 0);
@@ -39,6 +44,7 @@ namespace DynamicInterfaceBuilder
             {
                 Name = $"{Name}_TextBox",
                 Text = DefaultValue,
+                // AutoSize = true,
                 Dock = DockStyle.Fill
             };
 
@@ -59,7 +65,7 @@ namespace DynamicInterfaceBuilder
                 Dock = DockStyle.Top,
                 AutoSize = true,
                 ColumnCount = 2,
-                RowCount = 1
+                RowCount = 1,
             };
 
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));

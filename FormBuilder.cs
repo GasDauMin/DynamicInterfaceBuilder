@@ -59,6 +59,8 @@ namespace DynamicInterfaceBuilder
                 Theme = Constants.DefaultTheme
             };
             
+            formBuilder.SaveConfiguration();
+            formBuilder.LoadConfiguration();
             formBuilder.Parameters["InputFile"] = new Hashtable
             {
                 { "Type", FormElementType.TextBox },
@@ -164,17 +166,29 @@ namespace DynamicInterfaceBuilder
                 FormBorderStyle = FormBorderStyle.FixedSingle,
                 MaximizeBox = false,
                 MinimizeBox = true,
-                Padding = new Padding(Margin), // Add form-level padding
                 BackColor = GetThemeColor("Background"),
                 ForeColor = GetThemeColor("Foreground")
             };
 
             var container = BuildContainer();
-            
+            var idx = 0;
+
             FormElements = _parametersManager.FormElements;
             foreach (var element in FormElements.Values)
             {
-                container.Controls.Add(element.BuildControl());
+                var control = element.BuildControl();
+                if (control != null)
+                {
+                    idx++;
+                    control.Margin = new Padding(
+                        control.Margin.Left + Spacing,
+                        control.Margin.Top + (idx==1 ? Spacing*2 : 0),
+                        control.Margin.Right + Spacing,
+                        control.Margin.Bottom + Spacing
+                    );
+
+                    container.Controls.Add(control);
+                }
             }
             
             form.Controls.Add(container);
@@ -191,8 +205,8 @@ namespace DynamicInterfaceBuilder
                 WrapContents = false,
                 AutoSize = true,
                 AutoScroll = true,
-                Padding = new Padding(Padding), // Add padding inside flow layout
-                Margin = new Padding(Margin), // Add margin around flow layout
+                // Padding = new Padding(Padding), // Add padding inside flow layout
+                // Margin = new Padding(Margin), // Add margin around flow layout
                 BackColor = GetThemeColor("Panel")
             };
 
