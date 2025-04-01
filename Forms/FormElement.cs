@@ -15,15 +15,21 @@ namespace DynamicInterfaceBuilder
                 Name = $"{Name}_Panel",
                 Dock = DockStyle.Top,
                 AutoSize = true,
+                AutoScroll = false,
                 ColumnCount = 2,
                 RowCount = 1,
-                // BackColor = Color.Red,
-                
+                BackColor = Color.Transparent,
                 Margin = new Padding(0, 0, 0, 0),
                 Padding = new Padding(0, 0, 0, 0),
             };
 
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            int offset = FormBuilder.Spacing * 2 + 15 + 20;
+            float columnWidth = FormBuilder.Width - offset;
+            
+            panel.MinimumSize = new Size((int)columnWidth, 0);
+
+            panel.ColumnStyles.Clear();
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
 
             if (Label != null)
@@ -31,10 +37,12 @@ namespace DynamicInterfaceBuilder
                 var label = new Label
                 {
                     Name = $"{Name}_Label",
-                    Text = Label,
+                    Dock = DockStyle.Fill,
+                    Text = Label + ": ",
                     AutoSize = true,
                     TextAlign = ContentAlignment.MiddleLeft,
-                    Dock = DockStyle.Fill,
+                    Margin = new Padding(0, 0, 0, 0),
+                    Padding = new Padding(0, 0, 0, 0),
                 };
 
                 panel.Controls.Add(label, 0, 0);
@@ -43,9 +51,14 @@ namespace DynamicInterfaceBuilder
             var textBox = new TextBox
             {
                 Name = $"{Name}_TextBox",
+                Dock = DockStyle.Fill,
+                AutoSize = true,
                 Text = DefaultValue,
-                // AutoSize = true,
-                Dock = DockStyle.Fill
+                Margin = new Padding(0, 0, 0, 0),
+                Padding = new Padding(0, 0, 0, 0),
+                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = formBuilder.GetThemeColor("ControlBack"),
+                ForeColor = formBuilder.GetThemeColor("ControlFore"),
             };
 
             panel.Controls.Add(textBox, 1, 0);
@@ -64,6 +77,7 @@ namespace DynamicInterfaceBuilder
                 Name = $"{Name}_Panel",
                 Dock = DockStyle.Top,
                 AutoSize = true,
+                AutoScroll = true,
                 ColumnCount = 2,
                 RowCount = 1,
             };

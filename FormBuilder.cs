@@ -45,6 +45,8 @@ namespace DynamicInterfaceBuilder
         private ParametersManager _parametersManager;
         private string _theme;
         
+        public FlowLayoutPanel Container;        
+        
         #endregion
 
         #region Main 
@@ -89,21 +91,16 @@ namespace DynamicInterfaceBuilder
                 }
             };
 
-            formBuilder.Parameters["Test1"] = new Hashtable
+            for(int i = 0; i < 20; i++)
             {
-                { "Type", FormElementType.TextBox },
-                { "Label", "Testas #1" },
-                { "Description", "The input file to process" },
-                { "Required", false }
-            };
-
-            formBuilder.Parameters["Test2"] = new Hashtable
-            {
-                { "Type", FormElementType.TextBox },
-                { "Label", "Testas #2" },
-                { "Description", "The input file to process" },
-                { "Required", true }
-            };
+                formBuilder.Parameters[$"Test{i}"] = new Hashtable
+                {
+                    { "Type", FormElementType.TextBox },
+                    { "Label", $"Testas #{i}" },
+                    { "Description", "The input file to process" },
+                    { "Required", false }
+                };
+            }
 
             formBuilder.RunForm();
         }
@@ -166,11 +163,13 @@ namespace DynamicInterfaceBuilder
                 FormBorderStyle = FormBorderStyle.FixedSingle,
                 MaximizeBox = false,
                 MinimizeBox = true,
+                AutoScroll = false,
+                AutoSize = false,
                 BackColor = GetThemeColor("Background"),
                 ForeColor = GetThemeColor("Foreground")
             };
 
-            var container = BuildContainer();
+            Container = BuildContainer();
             var idx = 0;
 
             FormElements = _parametersManager.FormElements;
@@ -182,16 +181,16 @@ namespace DynamicInterfaceBuilder
                     idx++;
                     control.Margin = new Padding(
                         control.Margin.Left + Spacing,
-                        control.Margin.Top + (idx==1 ? Spacing*2 : 0),
+                        control.Margin.Top + (idx==1 ? Spacing : 0),
                         control.Margin.Right + Spacing,
                         control.Margin.Bottom + Spacing
                     );
 
-                    container.Controls.Add(control);
+                    Container.Controls.Add(control);
                 }
             }
             
-            form.Controls.Add(container);
+            form.Controls.Add(Container);
 
             return form;
         }
