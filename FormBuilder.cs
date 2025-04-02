@@ -91,7 +91,7 @@ namespace DynamicInterfaceBuilder
                 }
             };
 
-            for(int i = 0; i < 20; i++)
+            for(int i = 0; i < 25; i++)
             {
                 formBuilder.Parameters[$"Test{i}"] = new Hashtable
                 {
@@ -189,8 +189,23 @@ namespace DynamicInterfaceBuilder
                     Container.Controls.Add(control);
                 }
             }
-            
+
             form.Controls.Add(Container);
+
+            if (IsScrollbarVisible())
+            {
+                foreach (var element in FormElements.Values)
+                {
+                    if (element.Control != null && element.Control is TableLayoutPanel panel)
+                    {
+                        int offset = Spacing * 2 + 16 + 20;
+                        int minWidth = Width - offset;
+                        int minHeight = panel.MinimumSize.Height;
+
+                        panel.MinimumSize = new Size(minWidth, minHeight);
+                    }
+                }
+            }
 
             return form;
         }
@@ -200,6 +215,8 @@ namespace DynamicInterfaceBuilder
             FlowLayoutPanel container = new()
             {
                 Dock = DockStyle.Fill,
+                Width = Width,
+                Height = Height,
                 FlowDirection = FlowDirection.TopDown,
                 WrapContents = false,
                 AutoSize = true,
@@ -231,6 +248,14 @@ namespace DynamicInterfaceBuilder
             Height = Constants.DefaultHeight;
             
             Parameters.Clear();
+        }
+
+        protected bool IsScrollbarVisible()
+        {
+            var DisplayHeight = Container.DisplayRectangle.Height;
+            var VisibleHeight = Container.ClientRectangle.Height - Spacing;
+
+            return DisplayHeight > VisibleHeight;
         }
 
         public Color GetThemeColor(string name) => _themeManager.GetColor(name);

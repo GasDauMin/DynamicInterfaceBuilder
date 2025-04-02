@@ -23,14 +23,13 @@ namespace DynamicInterfaceBuilder
                 Padding = new Padding(0, 0, 0, 0),
             };
 
-            int offset = FormBuilder.Spacing * 2 + 15 + 20;
-            float columnWidth = FormBuilder.Width - offset;
-            
-            panel.MinimumSize = new Size((int)columnWidth, 0);
-
+            int offset = FormBuilder.Spacing * 2 + 16;
+            int minWidth = FormBuilder.Width - offset;
+        
             panel.ColumnStyles.Clear();
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+            panel.MinimumSize = new Size(minWidth, 0);
 
             if (Label != null)
             {

@@ -2,6 +2,7 @@ namespace DynamicInterfaceBuilder
 {
     public static class Constants
     {
+        #region Default values
         public const string DefaultTheme = "Default";
         public const string DefaultTitle = "Dynamic Interface Builder";
         public const int DefaultWidth = 600;
@@ -11,5 +12,10 @@ namespace DynamicInterfaceBuilder
         public const int DefaultMargin = 0;
         public const int DefaultPadding = 0;
         public const string DefaultConfigFile = "FormBuilder.properties.json";
+        #endregion
+
+        #region General constants
+        
+        #endregion
     }
 }
