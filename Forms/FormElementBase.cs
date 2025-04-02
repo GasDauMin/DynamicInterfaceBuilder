@@ -19,5 +19,30 @@ namespace DynamicInterfaceBuilder
         }
 
         public abstract Control? BuildControl();
+
+        public virtual bool ValidateControl()
+        {
+            bool ok = true;
+
+            foreach (var rule in ValidationRules)
+            {
+                if (!Validate(rule))
+                {
+                    if (rule.Message != null)
+                    {
+                        FormBuilder.PrintError(rule.Message);
+                    }
+                    
+                    ok = false;   
+                }
+            }
+
+            return ok;
+        }
+
+        public virtual bool Validate(ValidationRule rule)
+        {
+            return true;
+        }
     }
 }

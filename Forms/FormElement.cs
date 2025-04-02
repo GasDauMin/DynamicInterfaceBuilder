@@ -56,8 +56,8 @@ namespace DynamicInterfaceBuilder
                 Margin = new Padding(0, 0, 0, 0),
                 Padding = new Padding(0, 0, 0, 0),
                 BorderStyle = BorderStyle.FixedSingle,
-                BackColor = formBuilder.GetThemeColor("ControlBack"),
-                ForeColor = formBuilder.GetThemeColor("ControlFore"),
+                BackColor = FormBuilder.GetThemeColor("ControlBack"),
+                ForeColor = FormBuilder.GetThemeColor("ControlFore"),
             };
 
             panel.Controls.Add(textBox, 1, 0);
