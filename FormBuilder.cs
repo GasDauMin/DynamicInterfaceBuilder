@@ -49,6 +49,7 @@ namespace DynamicInterfaceBuilder
         private ParametersManager _parametersManager;
         private string _theme;
         
+        public Form? form;
         public FlowLayoutPanel? Container;        
         public Panel? ButtonPanel;
         
@@ -143,6 +144,21 @@ namespace DynamicInterfaceBuilder
         public DialogResult RunForm()
         {
             var form = BuildForm();
+
+            form.FormClosing += (sender, e) =>
+            {
+                if (form.DialogResult == DialogResult.OK)
+                {
+                    foreach (var element in FormElements.Values)
+                    {
+                        if (element.Control != null && !element.ValidateControl())
+                        {
+                            e.Cancel = true;
+                        }
+                    }
+                }
+            };
+
             return form.ShowDialog();
         }
         
@@ -150,7 +166,7 @@ namespace DynamicInterfaceBuilder
         {
             _parametersManager.ParseParameters(Parameters);
 
-            Form form = new()
+            form = new()
             {
                 Text = Title,
                 Width = Width,
@@ -233,9 +249,40 @@ namespace DynamicInterfaceBuilder
                 container.Padding.Bottom + Spacing
             );
 
+            container.Controls.Add(BuildMessagePanel());
+
             return container;
         }
         
+        protected Panel BuildMessagePanel()
+        {
+            // Create a panel for the info
+            Panel messagePanel = new()
+            {
+                Dock = DockStyle.Top,
+                Height = 50,
+                Padding = new Padding(0, 0, 0, 0),
+                Margin = new Padding(Spacing, Spacing, Spacing, 0)
+            };
+
+            TextBox textBox = new()
+            {
+                Dock = DockStyle.Fill,
+                Multiline = true,
+                ReadOnly = true,
+                BorderStyle = BorderStyle.None,
+                ScrollBars = ScrollBars.Vertical,
+                WordWrap = true,
+                BackColor = GetThemeColor("MessageBack"),
+                ForeColor = GetThemeColor("MessageFore"),
+            };
+            
+            // Add label to the panel
+            messagePanel.Controls.Add(textBox);
+
+            return messagePanel;
+        }
+
         protected Panel BuildButtonPanel()
         {
             // Create a panel for the buttons

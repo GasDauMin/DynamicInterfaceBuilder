@@ -1,11 +1,39 @@
 namespace DynamicInterfaceBuilder
-{    
+{   
+    #region FormElement
     public abstract class FormElement<T>(FormBuilder formBuilder, string name, FormElementType type) : FormElementBase(formBuilder, name, type)
     {
         public virtual T? DefaultValue { get; set; }
         public virtual T? Value { get; set; }
-    }
 
+        public override bool ValidateControl()
+        {
+            bool ok = true;
+
+            foreach (var rule in ValidationRules)
+            {
+                if (!ValidateRule(rule))
+                {
+                    if (rule.Message != null)
+                    {
+                        FormBuilder.PrintError(rule.Message);
+                    }
+                    
+                    ok = false;   
+                }
+            }
+
+            return ok;
+        }
+
+        public virtual bool ValidateRule(ValidationRule rule)
+        {
+            return false;
+        }
+    }
+    #endregion
+
+    #region TextBoxElement
     public class TextBoxElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.TextBox)
     {
         public override Control? BuildControl()
@@ -66,7 +94,9 @@ namespace DynamicInterfaceBuilder
             return Control;
         }
     }
+    #endregion
 
+    #region NumericElement
     public class NumericElement(FormBuilder formBuilder, string name) : FormElement<int>(formBuilder, name, FormElementType.Numeric)
     {
         public override Control? BuildControl()
@@ -110,7 +140,9 @@ namespace DynamicInterfaceBuilder
             return Control;
         }
     }
+    #endregion
 
+    #region CheckBoxElement
     public class CheckBoxElement(FormBuilder formBuilder, string name) : FormElement<bool>(formBuilder, name, FormElementType.CheckBox)
     {
 
@@ -128,7 +160,9 @@ namespace DynamicInterfaceBuilder
             return Control;
         }
     }
+    #endregion
 
+    #region FileBoxElement
     public class FileBoxElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.FileBox)
     {
         public override Control? BuildControl()
@@ -137,7 +171,9 @@ namespace DynamicInterfaceBuilder
             return Control;
         }
     }
+    #endregion
 
+    #region FolderBoxElement
     public class FolderBoxElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.FolderBox)
     {
         public override Control? BuildControl()
@@ -145,8 +181,10 @@ namespace DynamicInterfaceBuilder
             // Implement folder box control
             return Control;
         }
-    }    
+    }
+    #endregion
 
+    #region ListBoxElement
     public class ListBoxElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.ListBox), ISelectableList<string>
     {
         private readonly SelectableList<string> _selectableList = new();
@@ -161,7 +199,9 @@ namespace DynamicInterfaceBuilder
             return Control;
         }
     }
+    #endregion
 
+    #region ComboBoxElement
     public class ComboBoxElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.ComboBox), ISelectableList<string>
     {
         private readonly SelectableList<string> _selectableList = new();
@@ -176,7 +216,9 @@ namespace DynamicInterfaceBuilder
             return Control;
         }
     }
+    #endregion
 
+    #region RadioButtonElement
     public class RadioButtonElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.RadioButton), ISelectableList<string>
     {
         private readonly SelectableList<string> _selectableList = new();
@@ -190,5 +232,6 @@ namespace DynamicInterfaceBuilder
             // Implement RadioButton control
             return Control;
         }
-    }    
+    }
+    #endregion
 }

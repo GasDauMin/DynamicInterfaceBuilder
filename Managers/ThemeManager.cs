@@ -42,6 +42,8 @@ namespace DynamicInterfaceBuilder
                 { "Panel", "#454545" },
                 { "ControlBack", "#606060" },
                 { "ControlFore", "#FFFFFF" },
+                { "MessageBack", "#606060" },
+                { "MessageFore", "#FFFFFF" },
                 { "ButtonBack", "#606060" },
                 { "ButtonFore", "#FFFFFF" },
                 { "ButtonHover", "#808080" },
