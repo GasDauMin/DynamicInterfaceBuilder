@@ -12,11 +12,13 @@ namespace DynamicInterfaceBuilder
 
             foreach (var rule in ValidationRules)
             {
+                FB.ClearMessages();
+
                 if (!ValidateRule(rule))
                 {
                     if (rule.Message != null)
                     {
-                        FormBuilder.PrintError(rule.Message);
+                        FB.PrintError(rule.Message);
                     }
                     
                     ok = false;   
@@ -51,8 +53,8 @@ namespace DynamicInterfaceBuilder
                 Padding = new Padding(0, 0, 0, 0),
             };
 
-            int offset = FormBuilder.Spacing * 2 + 16;
-            int minWidth = FormBuilder.Width - offset;
+            int offset = FB.Spacing * 2 + 16;
+            int minWidth = FB.Width - offset;
         
             panel.ColumnStyles.Clear();
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
@@ -84,8 +86,8 @@ namespace DynamicInterfaceBuilder
                 Margin = new Padding(0, 0, 0, 0),
                 Padding = new Padding(0, 0, 0, 0),
                 BorderStyle = BorderStyle.FixedSingle,
-                BackColor = FormBuilder.GetThemeColor("ControlBack"),
-                ForeColor = FormBuilder.GetThemeColor("ControlFore"),
+                BackColor = FB.GetThemeColor("ControlBack"),
+                ForeColor = FB.GetThemeColor("ControlFore"),
             };
 
             panel.Controls.Add(textBox, 1, 0);

@@ -2,7 +2,7 @@ namespace DynamicInterfaceBuilder
 {
     public abstract class FormElementBase : IFormElement
     {
-        protected readonly FormBuilder FormBuilder;
+        protected readonly FormBuilder FB;
         
         public string Name { get; protected set; }
         public string? Label { get; set; }
@@ -13,7 +13,7 @@ namespace DynamicInterfaceBuilder
 
         protected FormElementBase(FormBuilder formBuilder, string name, FormElementType type)
         {
-            FormBuilder = formBuilder;
+            FB = formBuilder;
             Name = name;
             Type = type;
         }

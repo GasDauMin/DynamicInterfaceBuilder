@@ -14,5 +14,11 @@ namespace DynamicInterfaceBuilder
         public const string DefaultConfigFile = "FormBuilder.properties.json";
         public const bool DefaultReverseButtons = false;
         #endregion
+        
+        #region General constants
+        public const string ID = "FB";
+        public const string Namespace = "DynamicInterfaceBuilder";
+        public const string EndLine = "\r\n";
+        #endregion
     }
 }
