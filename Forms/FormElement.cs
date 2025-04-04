@@ -52,16 +52,15 @@ namespace DynamicInterfaceBuilder
                 Margin = new Padding(0, 0, 0, 0),
                 Padding = new Padding(0, 0, 0, 0),
             };
-
-            int offset = FB.Spacing * 2 + 16;
-            int minWidth = FB.Width - offset;
         
             panel.ColumnStyles.Clear();
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
-            panel.MinimumSize = new Size(minWidth, 0);
+            
+            bool isLabelVisible = Label != null && Label.Length > 0;
+            int spacing = isLabelVisible ? FB.Spacing : 0;
 
-            if (Label != null)
+            if (isLabelVisible)
             {
                 var label = new Label
                 {
@@ -69,6 +68,7 @@ namespace DynamicInterfaceBuilder
                     Dock = DockStyle.Fill,
                     Text = Label + ": ",
                     AutoSize = true,
+                    BorderStyle = BorderStyle.None,
                     TextAlign = ContentAlignment.MiddleLeft,
                     Margin = new Padding(0, 0, 0, 0),
                     Padding = new Padding(0, 0, 0, 0),
@@ -83,9 +83,9 @@ namespace DynamicInterfaceBuilder
                 Dock = DockStyle.Fill,
                 AutoSize = true,
                 Text = DefaultValue,
-                Margin = new Padding(0, 0, 0, 0),
+                Margin = new Padding(spacing, 0, 0, 0),
                 Padding = new Padding(0, 0, 0, 0),
-                BorderStyle = BorderStyle.FixedSingle,
+                BorderStyle = BorderStyle.None,
                 BackColor = FB.GetThemeColor("ControlBack"),
                 ForeColor = FB.GetThemeColor("ControlFore"),
             };

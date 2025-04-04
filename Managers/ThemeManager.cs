@@ -8,6 +8,7 @@ namespace DynamicInterfaceBuilder
         public readonly FormBuilder FormBuilder;
 
         public Dictionary<string, Dictionary<string, string>> Themes => _themes;
+
         public string RootThemePath { get; set; }
 
         private Dictionary<string, Dictionary<string, string>> _themes = new();

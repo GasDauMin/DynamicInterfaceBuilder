@@ -1,32 +1,40 @@
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection.Metadata;
 
 namespace DynamicInterfaceBuilder
 {
     public class FormBuilder
     {
+        #region Managers
+
+        private MessageManager MessageManager;
+        private ConfigManager ConfigManager;
+        private ThemeManager ThemeManager;
+        private ParametersManager ParametersManager;
+
+        #endregion
+
+
         #region Properties
 
         [ConfigProperty]
-        public required string Title { get; set; }
-        
-        [ConfigProperty]
-        public required int Width { get; set; }
-        
-        [ConfigProperty]
-        public required int Height { get; set; }
+        public required string Title { get; set; } = Constants.DefaultTitle;
 
         [ConfigProperty]
-        public int FontSize { get; set; }
-
-        [ConfigProperty]
-        public int Margin { get; set; }
+        public required int Width { get; set; } = Constants.DefaultWidth;
         
         [ConfigProperty]
-        public int Padding { get; set; }
+        public required int Height { get; set; } = Constants.DefaultHeight;
 
         [ConfigProperty]
-        public int Spacing { get; set; }
+        public int Spacing { get; set; } = Constants.DefaultSpacing;
+
+        [ConfigProperty]
+        public string FontName { get; set; } = Constants.DefaultFontName;
+
+        [ConfigProperty]
+        public int FontSize { get; set; } = Constants.DefaultFontSize;
 
         [ConfigProperty]
         public AdvancedProperties AdvancedProperties { get; set; } = new();
@@ -39,23 +47,15 @@ namespace DynamicInterfaceBuilder
                 ThemeManager.SetTheme(_theme);
             }
         }
-
-        public Dictionary<string, object> Parameters { get; set; } = new();
-        public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
-        public Dictionary<string, Dictionary<string, string>> Themes { get; set; } = new();
-        public Action<object, object> OnMessageTextChanged { get; internal set; }
-
-        private MessageManager MessageManager;
-        private ConfigManager ConfigManager;
-        private ThemeManager ThemeManager;
-        private ParametersManager ParametersManager;
-
-        private string _theme;
+        private string _theme = Constants.DefaultTheme;
         
         public Form? Form;
         public FlowLayoutPanel? ContentPanel;        
         public Panel? ButtonPanel, MessagePanel;
-        public TextBox? MessageTextBox;
+        public RichTextBox? MessageTextBox;
+        public Dictionary<string, object> Parameters { get; set; } = new();
+        public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
+        public Action<object, object>? OnMessageTextChanged { get; internal set; }
 
         #endregion
 
@@ -68,96 +68,50 @@ namespace DynamicInterfaceBuilder
 
         public FormBuilder(string title = Constants.DefaultTitle, int width = Constants.DefaultWidth, int height = Constants.DefaultHeight, string theme = Constants.DefaultTheme)
         {
-            this.InitDefaults();
+            ConfigManager = new(this);
+            ThemeManager = new(this);
+            ParametersManager = new(this);
+            MessageManager = new(this);
 
             Title = title;
             Width = width;
             Height = height;
-
-            // Initialize config manager
-
-            ConfigManager = new ConfigManager(this);
-
-            // Initialize theme manager
-
-            _theme = theme;
-
-            ThemeManager = new ThemeManager(this);
-            ThemeManager.SetTheme(_theme);
-
-            // Initialize parameters manager
-
-            ParametersManager = new ParametersManager(this);
-
-            // Initialize message manager
-
-            MessageManager = new MessageManager(this);
-
-            ((INotifyPropertyChanged)MessageManager).PropertyChanged += (sender, e) => {
-                if (e.PropertyName == nameof(MessageManager.MessageText))
-                {
-                    if (MessageTextBox != null
-                        && MessagePanel != null
-                        && MessageManager.MessageText != string.Empty
-                    )
+            Theme = theme;
+           
+            if (MessageManager is INotifyPropertyChanged notifyPropertyChanged)
+            {
+                ((INotifyPropertyChanged)MessageManager).PropertyChanged += (sender, e) => {
+                    if (e.PropertyName == nameof(MessageManager.MessageText))
                     {
-                        MessagePanel.Visible = true;
-                        MessageTextBox.Text += MessageManager.MessageText;
+                        if (MessageTextBox != null
+                            && MessagePanel != null
+                            && MessageManager.MessageText != string.Empty
+                        )
+                        {
+                            MessagePanel.Visible = true;
+                            MessageTextBox.Text += MessageManager.MessageText;
+                        }
+                        else if (MessagePanel != null)
+                        {
+                            MessagePanel.Visible = false;
+                        }
                     }
-                    else if (MessagePanel != null)
-                    {
-                        MessagePanel.Visible = false;
-                    }
-                }
-            };
+                };
+            }
         }
 
         #endregion
 
-        #region Functions
-        
-        public void SaveConfiguration() => ConfigManager.SaveConfiguration(this);
-        public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);
-        public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
-        public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path); 
-        public Color GetThemeColor(string name) => ThemeManager.GetColor(name);
-        public void ClearMessages() => MessageManager.Clear();
-        public void PrintError(string message) => MessageManager.Print(message, MessageType.Error);
-        public void PrintWarning(string message) => MessageManager.Print(message, MessageType.Warning);
-        public void PrintSuccess(string message) => MessageManager.Print(message, MessageType.Success);
-        public void PrintInfo(string message) => MessageManager.Print(message, MessageType.Info);
-        public void PrintAlert(string message) => MessageManager.Print(message, MessageType.Alert);
-        public void PrintDebug(string message) => MessageManager.Print(message, MessageType.Debug);
-        public void PrintMessage(string message) => MessageManager.Print(message, MessageType.None);
-
-        void InitDefaults()
-        {
-            Parameters.Clear();
-
-            Title = Constants.DefaultTitle;
-            Width = Constants.DefaultWidth;
-            Height = Constants.DefaultHeight;
-            FontSize = Constants.DefaultFontSize;
-            Margin = Constants.DefaultMargin;
-            Padding = Constants.DefaultPadding;
-            Spacing = Constants.DefaultSpacing;
-
-            AdvancedProperties = new AdvancedProperties
-            {
-                ReverseButtons = Constants.DefaultReverseButtons
-            };
-        }
-
-        protected bool IsScrollbarVisible()
-        {
-            var DisplayHeight = ContentPanel?.DisplayRectangle.Height;
-            var VisibleHeight = ContentPanel?.ClientRectangle.Height - Spacing;
-
-            return DisplayHeight > VisibleHeight;
-        }
+        #region Form builder
 
         public DialogResult RunForm()
         {
+            if (Environment.OSVersion.Version.Major >= 6)
+                WinAPI.SetProcessDPIAware();
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            
             Form = BuildForm();
             Form.FormClosing += (sender, e) =>
             {
@@ -175,7 +129,7 @@ namespace DynamicInterfaceBuilder
 
             return Form.ShowDialog();
         }
-        
+
         protected Form BuildForm()
         {
             ParametersManager.ParseParameters(Parameters);
@@ -192,8 +146,9 @@ namespace DynamicInterfaceBuilder
                 MinimizeBox = true,
                 AutoScroll = false,
                 AutoSize = false,
+                Font = new Font(FontName, FontSize),
                 BackColor = GetThemeColor("Background"),
-                ForeColor = GetThemeColor("Foreground")
+                ForeColor = GetThemeColor("Foreground"),
             };
 
             ContentPanel = BuildContentPanel();
@@ -212,18 +167,20 @@ namespace DynamicInterfaceBuilder
             form.Controls.Add(ContentPanel);
             form.Controls.Add(ButtonPanel);
 
-            if (IsScrollbarVisible())
+            foreach (var element in FormElements.Values)
             {
-                foreach (var element in FormElements.Values)
+                if (element.Control != null && element.Control is Control ctrl)
                 {
-                    if (element.Control != null && element.Control is TableLayoutPanel panel)
+                    int offset = (Spacing !=0 ? Spacing : 1) * 2 + 20;
+                    if (IsScrollbarVisible())
                     {
-                        int offset = Spacing * 2 + 16 + 20;
-                        int minWidth = Width - offset;
-                        int minHeight = panel.MinimumSize.Height;
-
-                        panel.MinimumSize = new Size(minWidth, minHeight);
+                        offset += SystemInformation.VerticalScrollBarWidth + 2;
                     }
+                    int minWidth = Width - offset;
+                    int minHeight = ctrl.MinimumSize.Height;
+
+                    ctrl.MinimumSize = new Size(minWidth, minHeight);
+                    ctrl.MaximumSize = new Size(minWidth, minHeight);
                 }
             }
 
@@ -244,17 +201,12 @@ namespace DynamicInterfaceBuilder
                 WrapContents = false,
                 AutoSize = true,
                 AutoScroll = true,
-                BackColor = GetThemeColor("Panel")
+                BackColor = GetThemeColor("Panel"),
+                Margin = new Padding(0, 0, 0, 0),
+                Padding = new Padding(0, 0, 0, 0),
             };
 
             panel.SetFlowBreak(panel, true);
-            panel.Padding = new Padding(
-                panel.Padding.Left,
-                panel.Padding.Top,
-                panel.Padding.Right,
-                panel.Padding.Bottom + Spacing
-            );
-
             panel.ControlAdded += (sender, e) =>
             {
                 if (e.Control is Panel control)
@@ -262,7 +214,7 @@ namespace DynamicInterfaceBuilder
                     control.Margin = new Padding(
                         control.Margin.Left + Spacing,
                         control.Margin.Top + Spacing,
-                        control.Margin.Right + Spacing,
+                        control.Margin.Right,
                         control.Margin.Bottom
                     );
                 }
@@ -278,30 +230,33 @@ namespace DynamicInterfaceBuilder
             {
                 Name = $"{Constants.ID}_Message_Panel",
                 Dock = DockStyle.Top,
-                Height = 50,
+                Height = 90,
                 Padding = new Padding(0, 0, 0, 0),
                 Margin = new Padding(0, 0, 0, 0)
             };
 
-            TextBox textBox = new()
+            RichTextBox richTextBox = new()
             {
                 Name = $"{Constants.ID}_Message_TextBox",
                 Dock = DockStyle.Fill,
                 Multiline = true,
                 ReadOnly = true,
                 BorderStyle = BorderStyle.None,
-                ScrollBars = ScrollBars.Vertical,
+                ScrollBars = RichTextBoxScrollBars.Vertical,
                 WordWrap = true,
+                Padding = new Padding(0, 0, 0, 0),
+                Margin = new Padding(0, 0, 0, 0),
                 BackColor = GetThemeColor("MessageBack"),
                 ForeColor = GetThemeColor("MessageFore"),
             };
             
             // Add label to the panel
-            panel.Controls.Add(textBox);
+            panel.Controls.Add(richTextBox);
 
             // Prepare panel for messages
-            MessageTextBox = textBox;
-            panel.Visible = false;
+            MessageTextBox = richTextBox;
+            panel.Visible = true;
+            MessageTextBox.Text = "ℹ️ teastasrafdasf adfas  fdafda f\n✅ asdasdasdasdasdads\n❌ afg5 wqdvfd";
 
             //Event whent
             return panel;
@@ -314,7 +269,7 @@ namespace DynamicInterfaceBuilder
             {
                 Name = $"{Constants.ID}_Button_Panel",
                 Dock = DockStyle.Bottom,
-                Height = 50,
+                Height = 60,
                 BackColor = GetThemeColor("Panel")
             };
             
@@ -324,8 +279,8 @@ namespace DynamicInterfaceBuilder
                 Name = $"{Constants.ID}_Ok_Button",
                 Text = "OK",
                 DialogResult = DialogResult.OK,
-                Width = 80,
-                Height = 30,
+                Width = 100,
+                Height = 45,
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Right
             };
             
@@ -335,20 +290,20 @@ namespace DynamicInterfaceBuilder
                 Name = $"{Constants.ID}_Cancel_Button",
                 Text = "Cancel",
                 DialogResult = DialogResult.Cancel,
-                Width = 80,
-                Height = 30,
+                Width = 100,
+                Height = 45,
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Right
             };
             
             // Add buttons to the panel
             if (AdvancedProperties.ReverseButtons)
             {
-                buttonCancel.Location = new Point(panel.Width - buttonOk.Width - 10 - 90, (panel.Height - buttonOk.Height) / 2);
+                buttonCancel.Location = new Point(panel.Width - buttonOk.Width - 120, (panel.Height - buttonOk.Height) / 2);
                 buttonOk.Location = new Point(panel.Width - buttonCancel.Width - 10, (panel.Height - buttonCancel.Height) / 2);
             }
             else
             {
-                buttonOk.Location = new Point(panel.Width - buttonOk.Width - 10 - 90, (panel.Height - buttonOk.Height) / 2);
+                buttonOk.Location = new Point(panel.Width - buttonOk.Width - 120, (panel.Height - buttonOk.Height) / 2);
                 buttonCancel.Location = new Point(panel.Width - buttonCancel.Width - 10, (panel.Height - buttonCancel.Height) / 2);
             }
             
@@ -357,6 +312,48 @@ namespace DynamicInterfaceBuilder
 
             return panel;
         }
+
+        #endregion
+
+        #region Functions
+    
+        void ResetDefaults(Boolean save = false)
+        {
+            Parameters.Clear();
+
+            Title = Constants.DefaultTitle;
+            Width = Constants.DefaultWidth;
+            Height = Constants.DefaultHeight;
+            Spacing = Constants.DefaultSpacing;
+            Theme = Constants.DefaultTheme;
+
+            AdvancedProperties = new AdvancedProperties
+            {
+                ReverseButtons = Constants.DefaultReverseButtons
+            };
+        }
+
+        protected bool IsScrollbarVisible()
+        {
+            var DisplayHeight = ContentPanel?.DisplayRectangle.Height;
+            var VisibleHeight = ContentPanel?.ClientRectangle.Height;
+
+            return DisplayHeight > VisibleHeight;
+        }
+        
+        public void SaveConfiguration() => ConfigManager.SaveConfiguration(this);
+        public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);
+        public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
+        public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path); 
+        public Color GetThemeColor(string name) => ThemeManager.GetColor(name);
+        public void ClearMessages() => MessageManager.Clear();
+        public void PrintError(string message) => MessageManager.Print(message, MessageType.Error);
+        public void PrintWarning(string message) => MessageManager.Print(message, MessageType.Warning);
+        public void PrintSuccess(string message) => MessageManager.Print(message, MessageType.Success);
+        public void PrintInfo(string message) => MessageManager.Print(message, MessageType.Info);
+        public void PrintAlert(string message) => MessageManager.Print(message, MessageType.Alert);
+        public void PrintDebug(string message) => MessageManager.Print(message, MessageType.Debug);
+        public void PrintMessage(string message) => MessageManager.Print(message, MessageType.None);
 
         #endregion
 
@@ -402,7 +399,7 @@ namespace DynamicInterfaceBuilder
                 }
             };
 
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < 15; i++)
             {
                 formBuilder.Parameters[$"Test{i}"] = new Hashtable
                 {

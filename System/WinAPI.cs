@@ -4,7 +4,9 @@ namespace DynamicInterfaceBuilder
 {
     class WinAPI
     {
-        // P/Invoke declaration for ShowScrollBar
+        [DllImport("user32.dll")]
+        public static extern bool SetProcessDPIAware();
+
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int ShowScrollBar(IntPtr hWnd, int wBar, bool bShow);
 
