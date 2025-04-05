@@ -72,6 +72,8 @@ namespace DynamicInterfaceBuilder
                     TextAlign = ContentAlignment.MiddleLeft,
                     Margin = new Padding(0, 0, 0, 0),
                     Padding = new Padding(0, 0, 0, 0),
+                    Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom,
+                    AutoEllipsis = true,
                 };
 
                 panel.Controls.Add(label, 0, 0);
@@ -88,6 +90,7 @@ namespace DynamicInterfaceBuilder
                 BorderStyle = BorderStyle.None,
                 BackColor = FB.GetThemeColor("ControlBack"),
                 ForeColor = FB.GetThemeColor("ControlFore"),
+                Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
             };
 
             panel.Controls.Add(textBox, 1, 0);

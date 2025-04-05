@@ -11,6 +11,10 @@ namespace DynamicInterfaceBuilder
         public const int DefaultFontSize = 10;
         public const int DefaultSpacing = 5;
         public const string DefaultConfigFile = "FormBuilder.properties.json";
+        public const bool DefaultAutoSaveConfig = true;
+        public const bool DefaultAutoLoadConfig = true;
+        public const bool DefaultAllowResize = true;
+        public const bool DefaultAdjustLabels = true;
         public const bool DefaultReverseButtons = false;
         #endregion
         
