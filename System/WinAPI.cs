@@ -1,21 +1,43 @@
-using System.Runtime.InteropServices;
+using System.IO;
+using System.Windows;
+using Microsoft.Win32;
+using System.Windows.Interop;
 
 namespace DynamicInterfaceBuilder
 {
-    class WinAPI
+    public static class WinAPI
     {
-        [DllImport("user32.dll")]
-        public static extern bool SetProcessDPIAware();
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern int ShowScrollBar(IntPtr hWnd, int wBar, bool bShow);
-
-        public enum ScrollBarDirection
+        /// <summary>
+        /// Opens a folder browser dialog using pure WPF techniques
+        /// </summary>
+        /// <param name="title">Dialog title</param>
+        /// <param name="initialDirectory">Initial directory to start from</param>
+        /// <returns>Selected folder path or null if canceled</returns>
+        public static string? BrowseForFolder(string title = "Select Folder", string? initialDirectory = null)
         {
-            SB_HORZ = 0,
-            SB_VERT = 1,
-            SB_CTL = 2,
-            SB_BOTH = 3
+            // WPF doesn't have a built-in folder browser, so we use OpenFileDialog with tricks
+            var dialog = new OpenFileDialog
+            {
+                CheckFileExists = false,
+                FileName = "Folder Selection",
+                Title = title,
+                ValidateNames = false,
+                CheckPathExists = true
+            };
+
+            if (!string.IsNullOrEmpty(initialDirectory) && Directory.Exists(initialDirectory))
+            {
+                dialog.InitialDirectory = initialDirectory;
+            }
+
+            bool? result = dialog.ShowDialog();
+            if (result == true)
+            {
+                string? folderPath = Path.GetDirectoryName(dialog.FileName);
+                return folderPath;
+            }
+
+            return null;
         }
     }
 }

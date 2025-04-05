@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.IO;
 using Newtonsoft.Json;
+using System.Windows.Media;
 
 namespace DynamicInterfaceBuilder
 {
@@ -12,7 +14,7 @@ namespace DynamicInterfaceBuilder
         public string RootThemePath { get; set; }
 
         private Dictionary<string, Dictionary<string, string>> _themes = new();
-        private Dictionary<string, Color> _colors = new();
+        private Dictionary<string, System.Drawing.Color> _colors = new();
 
         public ThemeManager(FormBuilder formBuilder)
         {
@@ -30,7 +32,7 @@ namespace DynamicInterfaceBuilder
         {
             if (_themes.ContainsKey(theme))
             {
-                _colors = _themes[theme].ToDictionary(kvp => kvp.Key, kvp => ColorTranslator.FromHtml(kvp.Value));
+                _colors = _themes[theme].ToDictionary(kvp => kvp.Key, kvp => System.Drawing.ColorTranslator.FromHtml(kvp.Value));
             }
         } 
 
@@ -85,7 +87,23 @@ namespace DynamicInterfaceBuilder
                 return _colors[name];
             }
 
-            return Color.Black;
-        }  
+            return System.Drawing.Color.Black;
+        }
+        
+        public System.Windows.Media.Color GetWpfColor(string name)
+        {
+            if (_colors.ContainsKey(name))
+            {
+                var drawingColor = _colors[name];
+                return System.Windows.Media.Color.FromArgb(
+                    drawingColor.A,
+                    drawingColor.R,
+                    drawingColor.G,
+                    drawingColor.B
+                );
+            }
+
+            return Colors.Black;
+        }
     }
 }

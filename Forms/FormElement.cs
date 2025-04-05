@@ -1,3 +1,9 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Input;
+using System.Text.RegularExpressions;
+
 namespace DynamicInterfaceBuilder
 {   
     #region FormElement
@@ -38,65 +44,57 @@ namespace DynamicInterfaceBuilder
     #region TextBoxElement
     public class TextBoxElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.TextBox)
     {
-        public override Control? BuildControl()
+        public override UIElement? BuildControl()
         {
-            var panel = new TableLayoutPanel
+            var panel = new Grid
             {
                 Name = $"{Name}_Panel",
-                Dock = DockStyle.Top,
-                AutoSize = true,
-                AutoScroll = false,
-                ColumnCount = 2,
-                RowCount = 1,
-                BackColor = Color.Transparent,
-                Margin = new Padding(0, 0, 0, 0),
-                Padding = new Padding(0, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, 0, 0, 0)
             };
-        
-            panel.ColumnStyles.Clear();
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
             
+            // Set up columns for label and textbox
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        
             bool isLabelVisible = Label != null && Label.Length > 0;
-            int spacing = isLabelVisible ? FB.Spacing : 0;
+            double spacing = isLabelVisible ? FB.Spacing : 0;
 
             if (isLabelVisible)
             {
-                var label = new Label
+                var label = new TextBlock
                 {
                     Name = $"{Name}_Label",
-                    Dock = DockStyle.Fill,
                     Text = Label + ": ",
-                    AutoSize = true,
-                    BorderStyle = BorderStyle.None,
-                    TextAlign = ContentAlignment.MiddleLeft,
-                    Margin = new Padding(0, 0, 0, 0),
-                    Padding = new Padding(0, 0, 0, 0),
-                    Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom,
-                    AutoEllipsis = true,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    TextAlignment = TextAlignment.Left,
+                    TextWrapping = TextWrapping.NoWrap,
+                    TextTrimming = TextTrimming.CharacterEllipsis
                 };
 
-                panel.Controls.Add(label, 0, 0);
+                Grid.SetColumn(label, 0);
+                panel.Children.Add(label);
             }
             
             var textBox = new TextBox
             {
                 Name = $"{Name}_TextBox",
-                Dock = DockStyle.Fill,
-                AutoSize = true,
                 Text = DefaultValue,
-                Margin = new Padding(spacing, 0, 0, 0),
-                Padding = new Padding(0, 0, 0, 0),
-                BorderStyle = BorderStyle.None,
-                BackColor = FB.GetThemeColor("ControlBack"),
-                ForeColor = FB.GetThemeColor("ControlFore"),
-                Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(spacing, 0, 0, 0),
+                Background = new SolidColorBrush(FB.GetThemeColor("ControlBack")),
+                Foreground = new SolidColorBrush(FB.GetThemeColor("ControlFore")),
+                BorderThickness = new Thickness(0)
             };
 
-            panel.Controls.Add(textBox, 1, 0);
+            Grid.SetColumn(textBox, 1);
+            panel.Children.Add(textBox);
 
             Control = panel;
-            return Control;
+            return panel;
         }
     }
     #endregion
@@ -104,45 +102,75 @@ namespace DynamicInterfaceBuilder
     #region NumericElement
     public class NumericElement(FormBuilder formBuilder, string name) : FormElement<int>(formBuilder, name, FormElementType.Numeric)
     {
-        public override Control? BuildControl()
+        public override UIElement? BuildControl()
         {
-            var panel = new TableLayoutPanel
+            var panel = new Grid
             {
                 Name = $"{Name}_Panel",
-                Dock = DockStyle.Top,
-                AutoSize = true,
-                AutoScroll = true,
-                ColumnCount = 2,
-                RowCount = 1,
+                VerticalAlignment = VerticalAlignment.Top
             };
 
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             if (Label != null)
             {
-                var label = new Label
+                var label = new TextBlock
                 {
                     Name = $"{Name}_Label",
                     Text = Label,
-                    TextAlign = ContentAlignment.MiddleLeft,
-                    Dock = DockStyle.Fill
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left
                 };
 
-                panel.Controls.Add(label, 0, 0);
+                Grid.SetColumn(label, 0);
+                panel.Children.Add(label);
             }
 
-            var numericUpDown = new NumericUpDown
+            // WPF doesn't have NumericUpDown, creating a proper numeric textbox
+            var numericUpDown = new TextBox
             {
                 Name = $"{Name}_Numeric",
-                Value = DefaultValue,
-                Dock = DockStyle.Fill
+                Text = DefaultValue.ToString(),
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Stretch
             };
 
-            panel.Controls.Add(numericUpDown, 1, 0);
+            // Add validation logic for numeric only
+            numericUpDown.PreviewTextInput += (s, e) =>
+            {
+                e.Handled = !int.TryParse(e.Text, out _);
+            };
+
+            // Prevent copying non-numeric text into the textbox
+            numericUpDown.PreviewKeyDown += (s, e) =>
+            {
+                if (e.Key == Key.Space)
+                    e.Handled = true;
+            };
+
+            // Prevent paste of non-numeric content
+            DataObject.AddPastingHandler(numericUpDown, (s, e) =>
+            {
+                if (e.DataObject.GetDataPresent(typeof(string)))
+                {
+                    string text = (string)e.DataObject.GetData(typeof(string));
+                    if (!int.TryParse(text, out _))
+                    {
+                        e.CancelCommand();
+                    }
+                }
+                else
+                {
+                    e.CancelCommand();
+                }
+            });
+
+            Grid.SetColumn(numericUpDown, 1);
+            panel.Children.Add(numericUpDown);
 
             Control = panel;
-            return Control;
+            return panel;
         }
     }
     #endregion
@@ -150,19 +178,18 @@ namespace DynamicInterfaceBuilder
     #region CheckBoxElement
     public class CheckBoxElement(FormBuilder formBuilder, string name) : FormElement<bool>(formBuilder, name, FormElementType.CheckBox)
     {
-
-        public override Control? BuildControl()
+        public override UIElement? BuildControl()
         {
             var checkBox = new CheckBox
             {
                 Name = $"{Name}_CheckBox",
-                Text = Label,
-                Checked = DefaultValue,
-                Dock = DockStyle.Top
+                Content = Label,
+                IsChecked = DefaultValue,
+                VerticalAlignment = VerticalAlignment.Top
             };
 
             Control = checkBox;
-            return Control;
+            return checkBox;
         }
     }
     #endregion
@@ -170,10 +197,67 @@ namespace DynamicInterfaceBuilder
     #region FileBoxElement
     public class FileBoxElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.FileBox)
     {
-        public override Control? BuildControl()
+        public override UIElement? BuildControl()
         {
-            // Implement file box control
-            return Control;
+            // Implement file box control using Grid with TextBox and Button
+            var panel = new Grid
+            {
+                Name = $"{Name}_Panel",
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            if (Label != null)
+            {
+                var label = new TextBlock
+                {
+                    Name = $"{Name}_Label",
+                    Text = Label,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                Grid.SetColumn(label, 0);
+                panel.Children.Add(label);
+            }
+
+            var textBox = new TextBox
+            {
+                Name = $"{Name}_FilePath",
+                Text = DefaultValue,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            Grid.SetColumn(textBox, 1);
+            panel.Children.Add(textBox);
+
+            var browseButton = new Button
+            {
+                Name = $"{Name}_BrowseButton",
+                Content = "...",
+                Width = 30,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+
+            browseButton.Click += (s, e) =>
+            {
+                var dialog = new Microsoft.Win32.OpenFileDialog();
+                if (dialog.ShowDialog() == true)
+                {
+                    textBox.Text = dialog.FileName;
+                }
+            };
+
+            Grid.SetColumn(browseButton, 2);
+            panel.Children.Add(browseButton);
+
+            Control = panel;
+            return panel;
         }
     }
     #endregion
@@ -181,10 +265,68 @@ namespace DynamicInterfaceBuilder
     #region FolderBoxElement
     public class FolderBoxElement(FormBuilder formBuilder, string name) : FormElement<string>(formBuilder, name, FormElementType.FolderBox)
     {
-        public override Control? BuildControl()
+        public override UIElement? BuildControl()
         {
-            // Implement folder box control
-            return Control;
+            // Implement folder box control similar to FileBoxElement
+            var panel = new Grid
+            {
+                Name = $"{Name}_Panel",
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            if (Label != null)
+            {
+                var label = new TextBlock
+                {
+                    Name = $"{Name}_Label",
+                    Text = Label,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                Grid.SetColumn(label, 0);
+                panel.Children.Add(label);
+            }
+
+            var textBox = new TextBox
+            {
+                Name = $"{Name}_FolderPath",
+                Text = DefaultValue,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            Grid.SetColumn(textBox, 1);
+            panel.Children.Add(textBox);
+
+            var browseButton = new Button
+            {
+                Name = $"{Name}_BrowseButton",
+                Content = "...",
+                Width = 30,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+
+            browseButton.Click += (s, e) =>
+            {
+                // Use our WPF-only folder browser implementation
+                string? selectedFolder = WinAPI.BrowseForFolder("Select Folder", DefaultValue);
+                if (!string.IsNullOrEmpty(selectedFolder))
+                {
+                    textBox.Text = selectedFolder;
+                }
+            };
+
+            Grid.SetColumn(browseButton, 2);
+            panel.Children.Add(browseButton);
+
+            Control = panel;
+            return panel;
         }
     }
     #endregion
@@ -198,10 +340,56 @@ namespace DynamicInterfaceBuilder
         public int DefaultIndex { get => _selectableList.DefaultIndex; set => _selectableList.DefaultIndex = value; }
         public override string? DefaultValue { get => _selectableList.DefaultValue; set => _selectableList.DefaultValue = value; }
 
-        public override Control? BuildControl()
+        public override UIElement? BuildControl()
         {
-            // Implement ListBox control
-            return Control;
+            var panel = new Grid
+            {
+                Name = $"{Name}_Panel",
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            if (Label != null)
+            {
+                var label = new TextBlock
+                {
+                    Name = $"{Name}_Label",
+                    Text = Label,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                Grid.SetColumn(label, 0);
+                panel.Children.Add(label);
+            }
+
+            var listBox = new System.Windows.Controls.ListBox
+            {
+                Name = $"{Name}_ListBox",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            if (Items != null)
+            {
+                foreach (var item in Items)
+                {
+                    listBox.Items.Add(item);
+                }
+                
+                if (DefaultIndex >= 0 && DefaultIndex < listBox.Items.Count)
+                {
+                    listBox.SelectedIndex = DefaultIndex;
+                }
+            }
+
+            Grid.SetColumn(listBox, 1);
+            panel.Children.Add(listBox);
+
+            Control = panel;
+            return panel;
         }
     }
     #endregion
@@ -215,10 +403,56 @@ namespace DynamicInterfaceBuilder
         public int DefaultIndex { get => _selectableList.DefaultIndex; set => _selectableList.DefaultIndex = value; }
         public override string? DefaultValue { get => _selectableList.DefaultValue; set => _selectableList.DefaultValue = value; }
 
-        public override Control? BuildControl()
+        public override UIElement? BuildControl()
         {
-            // Implement ComboBox control
-            return Control;
+            var panel = new Grid
+            {
+                Name = $"{Name}_Panel",
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            if (Label != null)
+            {
+                var label = new TextBlock
+                {
+                    Name = $"{Name}_Label",
+                    Text = Label,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                Grid.SetColumn(label, 0);
+                panel.Children.Add(label);
+            }
+
+            var comboBox = new ComboBox
+            {
+                Name = $"{Name}_ComboBox",
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            if (Items != null)
+            {
+                foreach (var item in Items)
+                {
+                    comboBox.Items.Add(item);
+                }
+                
+                if (DefaultIndex >= 0 && DefaultIndex < comboBox.Items.Count)
+                {
+                    comboBox.SelectedIndex = DefaultIndex;
+                }
+            }
+
+            Grid.SetColumn(comboBox, 1);
+            panel.Children.Add(comboBox);
+
+            Control = panel;
+            return panel;
         }
     }
     #endregion
@@ -232,10 +466,58 @@ namespace DynamicInterfaceBuilder
         public int DefaultIndex { get => _selectableList.DefaultIndex; set => _selectableList.DefaultIndex = value; }
         public override string? DefaultValue { get => _selectableList.DefaultValue; set => _selectableList.DefaultValue = value; }
 
-        public override Control? BuildControl()
+        public override UIElement? BuildControl()
         {
-            // Implement RadioButton control
-            return Control;
+            var panel = new Grid
+            {
+                Name = $"{Name}_Panel",
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            if (Label != null)
+            {
+                var label = new TextBlock
+                {
+                    Name = $"{Name}_Label",
+                    Text = Label,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                Grid.SetColumn(label, 0);
+                panel.Children.Add(label);
+            }
+
+            var radioPanel = new StackPanel
+            {
+                Name = $"{Name}_RadioPanel",
+                Orientation = Orientation.Vertical
+            };
+
+            if (Items != null)
+            {
+                for (int i = 0; i < Items.Length; i++)
+                {
+                    var radioButton = new RadioButton
+                    {
+                        Name = $"{Name}_RadioButton_{i}",
+                        Content = Items[i],
+                        GroupName = Name,
+                        IsChecked = (i == DefaultIndex)
+                    };
+                    
+                    radioPanel.Children.Add(radioButton);
+                }
+            }
+
+            Grid.SetColumn(radioPanel, 1);
+            panel.Children.Add(radioPanel);
+
+            Control = panel;
+            return panel;
         }
     }
     #endregion

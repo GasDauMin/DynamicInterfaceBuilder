@@ -1,3 +1,6 @@
+using System.Windows;
+using System.Windows.Controls;
+
 namespace DynamicInterfaceBuilder
 {
     public abstract class FormElementBase : IFormElement
@@ -7,7 +10,7 @@ namespace DynamicInterfaceBuilder
         public string Name { get; protected set; }
         public string? Label { get; set; }
         public string? Description { get; set; }
-        public Control? Control { get; protected set; }
+        public UIElement? Control { get; protected set; }
         public FormElementType Type { get; protected set; }
         public List<ValidationRule> ValidationRules { get; protected set; } = [];
 
@@ -18,7 +21,7 @@ namespace DynamicInterfaceBuilder
             Type = type;
         }
 
-        public abstract Control? BuildControl();
+        public abstract UIElement? BuildControl();
         public abstract bool ValidateControl();
     }
 }

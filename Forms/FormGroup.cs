@@ -1,3 +1,6 @@
+using System.Windows;
+using System.Windows.Controls;
+
 namespace DynamicInterfaceBuilder
 {
     public class FormGroup(FormBuilder formBuilder, string groupName)
@@ -13,32 +16,35 @@ namespace DynamicInterfaceBuilder
             _elements.Add(element);
         }
 
-        public Control BuildGroupControl()
+        public UIElement BuildGroupControl()
         {
-            var panel = new FlowLayoutPanel
+            var panel = new StackPanel
             {
                 Name = $"{GroupName}_GroupPanel",
-                Dock = DockStyle.Top,
-                AutoSize = true,
-                FlowDirection = FlowDirection.TopDown,
-                WrapContents = false
+                VerticalAlignment = VerticalAlignment.Top,
+                Orientation = Orientation.Vertical
             };
 
             if (!string.IsNullOrEmpty(GroupLabel))
             {
-                var groupLabel = new Label
+                var groupLabel = new TextBlock
                 {
                     Name = $"{GroupName}_GroupLabel",
                     Text = GroupLabel,
-                    Font = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold),
-                    Dock = DockStyle.Top
+                    FontWeight = FontWeights.Bold,
+                    FontSize = 12,
+                    VerticalAlignment = VerticalAlignment.Top
                 };
-                panel.Controls.Add(groupLabel);
+                panel.Children.Add(groupLabel);
             }
 
             foreach (var element in _elements)
             {
-                panel.Controls.Add(element.BuildControl());
+                var control = element.BuildControl();
+                if (control != null)
+                {
+                    panel.Children.Add(control);
+                }
             }
 
             return panel;

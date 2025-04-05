@@ -1,6 +1,12 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection.Metadata;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Controls.Primitives;
 
 namespace DynamicInterfaceBuilder
 {
@@ -49,10 +55,10 @@ namespace DynamicInterfaceBuilder
         }
         private string _theme = Constants.DefaultTheme;
         
-        public Form? Form;
-        public FlowLayoutPanel? ContentPanel;        
-        public Panel? ButtonPanel, MessagePanel;
-        public RichTextBox? MessageTextBox;
+        public Window? Form;
+        public StackPanel? ContentPanel;        
+        public Grid? ButtonPanel, MessagePanel;
+        public System.Windows.Controls.RichTextBox? MessageTextBox;
         public int LabelWidth { get; set; } = -1;
         public Dictionary<string, object> Parameters { get; set; } = new();
         public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
@@ -108,8 +114,8 @@ namespace DynamicInterfaceBuilder
 
         protected bool IsScrollbarVisible()
         {
-            var DisplayHeight = ContentPanel?.DisplayRectangle.Height;
-            var VisibleHeight = ContentPanel?.ClientRectangle.Height;
+            var DisplayHeight = ContentPanel?.ActualHeight ?? 0;
+            var VisibleHeight = ContentPanel?.Height ?? 0;
 
             return DisplayHeight > VisibleHeight;
         }
@@ -118,7 +124,7 @@ namespace DynamicInterfaceBuilder
         public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);
         public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
         public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path); 
-        public Color GetThemeColor(string name) => ThemeManager.GetColor(name);
+        public System.Windows.Media.Color GetThemeColor(string name) => ThemeManager.GetWpfColor(name);
         public void ClearMessages() => MessageManager.Clear();
         public void PrintError(string message) => MessageManager.Print(message, MessageType.Error);
         public void PrintWarning(string message) => MessageManager.Print(message, MessageType.Warning);
@@ -136,18 +142,24 @@ namespace DynamicInterfaceBuilder
         {
             if (MessageTextBox != null && MessagePanel != null && MessageManager.MessageText != string.Empty)
             {
-                MessagePanel.Visible = true;
-                MessageTextBox.Text += MessageManager.MessageText;
+                MessagePanel.Visibility = Visibility.Visible;
+                
+                // In WPF, RichTextBox content is set through document
+                FlowDocument document = new FlowDocument();
+                Paragraph paragraph = new Paragraph();
+                paragraph.Inlines.Add(new Run(MessageManager.MessageText));
+                document.Blocks.Add(paragraph);
+                MessageTextBox.Document = document;
             }
             else if (MessagePanel != null)
             {
-                MessagePanel.Visible = false;
+                MessagePanel.Visibility = Visibility.Collapsed;
             }
         }
 
-        private void HandleFormClosing(object? sender, FormClosingEventArgs e)
+        private void HandleFormClosing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (Form?.DialogResult == DialogResult.OK)
+            if (Form != null && Form.DialogResult == true)
             {
                 foreach (var element in FormElements.Values)
                 {
@@ -164,8 +176,8 @@ namespace DynamicInterfaceBuilder
         {
             if (Form != null && ContentPanel != null && ButtonPanel != null)
             {
-                Width = Form.Width;
-                Height = Form.Height;
+                Width = (int)Form.Width;
+                Height = (int)Form.Height;
 
                 AdjustControls();
             }
@@ -175,27 +187,18 @@ namespace DynamicInterfaceBuilder
 
         #region Form builder
 
-        public DialogResult RunForm()
+        public bool? RunForm()
         {
-            if (Environment.OSVersion.Version.Major >= 6)
-                WinAPI.SetProcessDPIAware();
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            
             if (AdvancedProperties.AutoLoadConfig)
             {
                 LoadConfiguration();
             }  
 
             Form = BuildForm();
-            Form.FormClosing += HandleFormClosing;
-            Form.Resize += HandleFormResize;
+            Form.Closing += HandleFormClosing;
+            Form.SizeChanged += HandleFormResize;
 
-            DialogResult result = Form.ShowDialog();
-
-            Form.Dispose();
-            Form = null;
+            bool? result = Form.ShowDialog();
 
             if (AdvancedProperties.AutoSaveConfig)
             {
@@ -205,42 +208,69 @@ namespace DynamicInterfaceBuilder
             return result;
         }
 
-        protected Form BuildForm()
+        protected Window BuildForm()
         {
             ParametersManager.ParseParameters(Parameters);
 
-            Form form = new()
+            Window form = new()
             {
-                Name = Constants.ID,
-                Text = Title,
+                Title = Title,
                 Width = Width,
                 Height = Height,
-                StartPosition = FormStartPosition.CenterScreen,
-                FormBorderStyle = (AdvancedProperties.AllowResize ? FormBorderStyle.Sizable : FormBorderStyle.FixedSingle),
-                MaximizeBox = false,
-                MinimizeBox = true,
-                AutoScroll = false,
-                AutoSize = false,
-                Font = new Font(FontName, FontSize),
-                BackColor = GetThemeColor("Background"),
-                ForeColor = GetThemeColor("Foreground"),
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = (AdvancedProperties.AllowResize ? ResizeMode.CanResize : ResizeMode.NoResize),
+                FontFamily = new FontFamily(FontName),
+                FontSize = FontSize,
+                Background = new SolidColorBrush(GetThemeColor("Background")),
+                Foreground = new SolidColorBrush(GetThemeColor("Foreground")),
             };
+
+            // Create main content container
+            Grid mainGrid = new Grid();
+            
+            // Define rows in the main grid
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });  // Message panel
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });  // Content panel
+            mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });  // Button panel
 
             ContentPanel = BuildContentPanel();
             MessagePanel = BuildMessagePanel();
             ButtonPanel = BuildButtonPanel();
 
-            ContentPanel.Controls.Add(MessagePanel);
+            // Subscribe to SizeChanged event to dynamically adjust controls
+            ContentPanel.SizeChanged += (s, e) => AdjustControls();
+            
+            // Load all form elements
             FormElements = ParametersManager.FormElements;
 
+            // Add form elements to content panel
             foreach (var element in FormElements.Values)
             {
-                ContentPanel.Controls.Add(element.BuildControl());
+                UIElement? control = element.BuildControl() as UIElement;
+                if (control != null)
+                {
+                    ContentPanel.Children.Add(control);
+                }
             }
 
-            // Add both panels to the form            
-            form.Controls.Add(ContentPanel);
-            form.Controls.Add(ButtonPanel);
+            // Create a ScrollViewer to wrap the ContentPanel for scrolling
+            ScrollViewer scrollViewer = new()
+            {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Content = ContentPanel
+            };
+
+            // Add panels to the main grid
+            Grid.SetRow(MessagePanel, 0);
+            Grid.SetRow(scrollViewer, 1);
+            Grid.SetRow(ButtonPanel, 2);
+            mainGrid.Children.Add(MessagePanel);
+            mainGrid.Children.Add(scrollViewer);
+            mainGrid.Children.Add(ButtonPanel);
+
+            // Set the main grid as the form's content
+            form.Content = mainGrid;
 
             AdjustControls();
             AdjustLabels();
@@ -248,128 +278,112 @@ namespace DynamicInterfaceBuilder
             return form;
         }
 
-        protected FlowLayoutPanel BuildContentPanel()
+        protected StackPanel BuildContentPanel()
         {
-            int buttonPanelHeight = ButtonPanel?.Height ?? 0;
-            
-            FlowLayoutPanel panel = new()
+            StackPanel panel = new()
             {
                 Name = $"{Constants.ID}_Container",
-                Dock = DockStyle.Fill,
-                Width = Width,
-                Height = Height - buttonPanelHeight,
-                FlowDirection = FlowDirection.TopDown,
-                WrapContents = false,
-                AutoSize = true,
-                AutoScroll = true,
-                BackColor = GetThemeColor("Panel"),
-                Margin = new Padding(0, 0, 0, 0),
-                Padding = new Padding(0, 0, 0, 0),
-            };
-
-            panel.SetFlowBreak(panel, true);
-            panel.ControlAdded += (sender, e) =>
-            {
-                if (e.Control is Panel control)
-                {
-                    control.Margin = new Padding(
-                        control.Margin.Left + Spacing,
-                        control.Margin.Top + Spacing,
-                        control.Margin.Right,
-                        control.Margin.Bottom
-                    );
-                }
+                Orientation = Orientation.Vertical,
+                Width = double.NaN, // Auto width
+                Background = new SolidColorBrush(GetThemeColor("Panel")),
+                Margin = new Thickness(0, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch
             };
 
             return panel;
         }
         
-        protected Panel BuildMessagePanel()
+        protected Grid BuildMessagePanel()
         {
             // Create a panel for the info
-            Panel panel = new()
+            Grid panel = new()
             {
                 Name = $"{Constants.ID}_Message_Panel",
-                Dock = DockStyle.Top,
                 Height = 90,
-                Padding = new Padding(0, 0, 0, 0),
-                Margin = new Padding(0, 0, 0, 0)
+                Margin = new Thickness(0, 0, 0, 0)
             };
 
-            RichTextBox richTextBox = new()
+            System.Windows.Controls.RichTextBox richTextBox = new()
             {
                 Name = $"{Constants.ID}_Message_TextBox",
-                Dock = DockStyle.Fill,
-                Multiline = true,
-                ReadOnly = true,
-                BorderStyle = BorderStyle.None,
-                ScrollBars = RichTextBoxScrollBars.Vertical,
-                WordWrap = true,
-                Padding = new Padding(0, 0, 0, 0),
-                Margin = new Padding(0, 0, 0, 0),
-                BackColor = GetThemeColor("MessageBack"),
-                ForeColor = GetThemeColor("MessageFore"),
+                IsReadOnly = true,
+                BorderThickness = new Thickness(0),
+                Margin = new Thickness(0, 0, 0, 0),
+                Background = new SolidColorBrush(GetThemeColor("MessageBack")),
+                Foreground = new SolidColorBrush(GetThemeColor("MessageFore")),
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                FontFamily = new FontFamily("Segoe UI Emoji") // explicitly set emoji-supporting font
             };
             
-            // Add label to the panel
-            panel.Controls.Add(richTextBox);
+            panel.Children.Add(richTextBox);
 
             // Prepare panel for messages
             MessageTextBox = richTextBox;
-            panel.Visible = true;
-            MessageTextBox.Text = "ℹ️ Info line\n✅ Success line\n❌ Error line\n⚠️ Warning line\n❗ Alert line\n🛠️ Debug line\n";
+            panel.Visibility = Visibility.Visible;
+            
+            // Create initial message document
+            FlowDocument document = new FlowDocument();
+            Paragraph paragraph = new Paragraph();
+            paragraph.Inlines.Add(new Run("ℹ️ Info line\n✅ Success line\n❌ Error line\n⚠️ Warning line\n❗ Alert line\n🛠️ Debug line\n"));
+            document.Blocks.Add(paragraph);
+            MessageTextBox.Document = document;
 
-            //Event whent
             return panel;
         }
 
-        protected Panel BuildButtonPanel()
+        protected Grid BuildButtonPanel()
         {
             // Create a panel for the buttons
-            Panel panel = new()
+            Grid panel = new()
             {
                 Name = $"{Constants.ID}_Button_Panel",
-                Dock = DockStyle.Bottom,
                 Height = 60,
-                BackColor = GetThemeColor("Panel")
+                Background = new SolidColorBrush(GetThemeColor("Panel"))
             };
             
             // Create OK button
             Button buttonOk = new()
             {
                 Name = $"{Constants.ID}_Ok_Button",
-                Text = "OK",
-                DialogResult = DialogResult.OK,
+                Content = "OK",
+                IsDefault = true,
                 Width = 100,
                 Height = 45,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center
             };
             
             // Create Cancel button
             Button buttonCancel = new()
             {
                 Name = $"{Constants.ID}_Cancel_Button",
-                Text = "Cancel",
-                DialogResult = DialogResult.Cancel,
+                Content = "Cancel",
+                IsCancel = true,
                 Width = 100,
                 Height = 45,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center
             };
             
-            // Add buttons to the panel
+            // Set button click handlers
+            buttonOk.Click += (s, e) => { if (Form != null) Form.DialogResult = true; };
+            buttonCancel.Click += (s, e) => { if (Form != null) Form.DialogResult = false; };
+            
+            // Position buttons
             if (AdvancedProperties.ReverseButtons)
             {
-                buttonCancel.Location = new Point(panel.Width - buttonOk.Width - 120, (panel.Height - buttonOk.Height) / 2);
-                buttonOk.Location = new Point(panel.Width - buttonCancel.Width - 10, (panel.Height - buttonCancel.Height) / 2);
+                buttonCancel.Margin = new Thickness(0, 0, 120, 0);
+                buttonOk.Margin = new Thickness(0, 0, 10, 0);
             }
             else
             {
-                buttonOk.Location = new Point(panel.Width - buttonOk.Width - 120, (panel.Height - buttonOk.Height) / 2);
-                buttonCancel.Location = new Point(panel.Width - buttonCancel.Width - 10, (panel.Height - buttonCancel.Height) / 2);
+                buttonOk.Margin = new Thickness(0, 0, 120, 0);
+                buttonCancel.Margin = new Thickness(0, 0, 10, 0);
             }
             
-            panel.Controls.Add(buttonOk);
-            panel.Controls.Add(buttonCancel);
+            panel.Children.Add(buttonOk);
+            panel.Children.Add(buttonCancel);
 
             return panel;
         }
@@ -383,11 +397,14 @@ namespace DynamicInterfaceBuilder
             {
                 foreach (var element in FormElements.Values)
                 {
-                    if (element.Control != null && element.Control is TableLayoutPanel panel)
+                    if (element.Control != null && element.Control is Grid panel)
                     {
-                        foreach (Control control in panel.Controls)
+                        foreach (UIElement control in panel.Children)
                         {
-                            LabelWidth = Math.Max(LabelWidth, panel.GetColumnWidths()[0]);
+                            if (control is TextBlock textBlock)
+                            {
+                                LabelWidth = Math.Max(LabelWidth, (int)textBlock.ActualWidth);
+                            }
                         }
                     }      
                 }
@@ -397,16 +414,15 @@ namespace DynamicInterfaceBuilder
             {
                 foreach (var element in FormElements.Values)
                 {
-                    if (element.Control != null && element.Control is TableLayoutPanel panel)
+                    if (element.Control != null && element.Control is Grid panel)
                     {
-                        foreach (Control control in panel.Controls)
+                        foreach (UIElement control in panel.Children)
                         {
-                            if (control is Label label)
+                            if (control is TextBlock textBlock)
                             {
-                                label.AutoSize = false;
-                                label.Width = LabelWidth;
-                                label.TextAlign = ContentAlignment.MiddleRight;
-                                label.MinimumSize = new Size(LabelWidth, label.Height);
+                                textBlock.TextAlignment = TextAlignment.Right;
+                                textBlock.Width = LabelWidth;
+                                textBlock.MinWidth = LabelWidth;
                             }
                         }
                     }
@@ -416,23 +432,27 @@ namespace DynamicInterfaceBuilder
 
         public void AdjustControls(bool initial = false)
         {
+            if (ContentPanel == null)
+                return;
+
+            double availableWidth = ContentPanel.ActualWidth;
+
+            if (double.IsNaN(availableWidth) || availableWidth <= 0)
+            {
+                availableWidth = Width - ((Spacing != 0 ? Spacing : 1) * 2 + 20);
+            }
+
+            if (IsScrollbarVisible())
+            {
+                availableWidth -= SystemParameters.VerticalScrollBarWidth + 2;
+            }
+
             foreach (var element in FormElements.Values)
             {
-                // Adjust the control size and position
-                if (element.Control != null && element.Control is Control ctrl)
+                if (element.Control is FrameworkElement ctrl)
                 {
-                    int offset = (Spacing !=0 ? Spacing : 1) * 2 + 20;
-                    
-                    if (IsScrollbarVisible())
-                    {
-                        offset += SystemInformation.VerticalScrollBarWidth + 2;
-                    }
-
-                    int w = Width - offset;
-                    int h = ctrl.MinimumSize.Height;
-
-                    ctrl.Width = w;
-                    ctrl.MinimumSize = new Size(w, h);
+                    ctrl.Width = availableWidth;
+                    ctrl.MinWidth = availableWidth;
                 }
             }
         }
@@ -441,8 +461,12 @@ namespace DynamicInterfaceBuilder
 
         #region Main 
 
+        [STAThread]
         static void Main()
         {
+            // Standard WPF application initialization
+            var application = new Application();
+            
             FormBuilder formBuilder = new()
             {
                 Title = Constants.DefaultTitle,
@@ -491,6 +515,9 @@ namespace DynamicInterfaceBuilder
             }
 
             formBuilder.RunForm();
+            
+            // Exit the application when the form is closed
+            application.Shutdown();
         }
 
         #endregion
