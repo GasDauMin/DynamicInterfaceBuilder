@@ -3,7 +3,7 @@ namespace DynamicInterfaceBuilder
     public class AdvancedProperties
     {
         [ConfigProperty]
-        public FormBaseType FormBaseType { get; set; } = Default.FormType;
+        public FormBaseType FormType { get; set; } = Default.FormType;
 
         [ConfigProperty]
         public bool AutoLoadConfig { get; set; } = Default.AutoLoadConfig;

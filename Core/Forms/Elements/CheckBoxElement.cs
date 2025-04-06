@@ -7,6 +7,12 @@ namespace DynamicInterfaceBuilder
     {
         public override UIElement? BuildControl()
         {
+            var panel = new Grid
+            {
+                Name = $"{Name}_Panel",
+                VerticalAlignment = VerticalAlignment.Top
+            };
+
             var checkBox = new CheckBox
             {
                 Name = $"{Name}_CheckBox",
@@ -15,7 +21,12 @@ namespace DynamicInterfaceBuilder
                 VerticalAlignment = VerticalAlignment.Top
             };
 
-            Control = checkBox;
+            panel.Children.Add(checkBox);
+
+            PanelControl = panel;
+            LabelControl = null;
+            ValueControl = checkBox;
+            
             return checkBox;
         }
     }

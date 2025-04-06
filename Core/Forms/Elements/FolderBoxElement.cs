@@ -19,8 +19,11 @@ namespace DynamicInterfaceBuilder
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+           
+            bool isLabelVisible = Label != null && Label.Length > 0;
+            double spacing = isLabelVisible ? App.Spacing : 0;
 
-            if (Label != null)
+            if (isLabelVisible)
             {
                 var label = new TextBlock
                 {
@@ -32,12 +35,15 @@ namespace DynamicInterfaceBuilder
 
                 Grid.SetColumn(label, 0);
                 panel.Children.Add(label);
+
+                LabelControl = label;
             }
 
             var textBox = new TextBox
             {
                 Name = $"{Name}_FolderPath",
                 Text = DefaultValue,
+                Margin = new Thickness(spacing, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
@@ -67,7 +73,10 @@ namespace DynamicInterfaceBuilder
             Grid.SetColumn(browseButton, 2);
             panel.Children.Add(browseButton);
 
-            Control = panel;
+            PanelControl = panel;
+            //LabelControl = isLabelVisible ? panel.Children[0] : null;
+            ValueControl = textBox;
+            
             return panel;
         }
 

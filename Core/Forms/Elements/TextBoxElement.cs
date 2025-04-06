@@ -37,6 +37,8 @@ namespace DynamicInterfaceBuilder
 
                 Grid.SetColumn(label, 0);
                 panel.Children.Add(label);
+
+                LabelControl = label;
             }
             
             var textBox = new TextBox
@@ -46,15 +48,18 @@ namespace DynamicInterfaceBuilder
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Margin = new Thickness(spacing, 0, 0, 0),
-                Background = App.GetBrush("ControlBack"),
-                Foreground = App.GetBrush("ControlFore"),
+                Background = App.GetBrush("Control.Background"),
+                Foreground = App.GetBrush("Control.Foreground"),
                 BorderThickness = new Thickness(0)
             };
 
             Grid.SetColumn(textBox, 1);
             panel.Children.Add(textBox);
 
-            Control = panel;
+            PanelControl = panel;
+            //LabelControl = isLabelVisible ? panel.Children[0] : null;
+            ValueControl = textBox;
+            
             return panel;
         }
     }

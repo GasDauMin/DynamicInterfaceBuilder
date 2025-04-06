@@ -2,12 +2,16 @@
     "Background": "#F0F0F0",
     "Foreground": "#000000",
     "Panel": "#dddddd", 
-    "ControlBack": "#FFFFFF",
-    "ControlFore": "#000000",
-    "ButtonBack": "#DFDFDF",
-    "ButtonFore": "#000000",
-    "ButtonHover": "#D0D0D0",
     "Description": "#505050",
+    "Control": {
+        "Background": "#FFFFFF",
+        "Foreground": "#000000"
+    },
+    "Button": {
+        "Background": "#DFDFDF",
+        "Foreground": "#000000",
+        "Hover": "#D0D0D0"
+    },
     "Message": {
         "Background": "#E8E8E8",
         "Foreground": "#000000",

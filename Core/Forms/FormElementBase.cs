@@ -5,7 +5,9 @@ namespace DynamicInterfaceBuilder
         public string Name { get; protected set; }
         public string? Label { get; set; }
         public string? Description { get; set; }
-        public object? Control { get; protected set; }
+        public object? PanelControl { get; protected set; }
+        public object? LabelControl { get; protected set; }
+        public object? ValueControl { get; protected set; }
         public FormElementType Type { get; protected set; }
         public List<ValidationRule> ValidationRules { get; protected set; } = [];
 
@@ -17,5 +19,8 @@ namespace DynamicInterfaceBuilder
 
         public abstract object? BuildControl();
         public abstract bool ValidateControl();
+        public abstract void RecolorValueControl(string color, ColorType type);
+        public abstract void RecolorPanelControl(string color, ColorType type);
+        public abstract void RecolorLabelControl(string color, ColorType type);
     }
 }

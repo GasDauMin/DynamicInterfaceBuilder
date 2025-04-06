@@ -12,6 +12,13 @@ namespace DynamicInterfaceBuilder
 
         #endregion
 
+        #region Helpers
+    
+        public WpfHelper WpfHelper;
+        public WinHelper WinHelper;
+
+        #endregion
+
         #region Properties
 
         public FormBuilder FormBuilder;
@@ -71,6 +78,9 @@ namespace DynamicInterfaceBuilder
             ThemeManager = new(this);
             ParametersManager = new(this);
             MessageManager = new(this);
+            
+            WpfHelper = new(this);
+            WinHelper = new(this);
 
             FormBuilder = new(this);
 
@@ -104,7 +114,7 @@ namespace DynamicInterfaceBuilder
         public bool Validate()
         {
             MessageManager.ResetMessage();
-            return FormElements.Values.All(element => element.Control == null || element.ValidateControl());
+            return FormElements.Values.All(element => element.ValueControl == null || element.ValidateControl());
         }
 
         public void ResetDefaults(bool save = false)
@@ -121,7 +131,7 @@ namespace DynamicInterfaceBuilder
 
             AdvancedProperties = new AdvancedProperties
             {
-                FormBaseType = Default.FormType,
+                FormType = Default.FormType,
                 ReverseButtons = Default.ReverseButtons,
                 AllowResize = Default.AllowResize,
                 AdjustLabels = Default.AdjustLabels,

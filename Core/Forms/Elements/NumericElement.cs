@@ -17,7 +17,10 @@ namespace DynamicInterfaceBuilder
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-            if (Label != null)
+            bool isLabelVisible = Label != null && Label.Length > 0;
+            double spacing = isLabelVisible ? App.Spacing : 0;
+
+            if (isLabelVisible)
             {
                 var label = new TextBlock
                 {
@@ -29,32 +32,35 @@ namespace DynamicInterfaceBuilder
 
                 Grid.SetColumn(label, 0);
                 panel.Children.Add(label);
+
+                LabelControl = label;
             }
 
             // WPF doesn't have NumericUpDown, creating a proper numeric textbox
-            var numericUpDown = new TextBox
+            var textBox = new TextBox
             {
                 Name = $"{Name}_Numeric",
                 Text = DefaultValue.ToString(),
+                Margin = new Thickness(spacing, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
 
             // Add validation logic for numeric only
-            numericUpDown.PreviewTextInput += (s, e) =>
+            textBox.PreviewTextInput += (s, e) =>
             {
                 e.Handled = !int.TryParse(e.Text, out _);
             };
 
             // Prevent copying non-numeric text into the textbox
-            numericUpDown.PreviewKeyDown += (s, e) =>
+            textBox.PreviewKeyDown += (s, e) =>
             {
                 if (e.Key == Key.Space)
                     e.Handled = true;
             };
 
             // Prevent paste of non-numeric content
-            DataObject.AddPastingHandler(numericUpDown, (s, e) =>
+            DataObject.AddPastingHandler(textBox, (s, e) =>
             {
                 if (e.DataObject.GetDataPresent(typeof(string)))
                 {
@@ -70,10 +76,13 @@ namespace DynamicInterfaceBuilder
                 }
             });
 
-            Grid.SetColumn(numericUpDown, 1);
-            panel.Children.Add(numericUpDown);
+            Grid.SetColumn(textBox, 1);
+            panel.Children.Add(textBox);
 
-            Control = panel;
+            PanelControl = panel;
+            //LabelControl = isLabelVisible ? panel.Children[0] : null;
+            ValueControl = textBox;
+
             return panel;
         }
     }

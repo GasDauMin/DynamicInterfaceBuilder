@@ -176,6 +176,20 @@ namespace DynamicInterfaceBuilder
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
 
+            panel.Loaded += (s, e) =>
+            {
+                foreach (UIElement element in panel.Children)
+                {
+                    if (element is FrameworkElement control)
+                    {
+                        control.Margin = new Thickness(App.Spacing, App.Spacing, App.Spacing, 0);
+                    }
+                }
+            };
+
+
+
+
             return panel;
         }
         
@@ -206,9 +220,33 @@ namespace DynamicInterfaceBuilder
                     PagePadding = new Thickness(5)
                 }
             };
+
+            Label buttonX = new()
+            {
+                Name = $"{Constants.ID}_X_Button",
+                Content = "❌",
+                FontSize = 9,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, 0, 0, 0),
+                Background = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                Foreground = App.GetBrush("Foreground"),
+            };
+            
+            // Add click handler to hide the message panel
+            buttonX.MouseLeftButtonDown += (s, e) => 
+            {
+                if (MessagePanel != null)
+                {
+                    MessagePanel.Visibility = Visibility.Collapsed;
+                    App.MessageText = string.Empty;
+                }
+            };
             
             // Add viewer to the panel
             panel.Children.Add(viewer);
+            panel.Children.Add(buttonX);
 
             // Global reference to the message viewer
             MessageViewer = viewer;
@@ -323,7 +361,7 @@ namespace DynamicInterfaceBuilder
             {
                 foreach (var element in App.FormElements.Values)
                 {
-                    if (element.Control != null && element.Control is Grid panel)
+                    if (element.PanelControl != null && element.PanelControl is Grid panel)
                     {
                         foreach (UIElement control in panel.Children)
                         {
@@ -340,7 +378,7 @@ namespace DynamicInterfaceBuilder
             {
                 foreach (var element in App.FormElements.Values)
                 {
-                    if (element.Control != null && element.Control is Grid panel)
+                    if (element.PanelControl != null && element.PanelControl is Grid panel)
                     {
                         foreach (UIElement control in panel.Children)
                         {
@@ -375,7 +413,7 @@ namespace DynamicInterfaceBuilder
 
             foreach (var element in App.FormElements.Values)
             {
-                if (element.Control is FrameworkElement ctrl)
+                if (element.PanelControl is FrameworkElement ctrl)
                 {
                     ctrl.Width = availableWidth;
                     ctrl.MinWidth = availableWidth;

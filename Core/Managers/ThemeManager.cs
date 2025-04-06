@@ -37,13 +37,14 @@ namespace DynamicInterfaceBuilder
             _themes["Default"] = new Dictionary<string, string>() {
                 { "Background", "#303030" },
                 { "Foreground", "#FFFFFF" },
-                { "Panel", "#454545" },
-                { "ControlBack", "#606060" },
-                { "ControlFore", "#FFFFFF" },
-                { "ButtonBack", "#606060" },
-                { "ButtonFore", "#FFFFFF" },
-                { "ButtonHover", "#808080" },
                 { "Description", "#D3D3D3" },
+                { "Panel", "#454545" },
+                { "Higlight", "#be858b"},
+                { "Control.Background", "#606060" },
+                { "Control.Foreground", "#FFFFFF" },
+                { "Button.Background", "#606060" },
+                { "Button.Foreground", "#FFFFFF" },
+                { "Button.Hover", "#808080" },
                 { "Message.Background", "#606060" },
                 { "Message.Foreground", "#FFFFFF" },
                 { "Message.InfoBg", "#505050" },
@@ -98,7 +99,11 @@ namespace DynamicInterfaceBuilder
                 else if (kvp.Value is Newtonsoft.Json.Linq.JObject jObject)
                 {
                     // Handle JObject from JSON.NET
-                    FlattenThemeDictionary(jObject.ToObject<Dictionary<string, object>>(), key, result);
+                    var jObjectDict = jObject.ToObject<Dictionary<string, object>>();
+                    if (jObjectDict != null)
+                    {
+                        FlattenThemeDictionary(jObjectDict, key, result);
+                    }
                 }
                 else
                 {
@@ -106,6 +111,11 @@ namespace DynamicInterfaceBuilder
                     result[key] = kvp.Value?.ToString() ?? "#000000";
                 }
             }
+        }
+
+        public bool KeyExists(string key)
+        {
+            return _themes.Values.Any(theme => theme.ContainsKey(key));
         }
 
         public System.Drawing.Color GetColor(string name)

@@ -4,5 +4,7 @@ namespace DynamicInterfaceBuilder
     {
         Background,
         Foreground,
+        Border,
+        Label,
     }
 }
