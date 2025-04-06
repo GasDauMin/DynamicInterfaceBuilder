@@ -5,6 +5,13 @@ namespace DynamicInterfaceBuilder
         None,
         Required,
         Regex,
+        Range,
+        MinLength,
+        MaxLength,
+        OnlyNumbers,
+        OnlyDigits,
+        OnlyLetters,
+        OnlySpecified,
         FileExists,
         DirectoryExists
     }

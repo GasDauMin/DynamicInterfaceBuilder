@@ -31,9 +31,14 @@ namespace DynamicInterfaceBuilder
             return ok;
         }
 
+        public virtual T? GetValue()
+        {
+            return Value != null ? (T)Value : default;
+        }
+        
         public virtual bool ValidateRule(ValidationRule rule)
         {
-            return false;
+            return true;
         }
 
         public override void RecolorLabelControl(string color = "", ColorType type = ColorType.Background)

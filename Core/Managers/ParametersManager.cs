@@ -83,16 +83,21 @@ namespace DynamicInterfaceBuilder
                 switch (entry.Key.ToString())   
                 {
                     case "Type":
+                        if (entry.Value is ValidationType type)
+                        {
+                            validationRule.Type = type;
+                        }
+                        else
                         if (entry.Value is string typeString)
                         {
-                            validationRule.Type = typeString switch
+                            if (Enum.TryParse(typeString, out ValidationType parsedType))
                             {
-                                "Required" => ValidationType.Required,
-                                "Regex" => ValidationType.Regex,
-                                "FileExists" => ValidationType.FileExists,
-                                "DirectoryExists" => ValidationType.DirectoryExists,
-                                _ => ValidationType.None,
-                            };
+                                validationRule.Type = parsedType;
+                            }
+                            else
+                            {
+                                validationRule.Type = ValidationType.None;
+                            }
                         }
                         break;
                     case "Value":

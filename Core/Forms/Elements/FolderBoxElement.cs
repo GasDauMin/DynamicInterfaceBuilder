@@ -28,7 +28,7 @@ namespace DynamicInterfaceBuilder
                 var label = new TextBlock
                 {
                     Name = $"{Name}_Label",
-                    Text = Label,
+                    Text = Label + ": ",
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
@@ -45,7 +45,10 @@ namespace DynamicInterfaceBuilder
                 Text = DefaultValue,
                 Margin = new Thickness(spacing, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Stretch
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Background = App.GetBrush("Control.Background"),
+                Foreground = App.GetBrush("Control.Foreground"),
+                BorderThickness = new Thickness(0),
             };
 
             Grid.SetColumn(textBox, 1);
@@ -105,6 +108,22 @@ namespace DynamicInterfaceBuilder
             }
 
             return null;
+        }
+
+        public override string? GetValue()
+        {
+            if (ValueControl is TextBox textBox)
+            {
+                Value = textBox.Text ?? string.Empty;
+            }
+
+            return base.GetValue();
+        }
+
+        public override bool ValidateRule(ValidationRule rule)
+        {
+            var value = GetValue() ?? string.Empty;
+            return App.ValidationHelper.Validate_Text(rule, value);
         }
     }
 }

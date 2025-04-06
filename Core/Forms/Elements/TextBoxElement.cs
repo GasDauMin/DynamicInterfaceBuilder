@@ -50,7 +50,7 @@ namespace DynamicInterfaceBuilder
                 Margin = new Thickness(spacing, 0, 0, 0),
                 Background = App.GetBrush("Control.Background"),
                 Foreground = App.GetBrush("Control.Foreground"),
-                BorderThickness = new Thickness(0)
+                BorderBrush = App.GetBrush("Control.Background"),
             };
 
             Grid.SetColumn(textBox, 1);
@@ -61,6 +61,22 @@ namespace DynamicInterfaceBuilder
             ValueControl = textBox;
             
             return panel;
+        }
+
+        public override string? GetValue()
+        {
+            if (ValueControl is TextBox textBox)
+            {
+                Value = textBox.Text ?? string.Empty;
+            }
+
+            return base.GetValue();
+        }
+
+        public override bool ValidateRule(ValidationRule rule)
+        {
+            var value = GetValue() ?? string.Empty;
+            return App.ValidationHelper.Validate_Text(rule, value);
         }
     }
 }

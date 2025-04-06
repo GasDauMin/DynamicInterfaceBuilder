@@ -16,6 +16,7 @@ namespace DynamicInterfaceBuilder
     
         public WpfHelper WpfHelper;
         public WinHelper WinHelper;
+        public ValidationHelper ValidationHelper;
 
         #endregion
 
@@ -81,6 +82,7 @@ namespace DynamicInterfaceBuilder
             
             WpfHelper = new(this);
             WinHelper = new(this);
+            ValidationHelper = new(this);
 
             FormBuilder = new(this);
 
@@ -114,7 +116,18 @@ namespace DynamicInterfaceBuilder
         public bool Validate()
         {
             MessageManager.ResetMessage();
-            return FormElements.Values.All(element => element.ValueControl == null || element.ValidateControl());
+
+            bool ok = true;
+
+            foreach (var element in FormElements.Values)
+            {
+                if (element.ValueControl != null && !element.ValidateControl())
+                {
+                    ok = false;
+                }
+            }
+
+            return ok;
         }
 
         public void ResetDefaults(bool save = false)
@@ -167,7 +180,7 @@ namespace DynamicInterfaceBuilder
             
             application.Parameters["InputFile"] = new Hashtable
             {
-                { "Type", FormElementType.TextBox },
+                { "Type", FormElementType.FileBox },
                 { "Label", "Input file text" },
                 { "Description", "The input file to process" },
                 { "DefaultValue", "C:\\Users\\GasDauMin\\Downloads\\OllamaSetup.exe" },
@@ -175,36 +188,51 @@ namespace DynamicInterfaceBuilder
                 { "Validation", new[]
                     {
                         new Hashtable { 
-                            { "Type", "Required" },
+                            { "Type", ValidationType.Required },
                             { "Value", true },
                             { "Message", "Input file is required." }
                         },
                         new Hashtable {
-                            { "Type", "Regex" },
-                            { "Value", @"^[a-zA-Z0-9_\-]+\.txt$" },
-                            { "Message", "Only .txt files are allowed." }
+                            { "Type", ValidationType.Regex },
+                            { "Value", @"^(.*)\.exe$" },
+                            { "Message", "Only .exe files are allowed." }
                         },
                         new Hashtable {
-                            { "Type", "FileExists" },
-                            { "Value", true },
-                            { "Message", "File must exist."} 
+                            { "Type", ValidationType.FileExists },
+                            { "Value", false },
+                            { "Message", "File already exists."} 
                         }
                     }
                 }
             };
 
-            for(int i = 0; i < 15; i++)
+            for(int i = 0; i < 5; i++)
             {
-                application.Parameters[$"Test{i}"] = new Hashtable
+                var item = new Hashtable
                 {
                     { "Type", FormElementType.TextBox },
                     { "Label", $"Testas #{i}" },
                     { "Description", "The input file to process" },
                     { "Required", false }
                 };
+
+                if (i % 2 == 0)
+                {
+                    item["Validation"] = new[] { 
+                        new Hashtable {
+                            { "Type", "Required" },
+                            { "Value", true },
+                            { "Message", $"\"Testas #{i}\" is required." }
+                        }
+                    };
+                }
+
+                application.Parameters[$"Test{i}"] = item;
             }
 
             application.Run();
+        
+
             
             // Exit the application when the form is closed
             // application.Shutdown();

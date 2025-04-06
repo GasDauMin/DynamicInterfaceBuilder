@@ -272,8 +272,19 @@ namespace DynamicInterfaceBuilder
                 IsDefault = true,
                 Width = 100,
                 Height = 25,
+                Background = App.GetBrush("Button.Background"),
+                Foreground = App.GetBrush("Button.Foreground"),
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center
+            };
+            
+            // Add hover effect
+            buttonOk.MouseEnter += (s, e) => {
+                buttonOk.Background = App.GetBrush("Button.Hover");
+            };
+            
+            buttonOk.MouseLeave += (s, e) => {
+                buttonOk.Background = App.GetBrush("Button.Background");
             };
             
             // Create Cancel button
@@ -284,6 +295,8 @@ namespace DynamicInterfaceBuilder
                 IsCancel = true,
                 Width = 100,
                 Height = 25,
+                Background = App.GetBrush("Button.Background"),
+                Foreground = App.GetBrush("Button.Foreground"),
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center
             };
