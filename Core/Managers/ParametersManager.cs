@@ -1,16 +1,13 @@
 using System.Collections;
 namespace DynamicInterfaceBuilder
 {
-    public class ParametersManager
+    public class ParametersManager : ApplicationBase
     {    
-        public readonly FormBuilder FormBuilder;
-
         public Dictionary<string, object> Parameters { get; set; } = [];
         public Dictionary<string, FormElementBase> FormElements { get; set; } = [];
 
-        public ParametersManager(FormBuilder formBuilder)
+        public ParametersManager(Application application) : base(application)
         {
-            FormBuilder = formBuilder;
         }
         
         public void ParseParameters(Dictionary<string, object> parameters)
@@ -38,7 +35,7 @@ namespace DynamicInterfaceBuilder
             if (parameter["Type"] is not FormElementType type)   
                 return;
 
-            var element = FormElementFactory.Create(type, id, FormBuilder);
+            var element = FormElementFactory.Create(type, id, App);
 
             foreach (DictionaryEntry parameterEntry in parameter)
             {

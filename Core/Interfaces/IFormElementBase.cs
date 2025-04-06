@@ -1,12 +1,9 @@
-using System.Windows;
-
 namespace DynamicInterfaceBuilder
 {
-    public interface IFormElement
+    public interface IFormElementBase
     {
         string Name { get; }
         string? Label { get; set; }
         string? Description { get; set; }
-        UIElement? BuildControl();
     }
 }

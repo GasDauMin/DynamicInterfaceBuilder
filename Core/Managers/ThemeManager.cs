@@ -1,14 +1,11 @@
 using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
-using System.Windows.Media;
 
 namespace DynamicInterfaceBuilder
 {
-    public class ThemeManager
+    public class ThemeManager : ApplicationBase
     {   
-        public readonly FormBuilder FormBuilder;
-
         public Dictionary<string, Dictionary<string, string>> Themes => _themes;
 
         public string RootThemePath { get; set; }
@@ -16,10 +13,8 @@ namespace DynamicInterfaceBuilder
         private Dictionary<string, Dictionary<string, string>> _themes = new();
         private Dictionary<string, System.Drawing.Color> _colors = new();
 
-        public ThemeManager(FormBuilder formBuilder)
+        public ThemeManager(Application application) : base(application)
         {
-            FormBuilder = formBuilder;
-
             string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
 
@@ -81,29 +76,14 @@ namespace DynamicInterfaceBuilder
         }
 
         public System.Drawing.Color GetColor(string name)
-        {      
-            if (_colors.ContainsKey(name))
-            {
-                return _colors[name];
-            }
-
-            return System.Drawing.Color.Black;
-        }
-        
-        public System.Windows.Media.Color GetWpfColor(string name)
         {
-            if (_colors.ContainsKey(name))
-            {
-                var drawingColor = _colors[name];
-                return System.Windows.Media.Color.FromArgb(
-                    drawingColor.A,
-                    drawingColor.R,
-                    drawingColor.G,
-                    drawingColor.B
-                );
-            }
+            return _colors.TryGetValue(name, out var color) ? color : System.Drawing.Color.Black;
+        }
 
-            return Colors.Black;
+        public System.Windows.Media.Color GetColorWpf(string name)
+        {
+            var color = GetColor(name);
+            return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
         }
     }
 }

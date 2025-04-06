@@ -5,17 +5,13 @@ using Newtonsoft.Json.Linq;
 
 namespace DynamicInterfaceBuilder
 {
-    public class ConfigManager
-    {
-        public readonly FormBuilder FormBuilder;
-        
+    public class ConfigManager : ApplicationBase
+    {        
         public string ConfigFile { get; set; } 
         public string ConfigPath { get; set; }
 
-        public ConfigManager(FormBuilder formBuilder)
+        public ConfigManager(Application application) : base(application)
         {   
-            FormBuilder = formBuilder;
-
             string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
 
@@ -106,6 +102,11 @@ namespace DynamicInterfaceBuilder
                         {
                             LoadConfigProperties(nestedObj, nestedConfig);
                         }
+                    }
+                    else if (property.PropertyType.IsEnum)
+                    {
+                        var enumValue = Enum.ToObject(property.PropertyType, value);
+                        property.SetValue(target, enumValue);
                     }
                     else
                     {

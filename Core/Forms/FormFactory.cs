@@ -2,7 +2,7 @@ namespace DynamicInterfaceBuilder
 {
     public static class FormElementFactory
     {
-        private static readonly Dictionary<FormElementType, Func<FormBuilder, string, FormElementBase>> _factories = new()
+        private static readonly Dictionary<FormElementType, Func<Application, string, FormElementBase>> _factories = new()
         {
             { FormElementType.TextBox, (fb, name) => new TextBoxElement(fb, name) },
             { FormElementType.Numeric, (fb, name) => new NumericElement(fb, name) },
@@ -14,11 +14,11 @@ namespace DynamicInterfaceBuilder
             { FormElementType.RadioButton, (fb, name) => new RadioButtonElement(fb, name) }
         };
 
-        public static FormElementBase Create(FormElementType type, string name, FormBuilder formBuilder)
+        public static FormElementBase Create(FormElementType type, string name, Application application)
         {
             if (_factories.TryGetValue(type, out var factory))
             {
-                return factory(formBuilder, name);
+                return factory(application, name);
             }
             throw new ArgumentException($"No factory registered for type {type}");
         }
