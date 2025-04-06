@@ -16,6 +16,7 @@ namespace DynamicInterfaceBuilder
 
         public FormBuilder FormBuilder;
         public string? MessageText{get; set;} = string.Empty;
+        public MessageType MessageType { get; set; } = MessageType.None;
         public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
         public Dictionary<string, object> Parameters { get; set; } = new();
 
@@ -24,22 +25,22 @@ namespace DynamicInterfaceBuilder
         #region Properties [CP]
 
         [ConfigProperty]
-        public required string Title { get; set; } = Constants.DefaultTitle;
+        public required string Title { get; set; } = Default.Title;
 
         [ConfigProperty]
-        public required int Width { get; set; } = Constants.DefaultWidth;
+        public required int Width { get; set; } = Default.Width;
         
         [ConfigProperty]
-        public required int Height { get; set; } = Constants.DefaultHeight;
+        public required int Height { get; set; } = Default.Height;
 
         [ConfigProperty]
-        public int Spacing { get; set; } = Constants.DefaultSpacing;
+        public int Spacing { get; set; } = Default.Spacing;
 
         [ConfigProperty]
-        public string FontName { get; set; } = Constants.DefaultFontName;
+        public string FontName { get; set; } = Default.FontName;
 
         [ConfigProperty]
-        public int FontSize { get; set; } = Constants.DefaultFontSize;
+        public int FontSize { get; set; } = Default.FontSize;
 
         [ConfigProperty]
         public AdvancedProperties AdvancedProperties { get; set; } = new();
@@ -53,18 +54,18 @@ namespace DynamicInterfaceBuilder
             }
         }
 
-        private string _theme = Constants.DefaultTheme;
+        private string _theme = Default.Theme;
 
         #endregion
 
         #region Constructors
 
         public Application()
-            : this(Constants.DefaultTitle, Constants.DefaultWidth, Constants.DefaultHeight, Constants.DefaultTheme)
+            : this(Default.Title, Default.Width, Default.Height, Default.Theme)
         {
         }
 
-        public Application(string title = Constants.DefaultTitle, int width = Constants.DefaultWidth, int height = Constants.DefaultHeight, string theme = Constants.DefaultTheme)
+        public Application(string title = Default.Title, int width = Default.Width, int height = Default.Height, string theme = Default.Theme)
         {
             ConfigManager = new(this);
             ThemeManager = new(this);
@@ -102,7 +103,7 @@ namespace DynamicInterfaceBuilder
 
         public bool Validate()
         {
-            MessageText = string.Empty;
+            MessageManager.ResetMessage();
             return FormElements.Values.All(element => element.Control == null || element.ValidateControl());
         }
 
@@ -110,23 +111,23 @@ namespace DynamicInterfaceBuilder
         {
             Parameters.Clear();
 
-            Title = Constants.DefaultTitle;
-            Width = Constants.DefaultWidth;
-            Height = Constants.DefaultHeight;
-            Spacing = Constants.DefaultSpacing;
-            Theme = Constants.DefaultTheme;
-            FontName = Constants.DefaultFontName;
-            FontSize = Constants.DefaultFontSize;
+            Title = Default.Title;
+            Width = Default.Width;
+            Height = Default.Height;
+            Spacing = Default.Spacing;
+            Theme = Default.Theme;
+            FontName = Default.FontName;
+            FontSize = Default.FontSize;
 
             AdvancedProperties = new AdvancedProperties
             {
-                FormBaseType = Constants.DefaultFormBaseType,
-                ReverseButtons = Constants.DefaultReverseButtons,
-                AllowResize = Constants.DefaultAllowResize,
-                AdjustLabels = Constants.DefaultAdjustLabels,
-                AutoLoadConfig = Constants.DefaultAutoLoadConfig,
-                AutoSaveConfig = Constants.DefaultAutoSaveConfig,
-                MaxMessageLines = Constants.DefaultMaxMessageLines,
+                FormBaseType = Default.FormType,
+                ReverseButtons = Default.ReverseButtons,
+                AllowResize = Default.AllowResize,
+                AdjustLabels = Default.AdjustLabels,
+                AutoLoadConfig = Default.AutoLoadConfig,
+                AutoSaveConfig = Default.AutoSaveConfig,
+                MaxMessageLines = Default.MaxMessageLines,
             };
         }
         
@@ -134,11 +135,9 @@ namespace DynamicInterfaceBuilder
         public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);
         public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
         public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path); 
-        public string FormatMessage(string message, MessageType type = MessageType.None) => MessageManager.FormatMessage(message, type);
         
         public System.Drawing.Color GetColor(string name) => ThemeManager.GetColor(name);
         public System.Windows.Media.Brush GetBrush(string name) => new System.Windows.Media.SolidColorBrush(ThemeManager.GetColorWpf(name));
-
 
         #endregion
 
@@ -150,10 +149,10 @@ namespace DynamicInterfaceBuilder
             // Standard WPF application initialization            
             var application = new Application()
             {
-                Title = Constants.DefaultTitle,
-                Width = Constants.DefaultWidth,
-                Height = Constants.DefaultHeight,
-                Theme = Constants.DefaultTheme
+                Title = Default.Title,
+                Width = Default.Width,
+                Height = Default.Height,
+                Theme = Default.Theme
             };
             
             application.Parameters["InputFile"] = new Hashtable

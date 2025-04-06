@@ -3,24 +3,24 @@ namespace DynamicInterfaceBuilder
     public class AdvancedProperties
     {
         [ConfigProperty]
-        public FormBaseType FormBaseType { get; set; } = Constants.DefaultFormBaseType;
+        public FormBaseType FormBaseType { get; set; } = Default.FormType;
 
         [ConfigProperty]
-        public bool AutoLoadConfig { get; set; } = Constants.DefaultAutoLoadConfig;
+        public bool AutoLoadConfig { get; set; } = Default.AutoLoadConfig;
 
         [ConfigProperty]
-        public bool AutoSaveConfig { get; set; } = Constants.DefaultAutoSaveConfig;
+        public bool AutoSaveConfig { get; set; } = Default.AutoSaveConfig;
 
         [ConfigProperty]
-        public bool AdjustLabels { get; set; } = Constants.DefaultAdjustLabels;
+        public bool AdjustLabels { get; set; } = Default.AdjustLabels;
 
         [ConfigProperty]
-        public bool ReverseButtons { get; set; } = Constants.DefaultReverseButtons;
+        public bool ReverseButtons { get; set; } = Default.ReverseButtons;
 
         [ConfigProperty]
-        public bool AllowResize { get; set; } = Constants.DefaultAllowResize;
+        public bool AllowResize { get; set; } = Default.AllowResize;
 
         [ConfigProperty]
-        public int MaxMessageLines { get; set; } = Constants.DefaultMaxMessageLines;
+        public int MaxMessageLines { get; set; } = Default.MaxMessageLines;
     }
 }

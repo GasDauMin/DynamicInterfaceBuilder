@@ -15,7 +15,7 @@ namespace DynamicInterfaceBuilder
                 {
                     if (rule.Message != null)
                     {
-                        App.MessageText += App.MessageManager.FormatMessage(rule.Message, MessageType.Error);
+                        App.MessageManager.AddMessage(rule.Message, MessageType.Error);
                     }
                     
                     ok = false;   

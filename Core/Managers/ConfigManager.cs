@@ -15,7 +15,7 @@ namespace DynamicInterfaceBuilder
             string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
 
-            ConfigFile = Constants.DefaultConfigFile; // Fixed :: to . for C# syntax
+            ConfigFile = Default.ConfigFile; // Fixed :: to . for C# syntax
             ConfigPath = Path.Combine(assemblyDirectory, ConfigFile);
         }
         

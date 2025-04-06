@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Media;
 
 namespace DynamicInterfaceBuilder
 {
@@ -12,18 +13,55 @@ namespace DynamicInterfaceBuilder
 
         public string FormatMessage(string message, MessageType type = MessageType.None)
         {
-            string prefix = type switch
+            var prefix = type != MessageType.None ? type switch
             {
-                MessageType.Info => "\u2139\uFE0F ", // ℹ️
-                MessageType.Alert => "\uD83D\uDD14 ", // 🔔
-                MessageType.Success => "\u2705 ", // ✅
-                MessageType.Warning => "\u26A0\uFE0F ", // ⚠️
-                MessageType.Error => "\u274C ", // ❌
-                MessageType.Debug => "\uD83D\uDEE0\uFE0F ", // 🛠️
-                _ => ""
-            };
+                MessageType.Debug => "🛠️",
+                MessageType.Success => "✅",
+                MessageType.Info => "ℹ️",
+                MessageType.Warning => "⚠️",
+                MessageType.Error => "❌",
+                MessageType.Alert => "🔔"
+            } + " " : "";
             
-            return $"{prefix}{message}{Constants.EndLine}";
+            return prefix + message;
+        }
+            
+        public string TypeColorKey(MessageType messageType, ColorType colorType)
+        {
+            switch (messageType)
+            {
+                case MessageType.None:
+                    if (colorType == ColorType.Background)
+                        return "Message.Background";
+                    else
+                        return "Message.Foreground";
+                default:
+                    var type = char.ToUpper(messageType.ToString()[0]) + messageType.ToString().Substring(1);
+                    var sfx = colorType == ColorType.Background ? "Bg" : "Fg";
+                    return $"Message.{type}{sfx}";
+            }
+        }
+
+        public string ColorKey(ColorType colorType)
+        {
+            return TypeColorKey(App.MessageType, colorType);
+        }
+
+        public void ResetMessage()
+        {
+                App.MessageText = string.Empty;
+                App.MessageType = MessageType.None;
+        }
+
+        public void AddMessage(string message, MessageType type = MessageType.None)
+        {   
+                App.MessageText += (String.IsNullOrEmpty(App.MessageText) ? "" : Constants.EndLine) + FormatMessage(message, type);
+
+                if (App.MessageType < type)
+                {
+                    App.MessageType = type;
+                }
+                
         }
     }
 }

@@ -3,11 +3,11 @@ namespace DynamicInterfaceBuilder
     public enum MessageType
     {
         None,
-        Info,
-        Alert,
+        Debug,
         Success,
+        Info,
         Warning,
         Error,
-        Debug
+        Alert,
     }
 }

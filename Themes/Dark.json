@@ -1,6 +1,6 @@
 {
     "Background": "#303030",
-    "Foreground": "#FFFFFF", 
+    "Foreground": "#FFFFFF",
     "Panel": "#454545",
     "ControlBack": "#606060",
     "ControlFore": "#FFFFFF",
@@ -8,7 +8,18 @@
     "ButtonFore": "#FFFFFF",
     "ButtonHover": "#808080",
     "Description": "#D3D3D3",
-    "Error": "#E81123",
-    "Success": "#107C10",
-    "Warning": "#FF8C00"
+    "Message": {
+        "Background": "#606060",
+        "Foreground": "#FFFFFF",
+        "InfoBg": "#505050",
+        "InfoFg": "#FFFFFF",
+        "AlertBg": "#8B4513",
+        "AlertFg": "#FFFFFF",
+        "SuccessBg": "#006400",
+        "SuccessFg": "#CCFFCC",
+        "WarningBg": "#8B8000",
+        "WarningFg": "#FFFFCC",
+        "ErrorBg": "#8B0000",
+        "ErrorFg": "#FFCCCC"
+    }
 }

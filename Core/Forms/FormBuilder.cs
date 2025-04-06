@@ -196,8 +196,8 @@ namespace DynamicInterfaceBuilder
                 IsReadOnly = true,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                Background = App.GetBrush("MessageBack"),
-                Foreground = App.GetBrush("MessageFore"),
+                Background = App.GetBrush("Message.Background"),
+                Foreground = App.GetBrush("Message.Foreground"),
                 Padding = new Thickness(0),
                 BorderThickness = new Thickness(0),
                 Document = new FlowDocument
@@ -288,11 +288,13 @@ namespace DynamicInterfaceBuilder
                 
                 MessageViewer.Document.Blocks.Clear();
                 MessageViewer.Document.Blocks.Add(new Paragraph(new Run(App.MessageText)));
+                MessageViewer.Background = App.GetBrush(App.MessageManager.ColorKey(ColorType.Background));
+                MessageViewer.Foreground = App.GetBrush(App.MessageManager.ColorKey(ColorType.Foreground));
 
                 int lineCount = App.MessageText.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).Length;
                 double lineHeight = SampleLineHeight(MessageViewer);
 
-                double padding = 0; // Additional padding
+                double padding = 2; // Additional padding
 
                 if (lineCount <= App.AdvancedProperties.MaxMessageLines)
                 {
