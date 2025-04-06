@@ -56,9 +56,10 @@ namespace DynamicInterfaceBuilder
         private string _theme = Constants.DefaultTheme;
         
         public Window? Form;
-        public StackPanel? ContentPanel;        
-        public Grid? ButtonPanel, MessagePanel;
-        public System.Windows.Controls.RichTextBox? MessageTextBox;
+        public StackPanel? ContentGrid;        
+        public Grid? ButtonGrid, MessageGrid;
+        public FlowDocumentScrollViewer? MessageViewer;
+        private FlowDocument? MessageDocument;
         public int LabelWidth { get; set; } = -1;
         public Dictionary<string, object> Parameters { get; set; } = new();
         public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
@@ -114,8 +115,8 @@ namespace DynamicInterfaceBuilder
 
         protected bool IsScrollbarVisible()
         {
-            var DisplayHeight = ContentPanel?.ActualHeight ?? 0;
-            var VisibleHeight = ContentPanel?.Height ?? 0;
+            var DisplayHeight = ContentGrid?.ActualHeight ?? 0;
+            var VisibleHeight = ContentGrid?.Height ?? 0;
 
             return DisplayHeight > VisibleHeight;
         }
@@ -136,24 +137,33 @@ namespace DynamicInterfaceBuilder
 
         #endregion
 
-        #region Events
+        #region Event handlers
 
         private void HandleMessageTextChanged(object? sender, EventArgs e)
         {
-            if (MessageTextBox != null && MessagePanel != null && MessageManager.MessageText != string.Empty)
+            if (MessageViewer != null && MessageGrid != null && !string.IsNullOrEmpty(MessageManager.MessageText))
             {
-                MessagePanel.Visibility = Visibility.Visible;
-                
-                // In WPF, RichTextBox content is set through document
-                FlowDocument document = new FlowDocument();
-                Paragraph paragraph = new Paragraph();
-                paragraph.Inlines.Add(new Run(MessageManager.MessageText));
-                document.Blocks.Add(paragraph);
-                MessageTextBox.Document = document;
+                MessageGrid.Visibility = Visibility.Visible;
+
+                if (MessageDocument == null)
+                {
+                    MessageDocument = new FlowDocument
+                    {
+                        FontFamily = new FontFamily("Segoe UI Emoji"),
+                        PagePadding = new Thickness(5)
+                    };
+                    MessageViewer.Document = MessageDocument;
+                }
+
+                MessageDocument.Blocks.Clear();
+                foreach (var line in MessageManager.MessageText.Split('\n'))
+                {
+                    MessageDocument.Blocks.Add(new Paragraph(new Run(line.TrimEnd())));
+                }
             }
-            else if (MessagePanel != null)
+            else if (MessageGrid != null)
             {
-                MessagePanel.Visibility = Visibility.Collapsed;
+                MessageGrid.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -174,7 +184,7 @@ namespace DynamicInterfaceBuilder
 
         private void HandleFormResize(object? sender, EventArgs e)
         {
-            if (Form != null && ContentPanel != null && ButtonPanel != null)
+            if (Form != null && ContentGrid != null && ButtonGrid != null)
             {
                 Width = (int)Form.Width;
                 Height = (int)Form.Height;
@@ -233,12 +243,12 @@ namespace DynamicInterfaceBuilder
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });  // Content panel
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });  // Button panel
 
-            ContentPanel = BuildContentPanel();
-            MessagePanel = BuildMessagePanel();
-            ButtonPanel = BuildButtonPanel();
+            ContentGrid = BuildContentPanel();
+            MessageGrid = BuildMessagePanel();
+            ButtonGrid = BuildButtonPanel();
 
             // Subscribe to SizeChanged event to dynamically adjust controls
-            ContentPanel.SizeChanged += (s, e) => AdjustControls();
+            ContentGrid.SizeChanged += (s, e) => AdjustControls();
             
             // Load all form elements
             FormElements = ParametersManager.FormElements;
@@ -249,7 +259,7 @@ namespace DynamicInterfaceBuilder
                 UIElement? control = element.BuildControl() as UIElement;
                 if (control != null)
                 {
-                    ContentPanel.Children.Add(control);
+                    ContentGrid.Children.Add(control);
                 }
             }
 
@@ -258,16 +268,16 @@ namespace DynamicInterfaceBuilder
             {
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                Content = ContentPanel
+                Content = ContentGrid
             };
 
             // Add panels to the main grid
-            Grid.SetRow(MessagePanel, 0);
+            Grid.SetRow(MessageGrid, 0);
             Grid.SetRow(scrollViewer, 1);
-            Grid.SetRow(ButtonPanel, 2);
-            mainGrid.Children.Add(MessagePanel);
+            Grid.SetRow(ButtonGrid, 2);
+            mainGrid.Children.Add(MessageGrid);
             mainGrid.Children.Add(scrollViewer);
-            mainGrid.Children.Add(ButtonPanel);
+            mainGrid.Children.Add(ButtonGrid);
 
             // Set the main grid as the form's content
             form.Content = mainGrid;
@@ -296,38 +306,32 @@ namespace DynamicInterfaceBuilder
         
         protected Grid BuildMessagePanel()
         {
-            // Create a panel for the info
             Grid panel = new()
             {
                 Name = $"{Constants.ID}_Message_Panel",
                 Height = 90,
-                Margin = new Thickness(0, 0, 0, 0)
+                Margin = new Thickness(0)
             };
 
-            System.Windows.Controls.RichTextBox richTextBox = new()
+            FlowDocumentScrollViewer viewer = new()
             {
-                Name = $"{Constants.ID}_Message_TextBox",
-                IsReadOnly = true,
-                BorderThickness = new Thickness(0),
-                Margin = new Thickness(0, 0, 0, 0),
+                Name = $"{Constants.ID}_Message_Viewer",
+                IsToolBarVisible = false,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                
                 Background = new SolidColorBrush(GetThemeColor("MessageBack")),
                 Foreground = new SolidColorBrush(GetThemeColor("MessageFore")),
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                FontFamily = new FontFamily("Segoe UI Emoji") // explicitly set emoji-supporting font
+                Padding = new Thickness(0),
+                BorderThickness = new Thickness(0)
             };
-            
-            panel.Children.Add(richTextBox);
 
-            // Prepare panel for messages
-            MessageTextBox = richTextBox;
+            panel.Children.Add(viewer);
+
+            MessageViewer = viewer;
+            MessageDocument = null;
+
             panel.Visibility = Visibility.Visible;
-            
-            // Create initial message document
-            FlowDocument document = new FlowDocument();
-            Paragraph paragraph = new Paragraph();
-            paragraph.Inlines.Add(new Run("ℹ️ Info line\n✅ Success line\n❌ Error line\n⚠️ Warning line\n❗ Alert line\n🛠️ Debug line\n"));
-            document.Blocks.Add(paragraph);
-            MessageTextBox.Document = document;
 
             return panel;
         }
@@ -432,10 +436,10 @@ namespace DynamicInterfaceBuilder
 
         public void AdjustControls(bool initial = false)
         {
-            if (ContentPanel == null)
+            if (ContentGrid == null)
                 return;
 
-            double availableWidth = ContentPanel.ActualWidth;
+            double availableWidth = ContentGrid.ActualWidth;
 
             if (double.IsNaN(availableWidth) || availableWidth <= 0)
             {
