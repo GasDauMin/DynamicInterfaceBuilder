@@ -2,17 +2,20 @@ using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using DynamicInterfaceBuilder.Core.Models;
+using DynamicInterfaceBuilder.Core.Attributes;
+using DynamicInterfaceBuilder.Core.Constants;
 
-namespace DynamicInterfaceBuilder
+namespace DynamicInterfaceBuilder.Core.Managers
 {
-    public class ConfigManager : ApplicationBase
+    public class ConfigManager : AppBase
     {        
         public string ConfigFile { get; set; } 
         public string ConfigPath { get; set; }
 
-        public ConfigManager(Application application) : base(application)
+        public ConfigManager(App application) : base(application)
         {   
-            string assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string assemblyLocation = Assembly.GetExecutingAssembly().Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
 
             ConfigFile = Default.ConfigFile; // Fixed :: to . for C# syntax
@@ -29,7 +32,7 @@ namespace DynamicInterfaceBuilder
             var configValues = new Dictionary<string, object>();
             SaveConfigProperties(target, configValues);
             
-            string json = JsonConvert.SerializeObject(configValues, Newtonsoft.Json.Formatting.Indented);
+            string json = JsonConvert.SerializeObject(configValues, Formatting.Indented);
             File.WriteAllText(path, json);
         }
         

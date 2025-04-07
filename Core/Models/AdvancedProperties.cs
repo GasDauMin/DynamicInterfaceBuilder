@@ -1,10 +1,10 @@
-namespace DynamicInterfaceBuilder
+using DynamicInterfaceBuilder.Core.Attributes;
+using DynamicInterfaceBuilder.Core.Constants;
+
+namespace DynamicInterfaceBuilder.Core.Models
 {
     public class AdvancedProperties
     {
-        [ConfigProperty]
-        public FormBaseType FormType { get; set; } = Default.FormType;
-
         [ConfigProperty]
         public bool AutoLoadConfig { get; set; } = Default.AutoLoadConfig;
 

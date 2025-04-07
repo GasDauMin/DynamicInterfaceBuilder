@@ -1,11 +1,10 @@
-using System.Windows.Controls;
 using System.Windows.Media;
+using DynamicInterfaceBuilder.Core.Models;
 
-namespace DynamicInterfaceBuilder
+namespace DynamicInterfaceBuilder.Core.Helpers
 {
-    public class WpfHelper : ApplicationBase
-    {
-        public WpfHelper(Application application) : base(application)
+    public class WpfHelper : AppBase {
+        public WpfHelper(App application) : base(application)
         {
         }
 

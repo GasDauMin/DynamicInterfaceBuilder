@@ -1,4 +1,4 @@
-namespace DynamicInterfaceBuilder
+namespace DynamicInterfaceBuilder.Core.Enums
 {
     public enum ColorType
     {

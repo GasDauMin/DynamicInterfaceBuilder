@@ -1,12 +1,17 @@
 using System.Collections;
-namespace DynamicInterfaceBuilder
+using DynamicInterfaceBuilder.Core.Form.Enums;
+using DynamicInterfaceBuilder.Core.Form.Interfaces;
+using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Form.Structure;
+using DynamicInterfaceBuilder.Core.Models;
+
+namespace DynamicInterfaceBuilder.Core.Managers
 {
-    public class ParametersManager : ApplicationBase
-    {    
+    public class ParametersManager : AppBase {    
         public Dictionary<string, object> Parameters { get; set; } = [];
         public Dictionary<string, FormElementBase> FormElements { get; set; } = [];
 
-        public ParametersManager(Application application) : base(application)
+        public ParametersManager(App application) : base(application)
         {
         }
         
@@ -76,27 +81,27 @@ namespace DynamicInterfaceBuilder
     
         public void ParseValidationRule(Hashtable data, FormElementBase element)
         {
-            ValidationRule validationRule = new();
+            FormElementValidationRule validationRule = new();
 
             foreach (DictionaryEntry entry in data)
             {
                 switch (entry.Key.ToString())   
                 {
                     case "Type":
-                        if (entry.Value is ValidationType type)
+                        if (entry.Value is FormElementValidationType type)
                         {
                             validationRule.Type = type;
                         }
                         else
                         if (entry.Value is string typeString)
                         {
-                            if (Enum.TryParse(typeString, out ValidationType parsedType))
+                            if (Enum.TryParse(typeString, out FormElementValidationType parsedType))
                             {
                                 validationRule.Type = parsedType;
                             }
                             else
                             {
-                                validationRule.Type = ValidationType.None;
+                                validationRule.Type = FormElementValidationType.None;
                             }
                         }
                         break;
