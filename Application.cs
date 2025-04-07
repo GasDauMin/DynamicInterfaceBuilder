@@ -1,13 +1,14 @@
 using System.Collections;
+using System.Windows;
+using Theme.WPF.Themes;
+
 namespace DynamicInterfaceBuilder
 {
     public class Application
     {
         #region Managers
 
-        public MessageManager MessageManager;
         public ConfigManager ConfigManager;
-        public ThemeManager ThemeManager;
         public ParametersManager ParametersManager;
 
         #endregion
@@ -16,6 +17,7 @@ namespace DynamicInterfaceBuilder
     
         public WpfHelper WpfHelper;
         public WinHelper WinHelper;
+        public MessageHelper MessageHelper;
         public ValidationHelper ValidationHelper;
 
         #endregion
@@ -53,32 +55,20 @@ namespace DynamicInterfaceBuilder
         [ConfigProperty]
         public AdvancedProperties AdvancedProperties { get; set; } = new();
 
-        [ConfigProperty]    
-        public required string Theme { 
-            get => _theme;
-            set {
-                _theme = value;
-                ThemeManager.SetTheme(_theme);
-            }
-        }
-
-        private string _theme = Default.Theme;
-
         #endregion
 
         #region Constructors
 
         public Application()
-            : this(Default.Title, Default.Width, Default.Height, Default.Theme)
+            : this(Default.Title, Default.Width, Default.Height)
         {
         }
 
-        public Application(string title = Default.Title, int width = Default.Width, int height = Default.Height, string theme = Default.Theme)
+        public Application(string title = Default.Title, int width = Default.Width, int height = Default.Height)
         {
             ConfigManager = new(this);
-            ThemeManager = new(this);
             ParametersManager = new(this);
-            MessageManager = new(this);
+            MessageHelper = new(this);
             
             WpfHelper = new(this);
             WinHelper = new(this);
@@ -89,13 +79,14 @@ namespace DynamicInterfaceBuilder
             Title = title;
             Width = width;
             Height = height;
-            Theme = theme;
+
+            InitResources();
         }
 
         #endregion
 
         #region Functions
-    
+
         public void Run()
         {
             if (AdvancedProperties.AutoLoadConfig)
@@ -115,7 +106,7 @@ namespace DynamicInterfaceBuilder
 
         public bool Validate()
         {
-            MessageManager.ResetMessage();
+            MessageHelper.ResetMessage();
 
             bool ok = true;
 
@@ -138,7 +129,6 @@ namespace DynamicInterfaceBuilder
             Width = Default.Width;
             Height = Default.Height;
             Spacing = Default.Spacing;
-            Theme = Default.Theme;
             FontName = Default.FontName;
             FontSize = Default.FontSize;
 
@@ -153,29 +143,47 @@ namespace DynamicInterfaceBuilder
                 MaxMessageLines = Default.MaxMessageLines,
             };
         }
+
+        private void InitResources()
+        {
+            var app = new System.Windows.Application();
+            var resources = System.Windows.Application.Current.Resources ?? [];
+            
+            resources.MergedDictionaries.Add(new ResourceDictionary 
+            { 
+                Source = new Uri("Core/Themes/ColourDictionaries/DarkGreyTheme.xaml", UriKind.Relative) 
+            });
+            resources.MergedDictionaries.Add(new ResourceDictionary 
+            { 
+                Source = new Uri("Core/Themes/ControlColours.xaml", UriKind.Relative) 
+            });
+            resources.MergedDictionaries.Add(new ResourceDictionary 
+            { 
+                Source = new Uri("Core/Themes/Controls.xaml", UriKind.Relative) 
+            });
+
+            System.Windows.Application.Current.Resources = resources;
+
+            //ThemesController.SetTheme(ThemeType.DarkGreyTheme);
+        }
         
         public void SaveConfiguration() => ConfigManager.SaveConfiguration(this);
         public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);
         public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
         public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path); 
         
-        public System.Drawing.Color GetColor(string name) => ThemeManager.GetColor(name);
-        public System.Windows.Media.Brush GetBrush(string name) => new System.Windows.Media.SolidColorBrush(ThemeManager.GetColorWpf(name));
-
         #endregion
 
         #region Main 
 
         [STAThread]
         static void Main()
-        {
-            // Standard WPF application initialization            
+        {       
             var application = new Application()
             {
                 Title = Default.Title,
                 Width = Default.Width,
-                Height = Default.Height,
-                Theme = Default.Theme
+                Height = Default.Height
             };
             
             application.Parameters["InputFile"] = new Hashtable
@@ -231,8 +239,6 @@ namespace DynamicInterfaceBuilder
             }
 
             application.Run();
-        
-
             
             // Exit the application when the form is closed
             // application.Shutdown();

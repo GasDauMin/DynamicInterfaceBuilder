@@ -15,9 +15,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
+  <!-- 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(ProjectDir)Themes&quot; &quot;$(TargetDir)Themes\&quot; /E /I /Y" />
-  </Target>
+    <Exec Command="xcopy &quot;$(ProjectDir)Themes_&quot; &quot;$(TargetDir)Themes\&quot; /E /I /Y" />
+  </Target> 
+  -->
 
   <!--
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

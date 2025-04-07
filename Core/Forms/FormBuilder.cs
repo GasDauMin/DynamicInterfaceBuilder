@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Documents;
 using System.Globalization;
+using Theme.WPF.Themes;
 
 namespace DynamicInterfaceBuilder
 {
@@ -103,8 +104,7 @@ namespace DynamicInterfaceBuilder
                 ResizeMode = App.AdvancedProperties.AllowResize ? ResizeMode.CanResize : ResizeMode.NoResize,
                 FontFamily = new FontFamily(App.FontName),
                 FontSize = App.FontSize,
-                Background = App.GetBrush("Background"),
-                Foreground = App.GetBrush("Foreground"),
+                Style = (Style)System.Windows.Application.Current.Resources["CustomWindowStyle"]
             };
 
             form.Content = MainPanel = BuildMainPanel();
@@ -170,7 +170,6 @@ namespace DynamicInterfaceBuilder
                 Name = $"{Constants.ID}_Content_Panel",
                 Orientation = Orientation.Vertical,
                 Width = double.NaN, // Auto width
-                Background = App.GetBrush("Panel"),
                 Margin = new Thickness(0, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Stretch,
                 HorizontalAlignment = HorizontalAlignment.Stretch
@@ -210,8 +209,6 @@ namespace DynamicInterfaceBuilder
                 IsReadOnly = true,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                Background = App.GetBrush("Message.Background"),
-                Foreground = App.GetBrush("Message.Foreground"),
                 Padding = new Thickness(0),
                 BorderThickness = new Thickness(0),
                 Document = new FlowDocument
@@ -231,7 +228,6 @@ namespace DynamicInterfaceBuilder
                 Margin = new Thickness(0, 0, 0, 0),
                 Background = Brushes.Transparent,
                 BorderThickness = new Thickness(0),
-                Foreground = App.GetBrush("Foreground"),
             };
             
             // Add click handler to hide the message panel
@@ -261,7 +257,6 @@ namespace DynamicInterfaceBuilder
             {
                 Name = $"{Constants.ID}_Button_Panel",
                 Height = 40,
-                Background = App.GetBrush("Panel")
             };
             
             // Create OK button
@@ -272,21 +267,10 @@ namespace DynamicInterfaceBuilder
                 IsDefault = true,
                 Width = 100,
                 Height = 25,
-                Background = App.GetBrush("Button.Background"),
-                Foreground = App.GetBrush("Button.Foreground"),
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            
-            // Add hover effect
-            buttonOk.MouseEnter += (s, e) => {
-                buttonOk.Background = App.GetBrush("Button.Hover");
-            };
-            
-            buttonOk.MouseLeave += (s, e) => {
-                buttonOk.Background = App.GetBrush("Button.Background");
-            };
-            
+                
             // Create Cancel button
             Button buttonCancel = new()
             {
@@ -295,8 +279,6 @@ namespace DynamicInterfaceBuilder
                 IsCancel = true,
                 Width = 100,
                 Height = 25,
-                Background = App.GetBrush("Button.Background"),
-                Foreground = App.GetBrush("Button.Foreground"),
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -339,8 +321,8 @@ namespace DynamicInterfaceBuilder
                 
                 MessageViewer.Document.Blocks.Clear();
                 MessageViewer.Document.Blocks.Add(new Paragraph(new Run(App.MessageText)));
-                MessageViewer.Background = App.GetBrush(App.MessageManager.ColorKey(ColorType.Background));
-                MessageViewer.Foreground = App.GetBrush(App.MessageManager.ColorKey(ColorType.Foreground));
+                // MessageViewer.Background = App.GetBrush(App.MessageManager.ColorKey(ColorType.Background));
+                // MessageViewer.Foreground = App.GetBrush(App.MessageManager.ColorKey(ColorType.Foreground));
 
                 int lineCount = App.MessageText.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).Length;
                 double lineHeight = SampleLineHeight(MessageViewer);

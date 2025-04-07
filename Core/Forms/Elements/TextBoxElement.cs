@@ -48,9 +48,6 @@ namespace DynamicInterfaceBuilder
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Margin = new Thickness(spacing, 0, 0, 0),
-                Background = App.GetBrush("Control.Background"),
-                Foreground = App.GetBrush("Control.Foreground"),
-                BorderBrush = App.GetBrush("Control.Background"),
             };
 
             Grid.SetColumn(textBox, 1);

@@ -13,15 +13,13 @@ namespace DynamicInterfaceBuilder
         {
             bool ok = true;
 
-            RecolorLabelControl("Foreground", ColorType.Foreground);
             foreach (var rule in ValidationRules)
             {
                 if (!ValidateRule(rule))
                 {
                     if (rule.Message != null)
                     {
-                        App.MessageManager.AddMessage(rule.Message, MessageType.Error);
-                        RecolorLabelControl("Higlight", ColorType.Foreground);
+                        App.MessageHelper.AddMessage(rule.Message, MessageType.Error);
                     }
                     
                     ok = false;   
@@ -39,30 +37,6 @@ namespace DynamicInterfaceBuilder
         public virtual bool ValidateRule(ValidationRule rule)
         {
             return true;
-        }
-
-        public override void RecolorLabelControl(string color = "", ColorType type = ColorType.Background)
-        {
-            if (App.AdvancedProperties.FormType == FormBaseType.WPF)
-            {
-                App.WpfHelper.RecolorObject(LabelControl, color, type);
-            }
-        }
-
-        public override void RecolorValueControl(string color = "", ColorType type = ColorType.Background)
-        {
-            if (App.AdvancedProperties.FormType == FormBaseType.WPF)
-            {
-                App.WpfHelper.RecolorObject(ValueControl, color, type);
-            }
-        }
-
-        public override void RecolorPanelControl(string color = "", ColorType type = ColorType.Background)
-        {
-            if (App.AdvancedProperties.FormType == FormBaseType.WPF)
-            {
-                App.WpfHelper.RecolorObject(PanelControl, color, type);
-            }
         }
     }
 }

@@ -19,8 +19,5 @@ namespace DynamicInterfaceBuilder
 
         public abstract object? BuildControl();
         public abstract bool ValidateControl();
-        public abstract void RecolorValueControl(string color, ColorType type);
-        public abstract void RecolorPanelControl(string color, ColorType type);
-        public abstract void RecolorLabelControl(string color, ColorType type);
     }
 }

@@ -46,8 +46,6 @@ namespace DynamicInterfaceBuilder
                 Margin = new Thickness(spacing, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Background = App.GetBrush("Control.Background"),
-                Foreground = App.GetBrush("Control.Foreground"),
                 BorderThickness = new Thickness(0),
             };
 

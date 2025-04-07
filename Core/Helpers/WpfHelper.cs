@@ -9,51 +9,6 @@ namespace DynamicInterfaceBuilder
         {
         }
 
-        public void RecolorObject(Object? obj, string colorKey = "", ColorType colorType = ColorType.Background)
-        {
-            if (obj == null || string.IsNullOrEmpty(colorKey) || !App.ThemeManager.KeyExists(colorKey))
-            {
-                return;
-            }
-
-            if (obj is Control control)
-            {
-                switch (colorType)
-                {
-                    case ColorType.Foreground:
-                        control.Foreground = App.GetBrush(colorKey);
-                        break;
-                    case ColorType.Border:
-                        control.BorderBrush = App.GetBrush(colorKey);
-                        break;
-                    case ColorType.Background:
-                        control.Background = App.GetBrush(colorKey);
-                        break;
-                }
-            }
-            else if (obj is TextBlock textBlock)
-            {
-                switch (colorType)
-                {
-                    case ColorType.Foreground:
-                        textBlock.Foreground = App.GetBrush(colorKey);
-                        break;
-                    case ColorType.Background:
-                        textBlock.Background = App.GetBrush(colorKey);
-                        break;
-                }
-            }
-            else if (obj is Panel panel)
-            {
-                switch (colorType)
-                {
-                    case ColorType.Background:
-                        panel.Background = App.GetBrush(colorKey);
-                        break;
-                }
-            }
-        }
-
         public bool IsValidColor(string color = "")
         {
             if (string.IsNullOrEmpty(color))

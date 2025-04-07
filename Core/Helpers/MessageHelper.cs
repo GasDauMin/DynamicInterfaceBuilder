@@ -1,13 +1,8 @@
-using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Media;
-
 namespace DynamicInterfaceBuilder
 {
-    public class MessageManager : ApplicationBase
+    public class MessageHelper : ApplicationBase
     {
-        public MessageManager(Application application) : base(application)
+        public MessageHelper(Application application) : base(application)
         {
         }
 
@@ -49,19 +44,18 @@ namespace DynamicInterfaceBuilder
 
         public void ResetMessage()
         {
-                App.MessageText = string.Empty;
-                App.MessageType = MessageType.None;
+            App.MessageText = string.Empty;
+            App.MessageType = MessageType.None;
         }
 
         public void AddMessage(string message, MessageType type = MessageType.None)
         {   
-                App.MessageText += (String.IsNullOrEmpty(App.MessageText) ? "" : Constants.EndLine) + FormatMessage(message, type);
+            App.MessageText += (String.IsNullOrEmpty(App.MessageText) ? "" : Constants.EndLine) + FormatMessage(message, type);
 
-                if (App.MessageType < type)
-                {
-                    App.MessageType = type;
-                }
-                
+            if (App.MessageType < type)
+            {
+                App.MessageType = type;
+            }
         }
     }
 }
