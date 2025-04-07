@@ -8,7 +8,7 @@ using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Managers;
 
-namespace DynamicInterfaceBuilder.Core.Form.Structure
+namespace DynamicInterfaceBuilder.Core.Form
 {
     public class FormBuilder : AppBase
     {
@@ -222,28 +222,33 @@ namespace DynamicInterfaceBuilder.Core.Form.Structure
         
         protected Panel BuildMessagePanel()
         {
-            // Create a panel for the message viewer
             Grid panel = new()
             {
                 Name = $"{General.ID}_Message_Panel",
                 Height = 100,
-                Margin = new Thickness(0)
+                Margin = new Thickness(0),
             };
 
-            // Create a RichTextBox for displaying messages
             RichTextBox viewer = new()
             {
                 Name = $"{General.ID}_Message_Viewer",
                 IsReadOnly = true,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                Padding = new Thickness(0),
+                Padding = new Thickness(0, 3, 0, 0),
                 BorderThickness = new Thickness(0),
+                Background = ThemeManager.GetBrush("ABrush.AlertTone3"),
+                Foreground = ThemeManager.GetBrush("ABrush.AlertTone5"),
+                VerticalAlignment = VerticalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Width = double.NaN,
+                Height = double.NaN,
                 Document = new FlowDocument
                 {
                     FontFamily = new FontFamily("Segoe UI Emoji"),
-                    PagePadding = new Thickness(5)
-                }
+                    PagePadding = new Thickness(5),
+                    LineHeight = 1,
+                },
             };
 
             Label buttonX = new()
@@ -254,7 +259,8 @@ namespace DynamicInterfaceBuilder.Core.Form.Structure
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 Background = Brushes.Transparent,
-                Margin = new Thickness(0, 0, 0, -4),
+
+                Margin = new Thickness(0, 0, 0, -3),
                 BorderThickness = new Thickness(0),
                 Visibility = Visibility.Collapsed, // Initially hidden
             };
@@ -275,6 +281,10 @@ namespace DynamicInterfaceBuilder.Core.Form.Structure
             {
                 buttonX.Visibility = Visibility.Collapsed;
             };
+
+            // Set Grid rows
+            Grid.SetRow(viewer, 0);
+            Grid.SetRow(buttonX, 1);
 
             // Add viewer to the panel
             panel.Children.Add(viewer);
@@ -364,24 +374,18 @@ namespace DynamicInterfaceBuilder.Core.Form.Structure
                 var buttonX = MessagePanel.Children.OfType<Label>().FirstOrDefault(x => x.Name == $"{General.ID}_X_Button");
                 var lineCount = App.MessageText.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).Length;
                 var lineHeight = SampleLineHeight(MessageViewer);
-                var padding = 2; // Additional padding
+                var padding = 5; // Additional padding
 
 
                 if (lineCount <= App.AdvancedProperties.MaxMessageLines)
                 {
                     MessagePanel.Height = lineHeight * lineCount + padding;
                     MessageViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-
-                    // if (buttonX != null)
-                    //     buttonX.Margin = new Thickness(0, 0, 0, 0);
                 }
                 else
                 {
                     MessagePanel.Height = lineHeight * App.AdvancedProperties.MaxMessageLines + padding;
                     MessageViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-
-                    // if (buttonX != null)
-                    //     buttonX.Margin = new Thickness(0, 0, 15, 0);
                 }
             }
             else

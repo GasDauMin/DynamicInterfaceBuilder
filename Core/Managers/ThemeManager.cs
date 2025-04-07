@@ -7,9 +7,9 @@ using DynamicInterfaceBuilder.Core.UI.Enums;
 
 namespace DynamicInterfaceBuilder.Core.Managers
 {
-    public class ThemesManager : AppBase
+    public class ThemeManager : AppBase
     {
-        public ThemesManager(App application) : base(application)
+        public ThemeManager(App application) : base(application)
         {
             Init();
         }

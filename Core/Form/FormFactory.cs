@@ -1,7 +1,7 @@
 using DynamicInterfaceBuilder.Core.Form.Elements;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 
-namespace DynamicInterfaceBuilder.Core.Form.Structure
+namespace DynamicInterfaceBuilder.Core.Form
 {
     public static class FormElementFactory
     {

@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Helpers;
 using DynamicInterfaceBuilder.Core.Form.Models;
-using DynamicInterfaceBuilder.Core.Form.Structure;
 using Microsoft.Win32;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements

@@ -97,6 +97,11 @@
     <Color x:Key="AColour.Tone8.Background.Disabled" R="158" G="158" B="158" A="255"/> <!-- Color: #9E9E9E -->
     <Color x:Key="AColour.Tone8.Border.Disabled" R="175" G="175" B="175" A="255"/> <!-- Color: #AFAFAF -->
 
+    <Color x:Key="AColour.AlertTone1" R="49" G="44" B="44" A="255"/> <!-- Color: #312c2c -->
+    <Color x:Key="AColour.AlertTone2" R="48" G="38" B="38" A="255"/> <!-- Color: #302626 -->
+    <Color x:Key="AColour.AlertTone3" R="86" G="55" B="55" A="255"/> <!-- Color: #563737 -->
+    <Color x:Key="AColour.AlertTone4" R="137" G="66" B="66" A="255"/> <!-- Color: #894242 -->
+    <Color x:Key="AColour.AlertTone5" R="213" G="102" B="102" A="255"/> <!-- Color: #d56666 -->
 
     <!-- Primary.4 would be containers, aka control that have a deep background (that sinks into the view) -->
     <!-- Primary.5 would be regular controls, aka control that are obvious and normal (they stick out)-->
@@ -192,4 +197,9 @@
     <SolidColorBrush x:Key="ABrush.Tone8.Border.Selected" Color="{StaticResource AColour.Tone8.Border.Selected}"/>
     <SolidColorBrush x:Key="ABrush.Tone8.Border.Selected.Inactive" Color="{StaticResource AColour.Tone8.Border.Selected.Inactive}"/>
     <SolidColorBrush x:Key="ABrush.Tone8.Border.Disabled" Color="{StaticResource AColour.Tone8.Border.Disabled}"/>
+    <SolidColorBrush x:Key="ABrush.AlertTone1" Color="{StaticResource AColour.AlertTone1}"/>
+    <SolidColorBrush x:Key="ABrush.AlertTone2" Color="{StaticResource AColour.AlertTone2}"/>
+    <SolidColorBrush x:Key="ABrush.AlertTone3" Color="{StaticResource AColour.AlertTone3}"/>
+    <SolidColorBrush x:Key="ABrush.AlertTone4" Color="{StaticResource AColour.AlertTone4}"/>
+    <SolidColorBrush x:Key="ABrush.AlertTone5" Color="{StaticResource AColour.AlertTone5}"/>
 </ResourceDictionary>

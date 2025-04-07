@@ -3,7 +3,6 @@ using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Interfaces;
 using DynamicInterfaceBuilder.Core.Form.Models;
-using DynamicInterfaceBuilder.Core.Form.Structure;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {

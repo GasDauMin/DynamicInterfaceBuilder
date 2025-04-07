@@ -2,9 +2,9 @@ using System.Collections;
 using System.Windows;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
+using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Helpers;
-using DynamicInterfaceBuilder.Core.Form.Structure;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Managers;
 using DynamicInterfaceBuilder.Core.Models;
@@ -26,7 +26,7 @@ namespace DynamicInterfaceBuilder
         public WpfHelper WpfHelper;
         public WindowsHelper WindowsHelper;
         public MessageHelper MessageHelper;
-        public ThemesManager ThemesManager;
+        public ThemeManager ThemesManager;
         public ValidationHelper ValidationHelper;
 
         #endregion
@@ -99,7 +99,7 @@ namespace DynamicInterfaceBuilder
             Width = width;
             Height = height;
 
-            ThemesManager.SetTheme(Theme);
+            ThemeManager.SetTheme(Theme);
         }
 
         #endregion

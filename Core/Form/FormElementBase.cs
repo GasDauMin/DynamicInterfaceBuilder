@@ -3,7 +3,7 @@ using DynamicInterfaceBuilder.Core.Form.Interfaces;
 using DynamicInterfaceBuilder.Core.Form.Models;
 using DynamicInterfaceBuilder.Core.Models;
 
-namespace DynamicInterfaceBuilder.Core.Form.Structure
+namespace DynamicInterfaceBuilder.Core.Form
 {
     public abstract class FormElementBase : AppBase, IFormElementBase
     {   

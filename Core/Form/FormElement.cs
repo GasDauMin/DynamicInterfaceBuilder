@@ -1,8 +1,9 @@
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Managers;
 
-namespace DynamicInterfaceBuilder.Core.Form.Structure
+namespace DynamicInterfaceBuilder.Core.Form
 {   
     public abstract class FormElement<T>(App application, string name, FormElementType type) : FormElementBase(application, name, type)
     {
@@ -13,6 +14,13 @@ namespace DynamicInterfaceBuilder.Core.Form.Structure
         {
             bool ok = true;
 
+            var valueControl = ValueControl as TextBox;
+            if (valueControl != null)
+            {
+                valueControl.ClearValue(Control.BackgroundProperty);
+                valueControl.ClearValue(Control.BorderBrushProperty);
+            }
+
             foreach (var rule in ValidationRules)
             {
                 if (!ValidateRule(rule))
@@ -20,6 +28,12 @@ namespace DynamicInterfaceBuilder.Core.Form.Structure
                     if (rule.Message != null)
                     {
                         App.MessageHelper.AddMessage(rule.Message, MessageType.Error);
+
+                        if (valueControl != null)
+                        {
+                            valueControl.Background = ThemeManager.GetBrush("ABrush.AlertTone2");
+                            valueControl.BorderBrush = ThemeManager.GetBrush("ABrush.AlertTone3");
+                        }
                     }
                     
                     ok = false;   

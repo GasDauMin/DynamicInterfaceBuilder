@@ -1,8 +1,8 @@
 using System.Collections;
+using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Interfaces;
 using DynamicInterfaceBuilder.Core.Form.Models;
-using DynamicInterfaceBuilder.Core.Form.Structure;
 using DynamicInterfaceBuilder.Core.Models;
 
 namespace DynamicInterfaceBuilder.Core.Managers
