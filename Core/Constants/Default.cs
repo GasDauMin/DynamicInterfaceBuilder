@@ -18,5 +18,6 @@ namespace DynamicInterfaceBuilder.Core.Constants
         public const bool AllowResize = true;
         public const bool AdjustLabels = true;
         public const bool ReverseButtons = false;
+        public const string Icon = "";
     }
 }

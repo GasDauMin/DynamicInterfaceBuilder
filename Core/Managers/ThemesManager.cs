@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.UI.Enums;
 
@@ -17,23 +18,29 @@ namespace DynamicInterfaceBuilder.Core.Managers
         {
             var resources = new ResourceDictionary();
 
-            resources.MergedDictionaries.Add(new ResourceDictionary
+            try
             {
-                Source = new Uri("Core/UI/Themes/Default.xaml", UriKind.Relative)
-            });
-            resources.MergedDictionaries.Add(new ResourceDictionary
-            {
-                Source = new Uri("Core/UI/Structures/ControlColours.xaml", UriKind.Relative)
-            });
-            resources.MergedDictionaries.Add(new ResourceDictionary
-            {
-                Source = new Uri("Core/UI/Structures/Controls.xaml", UriKind.Relative)
-            });
+                resources.MergedDictionaries.Add(new ResourceDictionary
+                {
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Themes/Default.xaml", UriKind.Absolute)
+                });
+                resources.MergedDictionaries.Add(new ResourceDictionary
+                {
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Structures/ControlColours.xaml", UriKind.Absolute)
+                });
+                resources.MergedDictionaries.Add(new ResourceDictionary
+                {
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Structures/Controls.xaml", UriKind.Absolute)
+                });
 
-            System.Windows.Application.Current.Resources = resources;
+                System.Windows.Application.Current.Resources = resources;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load theme resources: {ex.Message}");
+                throw; // Re-throw as this is a critical error
+            }
         }
-
-        //public static ThemeType CurrentTheme { get; set; }
 
         private static ResourceDictionary ThemeDictionary
         {
@@ -83,6 +90,11 @@ namespace DynamicInterfaceBuilder.Core.Managers
         public static SolidColorBrush GetBrush(string name)
         {
             return GetResource(name) is SolidColorBrush brush ? brush : new SolidColorBrush(Colors.White);
+        }
+
+        public static BitmapImage? GetApplicationIcon()
+        {
+            return Application.Current.Resources["ApplicationIcon"] as BitmapImage;
         }
     }
 }

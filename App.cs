@@ -68,6 +68,9 @@ namespace DynamicInterfaceBuilder
         [ConfigProperty]
         public AdvancedProperties AdvancedProperties { get; set; } = new();
 
+        [ConfigProperty]
+        public string? Icon { get; set; } = Default.Icon;
+
         #endregion
 
         #region Constructors
@@ -147,6 +150,8 @@ namespace DynamicInterfaceBuilder
             Spacing = Default.Spacing;
             FontName = Default.FontName;
             FontSize = Default.FontSize;
+            Theme = Default.Theme;
+            Icon = Default.Icon;
 
             AdvancedProperties = new AdvancedProperties
             {
@@ -177,7 +182,8 @@ namespace DynamicInterfaceBuilder
                 Width = Default.Width,
                 Height = Default.Height
             };
-            
+
+            //application.Icon = "C:\\Users\\GasDauMin\\ShellAnything\\icons\\zix-v2.ico";
             application.Parameters["InputFile"] = new Hashtable
             {
                 { "Type", FormElementType.FileBox },

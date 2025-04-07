@@ -6,6 +6,7 @@ using System.Globalization;
 
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.Constants;
+using DynamicInterfaceBuilder.Core.Managers;
 
 namespace DynamicInterfaceBuilder.Core.Form.Structure
 {
@@ -108,6 +109,34 @@ namespace DynamicInterfaceBuilder.Core.Form.Structure
                 FontSize = App.FontSize,
                 Style = (Style)Application.Current.Resources["CustomWindowStyle"]
             };
+
+            // Set icon if provided
+            if (!string.IsNullOrEmpty(App.Icon))
+            {
+                try
+                {
+                    var uri = new Uri(App.Icon, UriKind.RelativeOrAbsolute);
+                    form.Icon = new System.Windows.Media.Imaging.BitmapImage(uri);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to load custom icon: {ex.Message}");
+                }
+            }
+            
+            // If no custom icon or loading failed, try resource icon
+            if (form.Icon == null)
+            {
+                try 
+                {
+                    var uri = new Uri("pack://application:,,,/Resources/Icons/App1.ico", UriKind.Absolute);
+                    form.Icon = new System.Windows.Media.Imaging.BitmapImage(uri);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to load resource icon: {ex.Message}");
+                }
+            }
 
             form.Content = MainPanel = BuildMainPanel();
             return form;
