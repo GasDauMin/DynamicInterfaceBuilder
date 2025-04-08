@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Specialized;
 using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Interfaces;
@@ -7,7 +8,16 @@ using DynamicInterfaceBuilder.Core.Models;
 
 namespace DynamicInterfaceBuilder.Core.Managers
 {
-    public class ParametersManager : AppBase {    
+    public class ParametersManager : AppBase {
+
+        private static readonly string[] ParsingOrder = new[]
+        {
+            "Items",
+            "DefaultIndex",
+            "DefaultValue",
+            "Validation"
+        };
+
         public Dictionary<string, object> Parameters { get; set; } = [];
         public Dictionary<string, FormElementBase> FormElements { get; set; } = [];
 
@@ -22,10 +32,10 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
             foreach (var entry in parameters) 
             {
-                if (entry.Value == null || entry.Value.GetType() != typeof(Hashtable))
-                    continue;
-
-                ParseParameter(entry.Key, entry.Value);
+                if (entry.Value is OrderedDictionary || entry.Value is Hashtable)
+                {
+                    ParseParameter(entry.Key, entry.Value);
+                }
             }
         }
 
@@ -34,53 +44,100 @@ namespace DynamicInterfaceBuilder.Core.Managers
             if (data == null)
                 return;
 
-            if (data is not Hashtable parameter)
-                return;
-            
+            IDictionary parameter = data switch
+            {
+                OrderedDictionary od => od,
+                Hashtable ht => ht,
+                _ => throw new NotImplementedException(),
+            };
+                    
             if (parameter["Type"] is not FormElementType type)   
                 return;
 
             var element = FormElementFactory.Create(type, id, App);
 
-            foreach (DictionaryEntry parameterEntry in parameter)
+            // First pass - ordered properties
+            foreach (var propertyName in ParsingOrder)
             {
-                switch (parameterEntry.Key.ToString())
-                {
-                    case "Label":
-                        element.Label = parameterEntry.Value as string;
-                        break;
-                    case "Description":
-                        element.Description = parameterEntry.Value as string;
-                        break;
-                    case "DefaultValue":
-                        if (element is FormElement<string> stringElement && parameterEntry.Value is string strValue)
-                            stringElement.DefaultValue = strValue;
-                        else if (element is FormElement<int> intElement && parameterEntry.Value is int intValue)
-                            intElement.DefaultValue = intValue;
-                        else if (element is FormElement<bool> boolElement && parameterEntry.Value is bool boolValue)
-                            boolElement.DefaultValue = boolValue;
-                        break;
-                    case "Items":
-                        if (element is ISelectableList<string> selectableList && parameterEntry.Value is string[] items)
-                            selectableList.Items = items;
-                        break;
-                    case "Validation":
-                        if (parameterEntry.Value is Hashtable[] rules)
-                        {
-                            foreach (var rule in rules)
-                            {
-                                ParseValidationRule(rule, element);
-                            }
-                        }
-                        break;
-                }
+                if (!parameter.Contains(propertyName))
+                    continue;
+
+                ParseProperty(element, new DictionaryEntry { Key = propertyName, Value = parameter[propertyName] });
+            }
+
+            // Second pass - remaining properties
+            foreach (DictionaryEntry entry in parameter)
+            {
+                if (ParsingOrder.Contains(entry.Key.ToString()) || entry.Key.ToString() == "Type")
+                    continue;
+
+                ParseProperty(element, entry);
             }
 
             element.SetupElement();
             FormElements[id] = element;
         }
     
-        public void ParseValidationRule(Hashtable data, FormElementBase element)
+        private void ParseProperty(FormElementBase element, DictionaryEntry entry)
+        {   
+            if (entry.Value == null)
+                return;
+
+            switch (entry.Key.ToString())
+            {
+                case "Label":
+                    element.Label = entry.Value as string;
+                    break;
+                case "Description":
+                    element.Description = entry.Value as string;
+                    break;
+                case "DefaultValue":
+                    if (element is FormElement<string> stringElement && entry.Value is string strValue)
+                        stringElement.DefaultValue = strValue;
+                    else if (element is FormElement<int> intElement && entry.Value is int intValue)
+                        intElement.DefaultValue = intValue;
+                    else if (element is FormElement<bool> boolElement && entry.Value is bool boolValue)
+                        boolElement.DefaultValue = boolValue;
+                    break;
+                case "DefaultIndex":
+                case "Items":
+                    ParseSelectableList(element, entry);
+                    break;
+                case "Validation":
+                    if (entry.Value is IEnumerable rules)
+                    {
+                        foreach (IDictionary rule in rules)
+                        {
+                            ParseValidationRule(element, rule);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void ParseSelectableList(FormElementBase element, DictionaryEntry entry)
+        {
+            if (element is not ISelectableList<string> selectableList)
+                return;
+
+            switch (entry.Key.ToString())
+            {
+                case "DefaultIndex":
+                    if (entry.Value is int index)
+                        selectableList.DefaultIndex = index;
+                    break;
+
+                case "Items":
+                    if (entry.Value is string[] items)
+                        selectableList.Items = items;
+                    else if (entry.Value is List<string> itemList)
+                        selectableList.Items = itemList.ToArray();
+
+                    break;
+            }        
+        }
+
+        private void ParseValidationRule(FormElementBase element, IDictionary data)
         {
             FormElementValidationRule validationRule = new();
 

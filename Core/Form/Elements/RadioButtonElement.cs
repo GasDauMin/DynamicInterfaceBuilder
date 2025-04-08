@@ -62,7 +62,8 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                         Name = $"{Name}_RadioButton_{i}",
                         Content = Items[i],
                         GroupName = Name,
-                        IsChecked = i == DefaultIndex
+                        IsChecked = (i == DefaultIndex),
+                        Margin = new Thickness(2),
                     };
                     
                     radioPanel.Children.Add(radioButton);

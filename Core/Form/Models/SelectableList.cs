@@ -7,39 +7,34 @@ namespace DynamicInterfaceBuilder.Core.Form.Models
         private T? _defaultValue;
         private int _defaultIndex = 0;
 
-        public int DefaultIndex
+        public int DefaultIndex { get => _defaultIndex; set => SetDefaultIndex(value); }
+        public T? DefaultValue { get => _defaultValue; set => SetDefaultValue(value); }
+
+        public void SetDefaultIndex(int index)
         {
-            get => _defaultIndex;
-            set
+            if (Items != null && index >= 0 && index < Items.Length)
             {
-                _defaultIndex = value;
-                if (Items != null && value >= 0 && value < Items.Length)
-                {
-                    _defaultValue = Items[value];
-                }
-                else
-                {
-                    _defaultValue = default;
-                    _defaultIndex = 0;
-                }
+                _defaultIndex = index;
+                _defaultValue = Items[index];
+            }
+            else
+            {
+                _defaultIndex = index;
+                _defaultValue = default;
             }
         }
 
-        public T? DefaultValue
+        public void SetDefaultValue(T? value)
         {
-            get => _defaultValue;
-            set
+            if (Items != null && Array.Exists(Items, item => EqualityComparer<T>.Default.Equals(item, value)))
             {
                 _defaultValue = value;
-                if (Items != null && Array.Exists(Items, item => EqualityComparer<T>.Default.Equals(item, value)))
-                {
-                    _defaultIndex = Array.IndexOf(Items, value);
-                }
-                else
-                {
-                    _defaultValue = default;
-                    _defaultIndex = 0;
-                }
+                _defaultIndex = Array.IndexOf(Items, value);
+            }
+            else
+            {
+                _defaultValue = value;
+                _defaultIndex = default;
             }
         }
     }

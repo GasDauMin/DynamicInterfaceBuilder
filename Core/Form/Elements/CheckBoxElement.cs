@@ -28,7 +28,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
 
             SetupControls(checkBox, panel, null);
 
-            return checkBox;
+            return panel;
         }
     }
 }

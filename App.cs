@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Specialized;
 using System.Windows;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
@@ -98,8 +99,6 @@ namespace DynamicInterfaceBuilder
             Title = title;
             Width = width;
             Height = height;
-
-            ThemeManager.SetTheme(Theme);
         }
 
         #endregion
@@ -114,6 +113,8 @@ namespace DynamicInterfaceBuilder
             }  
 
             ParametersManager.ParseParameters(Parameters);
+            
+            ThemeManager.SetTheme(Theme);
 
             FormBuilder.Run();
 
@@ -183,8 +184,10 @@ namespace DynamicInterfaceBuilder
                 Height = Default.Height
             };
 
+            // application.Theme = ThemeType.LightTheme;
+
             //application.Icon = "C:\\Users\\GasDauMin\\ShellAnything\\icons\\zix-v2.ico";
-            application.Parameters["InputFile"] = new Hashtable
+            application.Parameters["InputFile"] = new OrderedDictionary
             {
                 { "Type", FormElementType.FileBox },
                 { "Label", "Input file text" },
@@ -193,23 +196,31 @@ namespace DynamicInterfaceBuilder
                 { "Required", true },
                 { "Validation", new[]
                     {
-                        new Hashtable { 
+                        new OrderedDictionary { 
                             { "Type", FormElementValidationType.Required },
                             { "Value", true },
                             { "Message", "Input file is required." }
                         },
-                        new Hashtable {
+                        new OrderedDictionary {
                             { "Type", FormElementValidationType.Regex },
                             { "Value", @"^(.*)\.exe$" },
                             { "Message", "Only .exe files are allowed." }
                         },
-                        new Hashtable {
+                        new OrderedDictionary {
                             { "Type", FormElementValidationType.FileExists },
                             { "Value", false },
                             { "Message", "File already exists."} 
                         }
                     }
                 }
+            };
+
+            application.Parameters["RadioButton"] = new OrderedDictionary
+            {
+                {"Type", FormElementType.RadioButton},
+                {"Label", "Choose an option"},
+                {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
+                {"DefaultIndex", 2}
             };
 
             for(int i = 0; i < 5; i++)

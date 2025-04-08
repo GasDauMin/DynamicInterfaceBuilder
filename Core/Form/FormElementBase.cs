@@ -21,6 +21,25 @@ namespace DynamicInterfaceBuilder.Core.Form
             Type = type;
         }
 
+        public bool TrySetProperty(string propertyName, object? value)
+        {
+            try
+            {
+                var property = GetType().GetProperty(propertyName);
+                if (property != null && property.CanWrite)
+                {
+                    property.SetValue(this, value);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error setting property {propertyName}: {ex.Message}");
+            }
+            
+            return false;
+        }
+
         public abstract object? BuildElement();
         public abstract void SetupElement();
         public abstract void ResetElement();
