@@ -1,13 +1,15 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
+    [FormElement]
     public class NumericElement(App application, string name) : FormElement<int>(application, name, FormElementType.Numeric)
     {
-        public override UIElement? BuildControl()
+        public override UIElement? BuildElement()
         {
             var panel = new Grid
             {
@@ -34,7 +36,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 Grid.SetColumn(label, 0);
                 panel.Children.Add(label);
 
-                LabelControl = label;
+                SetupLabelControl(label);
             }
 
             // WPF doesn't have NumericUpDown, creating a proper numeric textbox
@@ -80,8 +82,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             Grid.SetColumn(textBox, 1);
             panel.Children.Add(textBox);
 
-            PanelControl = panel;
-            ValueControl = textBox;
+            SetupControls(textBox, panel, null);
 
             return panel;
         }

@@ -167,7 +167,7 @@ namespace DynamicInterfaceBuilder.Core.Form
             // Add form elements to content panel
             foreach (var element in App.FormElements.Values)
             {
-                if (element.BuildControl() is UIElement control)
+                if (element.BuildElement() is UIElement control)
                 {
                     ContentPanel.Children.Add(control); ;
                 }
@@ -367,9 +367,6 @@ namespace DynamicInterfaceBuilder.Core.Form
                 
                 MessageViewer.Document.Blocks.Clear();
                 MessageViewer.Document.Blocks.Add(new Paragraph(new Run(App.MessageText)));
-                
-                // MessageViewer.Background = App.GetBrush(App.MessageManager.ColorKey(ColorType.Background));
-                // MessageViewer.Foreground = App.GetBrush(App.MessageManager.ColorKey(ColorType.Foreground));
 
                 var buttonX = MessagePanel.Children.OfType<Label>().FirstOrDefault(x => x.Name == $"{General.ID}_X_Button");
                 var lineCount = App.MessageText.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).Length;

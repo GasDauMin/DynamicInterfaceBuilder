@@ -119,7 +119,9 @@ namespace DynamicInterfaceBuilder.Core.UI.Helpers
         public static T FindVisualChild<T>(DependencyObject obj, bool includeSelf = true) where T : class
         {
             if (obj == null)
+#pragma warning disable CS8603 // Possible null reference return.
                 return null;
+#pragma warning restore CS8603 // Possible null reference return.
             if (includeSelf && obj is T t)
                 return t;
             return FindVisualChildInternal<T>(obj);
@@ -130,14 +132,18 @@ namespace DynamicInterfaceBuilder.Core.UI.Helpers
             int count, i;
             if (obj is ContentControl)
             {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 DependencyObject child = ((ContentControl) obj).Content as DependencyObject;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                 if (child is T t)
                 {
                     return t;
                 }
                 else
                 {
+#pragma warning disable CS8603 // Possible null reference return.
                     return child != null ? FindVisualChildInternal<T>(child) : null;
+#pragma warning restore CS8603 // Possible null reference return.
                 }
             }
             else if ((obj is Visual || obj is Visual3D) && (count = VisualTreeHelper.GetChildrenCount(obj)) > 0)
@@ -161,7 +167,9 @@ namespace DynamicInterfaceBuilder.Core.UI.Helpers
                 }
             }
 
+#pragma warning disable CS8603 // Possible null reference return.
             return null;
+#pragma warning restore CS8603 // Possible null reference return.
         }
     }
 }

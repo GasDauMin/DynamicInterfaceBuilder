@@ -131,7 +131,7 @@ namespace DynamicInterfaceBuilder
 
             foreach (var element in FormElements.Values)
             {
-                if (element.ValueControl != null && !element.ValidateControl())
+                if (!element.ValidateElement())
                 {
                     ok = false;
                 }
@@ -218,7 +218,7 @@ namespace DynamicInterfaceBuilder
                 {
                     { "Type", FormElementType.TextBox },
                     { "Label", $"Testas #{i}" },
-                    { "Description", "The input file to process" },
+                    { "Description", $"Test element" },
                     { "Required", false }
                 };
 

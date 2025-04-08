@@ -1,11 +1,13 @@
 using System.Windows;
 using System.Windows.Controls;
+using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Interfaces;
 using DynamicInterfaceBuilder.Core.Form.Models;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
+    [FormElement]
     public class ComboBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.ComboBox), ISelectableList<string>
     {
         private readonly SelectableList<string> _selectableList = new();
@@ -14,7 +16,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
         public int DefaultIndex { get => _selectableList.DefaultIndex; set => _selectableList.DefaultIndex = value; }
         public override string? DefaultValue { get => _selectableList.DefaultValue; set => _selectableList.DefaultValue = value; }
 
-        public override UIElement? BuildControl()
+        public override UIElement? BuildElement()
         {
             var panel = new Grid
             {
@@ -41,7 +43,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 Grid.SetColumn(label, 0);
                 panel.Children.Add(label);
 
-                LabelControl = label;
+                SetupLabelControl(label);
             }
 
             var comboBox = new ComboBox
@@ -68,8 +70,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             Grid.SetColumn(comboBox, 1);
             panel.Children.Add(comboBox);
 
-            PanelControl = panel;
-            ValueControl = comboBox;
+            SetupControls(comboBox, panel, null);
             
             return panel;
         }

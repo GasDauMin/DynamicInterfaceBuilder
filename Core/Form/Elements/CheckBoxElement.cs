@@ -1,12 +1,14 @@
 using System.Windows;
 using System.Windows.Controls;
+using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
+    [FormElement]
     public class CheckBoxElement(App application, string name) : FormElement<bool>(application, name, FormElementType.CheckBox)
     {
-        public override UIElement? BuildControl()
+        public override UIElement? BuildElement()
         {
             var panel = new Grid
             {
@@ -24,10 +26,8 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
 
             panel.Children.Add(checkBox);
 
-            PanelControl = panel;
-            LabelControl = null;
-            ValueControl = checkBox;
-            
+            SetupControls(checkBox, panel, null);
+
             return checkBox;
         }
     }

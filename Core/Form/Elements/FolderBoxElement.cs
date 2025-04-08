@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Helpers;
 using DynamicInterfaceBuilder.Core.Form.Models;
@@ -8,9 +9,10 @@ using Microsoft.Win32;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
+    [FormElement(true)]
     public class FolderBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.FolderBox)
     {
-        public override UIElement? BuildControl()
+        public override UIElement? BuildElement()
         {
             // Implement folder box control similar to FileBoxElement
             var panel = new Grid
@@ -39,7 +41,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 Grid.SetColumn(label, 0);
                 panel.Children.Add(label);
 
-                LabelControl = label;
+                SetupLabelControl(label);
             }
 
             var textBox = new TextBox
@@ -77,9 +79,8 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             Grid.SetColumn(browseButton, 2);
             panel.Children.Add(browseButton);
 
-            PanelControl = panel;
-            ValueControl = textBox;
-            
+            SetupControls(textBox, panel, null);
+
             return panel;
         }
 

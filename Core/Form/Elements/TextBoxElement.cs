@@ -1,14 +1,16 @@
 using System.Windows;
 using System.Windows.Controls;
+using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Helpers;
 using DynamicInterfaceBuilder.Core.Form.Models;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
+    [FormElement(true)]
     public class TextBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.TextBox)
     {
-        public override UIElement? BuildControl()
+        public override UIElement? BuildElement()
         {
             var panel = new Grid
             {
@@ -41,7 +43,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 Grid.SetColumn(label, 0);
                 panel.Children.Add(label);
 
-                LabelControl = label;
+                SetupLabelControl(label);
             }
             
             var textBox = new TextBox
@@ -55,10 +57,9 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
 
             Grid.SetColumn(textBox, 1);
             panel.Children.Add(textBox);
-
-            PanelControl = panel;
-            ValueControl = textBox;
             
+            SetupControls(textBox, panel, null);
+
             return panel;
         }
 

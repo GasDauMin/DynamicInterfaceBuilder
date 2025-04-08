@@ -76,6 +76,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 }
             }
 
+            element.SetupElement();
             FormElements[id] = element;
         }
     

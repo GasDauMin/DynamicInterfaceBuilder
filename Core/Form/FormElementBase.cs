@@ -10,10 +10,9 @@ namespace DynamicInterfaceBuilder.Core.Form
         public string Name { get; protected set; }
         public string? Label { get; set; }
         public string? Description { get; set; }
-        public object? PanelControl { get; protected set; }
-        public object? LabelControl { get; protected set; }
-        public object? ValueControl { get; protected set; }
-        public FormElementType Type { get; protected set; }
+        public string? Tooltip { get; set; }
+        public bool Valid { get; set; } = true;
+
         public List<FormElementValidationRule> ValidationRules { get; protected set; } = [];
 
         protected FormElementBase(App application, string name, FormElementType type) : base(application)
@@ -22,7 +21,24 @@ namespace DynamicInterfaceBuilder.Core.Form
             Type = type;
         }
 
-        public abstract object? BuildControl();
-        public abstract bool ValidateControl();
+        public abstract object? BuildElement();
+        public abstract void SetupElement();
+        public abstract void ResetElement();
+        public abstract bool ValidateElement();
+
+        public object? PanelControl { get; protected set; }
+        public object? LabelControl { get; protected set; }
+        public object? ValueControl { get; protected set; }
+        public FormElementType Type { get; protected set; }
+
+        public abstract void SetupControls(object? PanelControl, object? LabelControl, object? ValueControl);
+        public abstract bool SetupValueControl(object? control);
+        public abstract bool SetupPanelControl(object? control);
+        public abstract bool SetupLabelControl(object? control);
+
+        public abstract void ResetControls(bool doResetPanelControl, bool doResetLabelControl, bool doResetValueControl);
+        public abstract void ResetValueControl();
+        public abstract void ResetPanelControl();
+        public abstract void ResetLabelControl();
     }
 }
