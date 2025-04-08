@@ -10,7 +10,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Helpers
         {
         }
 
-        public string FormatMessage(string message, MessageType type = MessageType.None)
+        public static string FormatMessage(string message, MessageType type = MessageType.None)
         {
             var prefix = type switch
             {
