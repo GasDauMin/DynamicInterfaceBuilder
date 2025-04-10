@@ -61,9 +61,13 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                     comboBox.Items.Add(item);
                 }
                 
-                if (DefaultIndex >= 0 && DefaultIndex < comboBox.Items.Count)
+                var idx = DefaultIndex >= 0 
+                    ? DefaultIndex 
+                    : Items.Length + DefaultIndex;
+
+                if (idx >= 0 && idx < Items.Length)
                 {
-                    comboBox.SelectedIndex = DefaultIndex;
+                    comboBox.SelectedIndex = idx;
                 }
             }
 

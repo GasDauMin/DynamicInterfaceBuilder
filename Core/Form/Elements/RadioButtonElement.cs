@@ -55,14 +55,19 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
 
             if (Items != null)
             {
+                var idx = DefaultIndex >= 0 
+                    ? DefaultIndex 
+                    : Items.Length + DefaultIndex;
+
                 for (int i = 0; i < Items.Length; i++)
                 {
+                    var isChecked =  (idx >= 0 && idx < Items.Length && i == idx);
                     var radioButton = new RadioButton
                     {
                         Name = $"{Name}_RadioButton_{i}",
                         Content = Items[i],
                         GroupName = Name,
-                        IsChecked = (i == DefaultIndex),
+                        IsChecked = isChecked,
                         Margin = new Thickness(2),
                     };
                     

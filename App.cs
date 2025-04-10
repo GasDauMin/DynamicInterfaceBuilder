@@ -220,14 +220,30 @@ namespace DynamicInterfaceBuilder
                 {"Type", FormElementType.RadioButton},
                 {"Label", "Choose an option"},
                 {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
+                {"DefaultValue", "Option 2"}
+            };
+
+            application.Parameters["ComboBox"] = new OrderedDictionary
+            {
+                {"Type", FormElementType.ComboBox},
+                {"Label", "Choose an option"},
+                {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
                 {"DefaultIndex", 2}
+            };
+
+            application.Parameters["ListBox"] = new OrderedDictionary
+            {
+                {"Type", FormElementType.ListBox},
+                {"Label", "Choose an option"},
+                {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
+                {"DefaultIndex", -1}
             };
 
             for(int i = 0; i < 5; i++)
             {
                 var item = new Hashtable
                 {
-                    { "Type", FormElementType.TextBox },
+                    { "Type", FormElementType.CheckBox },
                     { "Label", $"Testas #{i}" },
                     { "Description", $"Test element" },
                     { "Required", false }
