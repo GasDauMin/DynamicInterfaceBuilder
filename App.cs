@@ -215,6 +215,29 @@ namespace DynamicInterfaceBuilder
                 }
             };
 
+            for(int i = 0; i < 5; i++)
+            {
+                var item = new Hashtable
+                {
+                    { "Type", FormElementType.TextBox },
+                    { "Label", $"TextBox #{i}" },
+                    { "Description", $"Test element" },
+                };
+
+                if (i % 2 == 0)
+                {
+                    item["Validation"] = new[] { 
+                        new Hashtable {
+                            { "Type", "Required" },
+                            { "Value", true },
+                            { "Message", $" \"TextBox #{i}\" is required." }
+                        }
+                    };
+                }
+
+                application.Parameters[$"TextBox_{i}"] = item;
+            }
+
             application.Parameters["RadioButton"] = new OrderedDictionary
             {
                 {"Type", FormElementType.RadioButton},
@@ -244,23 +267,11 @@ namespace DynamicInterfaceBuilder
                 var item = new Hashtable
                 {
                     { "Type", FormElementType.CheckBox },
-                    { "Label", $"Testas #{i}" },
+                    { "Label", $"CheckBox #{i}" },
                     { "Description", $"Test element" },
-                    { "Required", false }
                 };
 
-                if (i % 2 == 0)
-                {
-                    item["Validation"] = new[] { 
-                        new Hashtable {
-                            { "Type", "Required" },
-                            { "Value", true },
-                            { "Message", $" \"Testas #{i}\" is required." }
-                        }
-                    };
-                }
-
-                application.Parameters[$"Test{i}"] = item;
+                application.Parameters[$"CheckBox_{i}"] = item;
             }
 
             application.Run();
