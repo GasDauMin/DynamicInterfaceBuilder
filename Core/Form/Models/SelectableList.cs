@@ -10,6 +10,13 @@ namespace DynamicInterfaceBuilder.Core.Form.Models
         public int DefaultIndex { get => _defaultIndex; set => SetDefaultIndex(value); }
         public T? DefaultValue { get => _defaultValue; set => SetDefaultValue(value); }
 
+        private T[]? _defaultIndices;
+        private T[]? _defaultValues;
+
+        public T[]? DefaultIndices { get => _defaultIndices; set => _defaultIndices = value; }
+
+        public T[]? DefaultValues { get => _defaultValues; set => _defaultValues = value; }
+
         public void SetDefaultIndex(int index)
         {
             if (Items != null && index >= 0 && index < Items.Length)
