@@ -2,6 +2,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Enums
 {
     public enum FormElementType
     {
+        Group,
         TextBox,
         ComboBox,
         RadioButton,
@@ -10,5 +11,13 @@ namespace DynamicInterfaceBuilder.Core.Form.Enums
         FileBox,
         FolderBox,
         ListBox,
+    }
+
+    public static class FormElementTypeExtension
+    {
+        public static string GetName(this FormElementType type)
+        {
+            return type.ToString();
+        }
     }
 }

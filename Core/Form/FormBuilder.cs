@@ -7,6 +7,7 @@ using System.Globalization;
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Managers;
+using DynamicInterfaceBuilder.Core.Form.Enums;
 
 namespace DynamicInterfaceBuilder.Core.Form
 {
@@ -64,6 +65,19 @@ namespace DynamicInterfaceBuilder.Core.Form
             );
 
             return formattedText.Height;
+        }
+
+        public static string GenerateUniqueId(params string[] prefixes)
+        {
+            if (prefixes == null || prefixes.Length == 0)
+                return Guid.NewGuid().ToString("N");
+                
+            string prefix = string.Join("_", prefixes.Where(p => !string.IsNullOrEmpty(p)));
+            
+            if (string.IsNullOrEmpty(prefix))
+                return Guid.NewGuid().ToString("N");
+                
+            return $"{prefix}_{Guid.NewGuid().ToString("N")}";
         }
 
         #endregion
@@ -141,10 +155,6 @@ namespace DynamicInterfaceBuilder.Core.Form
             form.Content = MainPanel = BuildMainPanel();
             return form;
         }
-
-        #endregion
-
-        #region Build panels
 
         protected Grid BuildMainPanel()
         {

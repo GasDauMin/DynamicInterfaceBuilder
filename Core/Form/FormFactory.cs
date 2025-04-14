@@ -7,6 +7,7 @@ namespace DynamicInterfaceBuilder.Core.Form
     {
         private static readonly Dictionary<FormElementType, Func<App, string, FormElementBase>> _factories = new()
         {
+            { FormElementType.Group, (fb, name) => new GroupElement(fb, name) },
             { FormElementType.TextBox, (fb, name) => new TextBoxElement(fb, name) },
             { FormElementType.Numeric, (fb, name) => new NumericElement(fb, name) },
             { FormElementType.CheckBox, (fb, name) => new CheckBoxElement(fb, name) },

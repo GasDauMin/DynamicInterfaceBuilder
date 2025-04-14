@@ -184,84 +184,117 @@ namespace DynamicInterfaceBuilder
                 Height = Default.Height
             };
 
-            // application.Theme = ThemeType.LightTheme;
-
-            //application.Icon = "C:\\Users\\GasDauMin\\ShellAnything\\icons\\zix-v2.ico";
-            application.Parameters["InputFile"] = new OrderedDictionary
+            application.Parameters["TestGroup"] = new OrderedDictionary
             {
-                { "Type", FormElementType.FileBox },
-                { "Label", "Input file text" },
-                { "Description", "The input file to process" },
-                { "DefaultValue", "C:\\Users\\GasDauMin\\Downloads\\OllamaSetup.exe" },
-                { "Required", true },
-                { "Validation", new[]
-                    {
-                        new OrderedDictionary { 
-                            { "Type", FormElementValidationType.Required },
-                            { "Value", true },
-                            { "Message", "Input file is required." }
+                { "Type", FormElementType.Group },
+                { "Label", "Test group" },
+                { "Description", "Test group description" },
+                { "Elements", new[] {
+                        new OrderedDictionary
+                        {
+                            { "Type", FormElementType.TextBox },
+                            { "Label", "Test text box" },
+                            { "Description", "Test text box description" },
+                            { "DefaultValue", "Test text box default value" },
+                            { "Validation", new[]
+                                {
+                                    new OrderedDictionary { 
+                                        { "Type", FormElementValidationType.Required },
+                                        { "Value", true },
+                                        { "Message", "Test text box is required." }
+                                    }
+                                }
+                            }
                         },
-                        new OrderedDictionary {
-                            { "Type", FormElementValidationType.Regex },
-                            { "Value", @"^(.*)\.exe$" },
-                            { "Message", "Only .exe files are allowed." }
-                        },
-                        new OrderedDictionary {
-                            { "Type", FormElementValidationType.FileExists },
-                            { "Value", false },
-                            { "Message", "File already exists."} 
+                        new OrderedDictionary
+                        {
+                            { "Type", FormElementType.CheckBox },
+                            { "Label", "Test check box" },
+                            { "Description", "Test check box description" },
+                            { "DefaultValue", true },
                         }
                     }
                 }
             };
 
-            application.Parameters["RadioButton"] = new OrderedDictionary
-            {
-                {"Type", FormElementType.RadioButton},
-                {"Label", "Choose an option"},
-                {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
-                {"DefaultValue", "Option 2"}
-            };
+            // application.Theme = ThemeType.LightTheme;
 
-            application.Parameters["ComboBox"] = new OrderedDictionary
-            {
-                {"Type", FormElementType.ComboBox},
-                {"Label", "Choose an option"},
-                {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
-                {"DefaultIndex", 2}
-            };
+            //application.Icon = "C:\\Users\\GasDauMin\\ShellAnything\\icons\\zix-v2.ico";
+            // application.Parameters["InputFile"] = new OrderedDictionary
+            // {
+            //     { "Type", FormElementType.FileBox },
+            //     { "Label", "Input file text" },
+            //     { "Description", "The input file to process" },
+            //     { "DefaultValue", "C:\\Users\\GasDauMin\\Downloads\\OllamaSetup.exe" },
+            //     { "Required", true },
+            //     { "Validation", new[]
+            //         {
+            //             new OrderedDictionary { 
+            //                 { "Type", FormElementValidationType.Required },
+            //                 { "Value", true },
+            //                 { "Message", "Input file is required." }
+            //             },
+            //             new OrderedDictionary {
+            //                 { "Type", FormElementValidationType.Regex },
+            //                 { "Value", @"^(.*)\.exe$" },
+            //                 { "Message", "Only .exe files are allowed." }
+            //             },
+            //             new OrderedDictionary {
+            //                 { "Type", FormElementValidationType.FileExists },
+            //                 { "Value", false },
+            //                 { "Message", "File already exists."} 
+            //             }
+            //         }
+            //     }
+            // };
 
-            application.Parameters["ListBox"] = new OrderedDictionary
-            {
-                {"Type", FormElementType.ListBox},
-                {"Label", "Choose an option"},
-                {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
-                {"DefaultIndex", -1}
-            };
+            // application.Parameters["RadioButton"] = new OrderedDictionary
+            // {
+            //     {"Type", FormElementType.RadioButton},
+            //     {"Label", "Choose an option"},
+            //     {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
+            //     {"DefaultValue", "Option 2"}
+            // };
 
-            for(int i = 0; i < 5; i++)
-            {
-                var item = new Hashtable
-                {
-                    { "Type", FormElementType.CheckBox },
-                    { "Label", $"Testas #{i}" },
-                    { "Description", $"Test element" },
-                    { "Required", false }
-                };
+            // application.Parameters["ComboBox"] = new OrderedDictionary
+            // {
+            //     {"Type", FormElementType.ComboBox},
+            //     {"Label", "Choose an option"},
+            //     {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
+            //     {"DefaultIndex", 2}
+            // };
 
-                if (i % 2 == 0)
-                {
-                    item["Validation"] = new[] { 
-                        new Hashtable {
-                            { "Type", "Required" },
-                            { "Value", true },
-                            { "Message", $" \"Testas #{i}\" is required." }
-                        }
-                    };
-                }
+            // application.Parameters["ListBox"] = new OrderedDictionary
+            // {
+            //     {"Type", FormElementType.ListBox},
+            //     {"Label", "Choose an option"},
+            //     {"Items", new[] { "Option 1", "Option 2", "Option 3", "Option 4"}},
+            //     {"DefaultIndex", -1}
+            // };
 
-                application.Parameters[$"Test{i}"] = item;
-            }
+            // for(int i = 0; i < 5; i++)
+            // {
+            //     var item = new Hashtable
+            //     {
+            //         { "Type", FormElementType.CheckBox },
+            //         { "Label", $"Testas #{i}" },
+            //         { "Description", $"Test element" },
+            //         { "Required", false }
+            //     };
+
+            //     if (i % 2 == 0)
+            //     {
+            //         item["Validation"] = new[] { 
+            //             new Hashtable {
+            //                 { "Type", "Required" },
+            //                 { "Value", true },
+            //                 { "Message", $" \"Testas #{i}\" is required." }
+            //             }
+            //         };
+            //     }
+
+            //     application.Parameters[$"Test{i}"] = item;
+            // }
 
             application.Run();
             

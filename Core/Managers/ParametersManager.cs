@@ -15,7 +15,8 @@ namespace DynamicInterfaceBuilder.Core.Managers
             "Items",
             "DefaultIndex",
             "DefaultValue",
-            "Validation"
+            "Elements",
+            "Validation",
         };
 
         public Dictionary<string, object> Parameters { get; set; } = [];
@@ -62,7 +63,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 if (!parameter.Contains(propertyName))
                     continue;
 
-                ParseProperty(element, new DictionaryEntry { Key = propertyName, Value = parameter[propertyName] });
+                ParseProperty(id, element, new DictionaryEntry { Key = propertyName, Value = parameter[propertyName] });
             }
 
             // Second pass - remaining properties
@@ -71,14 +72,14 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 if (ParsingOrder.Contains(entry.Key.ToString()) || entry.Key.ToString() == "Type")
                     continue;
 
-                ParseProperty(element, entry);
+                ParseProperty(id, element, entry);
             }
 
             element.SetupElement();
             FormElements[id] = element;
         }
     
-        private void ParseProperty(FormElementBase element, DictionaryEntry entry)
+        private void ParseProperty(string id, FormElementBase element, DictionaryEntry entry)
         {   
             if (entry.Value == null)
                 return;
@@ -102,6 +103,23 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 case "DefaultIndex":
                 case "Items":
                     ParseSelectableList(element, entry);
+                    break;
+                case "Elements":
+                    if (element is IFormGroup group && entry.Value is IEnumerable groupElements)
+                    {
+                        foreach (IDictionary groupElement in groupElements)
+                        {
+                            var typeId = groupElement["Type"]?.ToString() ?? string.Empty;
+                            var childId = FormBuilder.GenerateUniqueId(id,typeId);
+
+                            ParseParameter(childId, groupElement);
+                            
+                            if (FormElements.TryGetValue(childId, out var childElement))
+                            {
+                                group.AddChild(childElement);
+                            }
+                        }
+                    }
                     break;
                 case "Validation":
                     if (entry.Value is IEnumerable rules)
