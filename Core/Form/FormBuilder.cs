@@ -67,17 +67,19 @@ namespace DynamicInterfaceBuilder.Core.Form
             return formattedText.Height;
         }
 
-        public static string GenerateUniqueId(params string[] prefixes)
+        public static string ElementId(params string[] prefixes)
         {
+            var guid = Guid.NewGuid().ToString("N")[..8];
+            
             if (prefixes == null || prefixes.Length == 0)
-                return Guid.NewGuid().ToString("N");
+                return guid;
                 
             string prefix = string.Join("_", prefixes.Where(p => !string.IsNullOrEmpty(p)));
             
             if (string.IsNullOrEmpty(prefix))
-                return Guid.NewGuid().ToString("N");
+                return guid;
                 
-            return $"{prefix}_{Guid.NewGuid().ToString("N")}";
+            return $"{prefix}_{guid}";
         }
 
         #endregion

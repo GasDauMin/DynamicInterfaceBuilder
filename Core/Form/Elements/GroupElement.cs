@@ -10,22 +10,25 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
     [FormElement]
     public class GroupElement(App application, string name) : FormElementBase(application, name, FormElementType.Group), IFormGroup
     {
-        public List<FormElementBase> Elements { get; set; } = new();
-        public IReadOnlyList<FormElementBase> Children => Elements;
-        public Orientation Orientation { get; set; } = Orientation.Horizontal;
+        public Dictionary<string, FormElementBase> Elements { get; set; } = new();
+        public IReadOnlyList<FormElementBase> Children => [.. Elements.Values];
+        public Orientation Orientation { get; set; } = Orientation.Vertical;
         public int Spacing { get; set; }
         public bool ShowBorder { get; set; }
         public Thickness Margin { get; set; }
         public Thickness Padding { get; set; }
+
+        public void AddChild(FormElementBase child)
+        {
+            Elements[child.Name] = child;
+        }
         
         public override UIElement? BuildElement()
         {
-            // Create the main container
-            var panel = new Grid
+            var mainPanel = new DockPanel
             {
-                Name = $"{Name}_Panel",
-                VerticalAlignment = VerticalAlignment.Top,
-                Margin = Margin
+                Name = $"{Name}_MainPanel",
+                VerticalAlignment = VerticalAlignment.Top
             };
             
             // Create container for elements
@@ -33,95 +36,79 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             {
                 Name = $"{Name}_Elements",
                 Orientation = Orientation,
-                Margin = Padding
+                Margin = new Thickness(Margin.Left + Padding.Left, 
+                                     Margin.Top + Padding.Top, 
+                                     Margin.Right + Padding.Right, 
+                                     Margin.Bottom + Padding.Bottom)
             };
-            
-            // Add elements to the panel with proper spacing
-            for (int i = 0; i < Elements.Count; i++)
+
+            // Set spacing between elements
+            if (Spacing > 0)
             {
-                if (Elements[i].BuildElement() is UIElement control)
+                elementsPanel.Margin = new Thickness(
+                    elementsPanel.Margin.Left,
+                    elementsPanel.Margin.Top,
+                    elementsPanel.Margin.Right,
+                    elementsPanel.Margin.Bottom + Spacing
+                );
+            }
+            
+            // Add group header if label is provided
+            if (!string.IsNullOrEmpty(Label))
+            {
+                var header = new TextBlock
                 {
-                    // Apply spacing to all elements except the last one
-                    if (i < Elements.Count - 1 && Spacing > 0 && control is FrameworkElement frameworkElement)
+                    Name = $"{Name}_Header",
+                    Text = Label,
+                    FontWeight = FontWeights.Bold,
+                    Margin = new Thickness(0, 0, 0, Spacing > 0 ? Spacing : 5)
+                };
+                DockPanel.SetDock(header, Dock.Top);
+                mainPanel.Children.Add(header);
+            }
+            
+            // Add elements to the panel
+            foreach (var element in Elements.Values)
+            {
+                if (element.BuildElement() is UIElement control)
+                {
+                    if (Spacing > 0 && elementsPanel.Children.Count > 0)
                     {
-                        if (Orientation == Orientation.Vertical)
-                            frameworkElement.Margin = new Thickness(0, 0, 0, Spacing);
-                        else
-                            frameworkElement.Margin = new Thickness(0, 0, Spacing, 0);
+                        if (control is FrameworkElement frameworkElement)
+                        {
+                            if (Orientation == Orientation.Horizontal)
+                            {
+                                frameworkElement.Margin = new Thickness(Spacing, 0, 0, 0);
+                            }
+                            else
+                            {
+                                frameworkElement.Margin = new Thickness(0, Spacing, 0, 0);
+                            }
+                        }
                     }
                     elementsPanel.Children.Add(control);
                 }
             }
             
-            // Determine if we need a border
-            if (ShowBorder)
+            // Wrap elements panel in a ScrollViewer
+            var scrollViewer = new ScrollViewer
             {
-                var border = new Border
-                {
-                    Name = $"{Name}_Border",
-                    BorderThickness = new Thickness(1),
-                    BorderBrush = SystemColors.ControlDarkBrush,
-                    Padding = new Thickness(5),
-                    Child = elementsPanel
-                };
-                
-                // Add group header if label is provided
-                if (!string.IsNullOrEmpty(Label))
-                {
-                    var headerPanel = new Grid();
-                    var header = new TextBlock
-                    {
-                        Name = $"{Name}_Header",
-                        Text = Label,
-                        FontWeight = FontWeights.Bold,
-                        Margin = new Thickness(5, 0, 5, 5)
-                    };
-                    headerPanel.Children.Add(header);
-                    panel.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                    panel.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                    Grid.SetRow(headerPanel, 0);
-                    Grid.SetRow(border, 1);
-                    panel.Children.Add(headerPanel);
-                    panel.Children.Add(border);
-                }
-                else
-                {
-                    panel.Children.Add(border);
-                }
-            }
-            else
-            {
-                // Add group header if label is provided
-                if (!string.IsNullOrEmpty(Label))
-                {
-                    var header = new TextBlock
-                    {
-                        Name = $"{Name}_Header",
-                        Text = Label,
-                        FontWeight = FontWeights.Bold,
-                        Margin = new Thickness(0, 0, 0, 5)
-                    };
-                    panel.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                    panel.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                    Grid.SetRow(header, 0);
-                    Grid.SetRow(elementsPanel, 1);
-                    panel.Children.Add(header);
-                    panel.Children.Add(elementsPanel);
-                }
-                else
-                {
-                    panel.Children.Add(elementsPanel);
-                }
-            }
+                Name = $"{Name}_ScrollViewer",
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Content = elementsPanel
+            };
             
-            SetupPanelControl(panel);
-            return panel;
+            mainPanel.Children.Add(scrollViewer);
+            SetupPanelControl(mainPanel);
+            
+            return mainPanel;
         }
         
         public override bool ValidateElement()
         {
             bool isValid = true;
-            foreach (var element in Elements)
+            foreach (var element in Elements.Values)
             {
                 if (!element.ValidateElement())
                 {
@@ -143,7 +130,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             Tooltip = Description;
         }
 
-        public override void SetupControls(object? panelControl, object? labelControl, object? valueControl)
+        public override void SetupControls(object? valueControl, object? panelControl, object? labelControl)
         {
             if (panelControl != null)
             {
@@ -193,14 +180,10 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 control.ClearValue(Control.BorderBrushProperty);
             }
         }
+
         public override void ResetLabelControl()
         {
             // Groups don't have label controls
-        }
-
-        public void AddChild(FormElementBase element)
-        {
-            Elements.Add(element);
         }
     }
 }

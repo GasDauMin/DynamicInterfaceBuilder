@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Specialized;
+using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Interfaces;
@@ -76,7 +77,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
 
             element.SetupElement();
-            FormElements[id] = element;
+            FormElements[id] = element;            
         }
     
         private void ParseProperty(string id, FormElementBase element, DictionaryEntry entry)
@@ -107,18 +108,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 case "Elements":
                     if (element is IFormGroup group && entry.Value is IEnumerable groupElements)
                     {
-                        foreach (IDictionary groupElement in groupElements)
-                        {
-                            var typeId = groupElement["Type"]?.ToString() ?? string.Empty;
-                            var childId = FormBuilder.GenerateUniqueId(id,typeId);
-
-                            ParseParameter(childId, groupElement);
-                            
-                            if (FormElements.TryGetValue(childId, out var childElement))
-                            {
-                                group.AddChild(childElement);
-                            }
-                        }
+                        ParseGroupElements(group, groupElements);
                     }
                     break;
                 case "Validation":
@@ -194,6 +184,29 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
 
             element.ValidationRules.Add(validationRule);
+        }
+
+        private void ParseGroupElements(IFormGroup group, IEnumerable elements)
+        {
+            foreach (IDictionary elementData in elements)
+            {
+                if (elementData["Type"] is FormElementType elementType)
+                {
+                    FormBuilder.ElementId(group.Name,elementType.GetName());
+                    string elementName = elementData["Name"] as string ?? $"{group.Name}_{elementType}_{Guid.NewGuid().ToString("N")[..8]}";
+                    
+                    var element = FormElementFactory.Create(elementType, elementName, App);
+                    
+                    // Parse element properties
+                    foreach (DictionaryEntry entry in elementData)
+                    {
+                        ParseProperty(elementName, element, entry);
+                    }
+                    
+                    element.SetupElement();
+                    group.Elements[elementName] = element;
+                }
+            }
         }
     }
 }
