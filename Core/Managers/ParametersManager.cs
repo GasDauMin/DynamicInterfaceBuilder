@@ -15,9 +15,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
         {
             "Items",
             "DefaultIndex",
-            "DefaultValue",
-            "Elements",
-            "Validation",
+            "DefaultValue"
         };
 
         public Dictionary<string, object> Parameters { get; set; } = [];
@@ -41,7 +39,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
         }
 
-        public void ParseParameter(string id, object data)
+        public void ParseParameter(string id, object data, IFormGroup? group = null)
         {
             if (data == null)
                 return;
@@ -56,7 +54,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
             if (parameter["Type"] is not FormElementType type)   
                 return;
 
-            var element = FormElementFactory.Create(type, id, App);
+            var element = FormElementFactory.Create(type, App.SetElementId(id), App);
 
             // First pass - ordered properties
             foreach (var propertyName in ParsingOrder)
@@ -77,7 +75,15 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
 
             element.SetupElement();
-            FormElements[id] = element;            
+
+            if (group != null)
+            {
+                group.Elements[id] = element;
+            }
+            else
+            {
+                FormElements[id] = element;
+            }
         }
     
         private void ParseProperty(string id, FormElementBase element, DictionaryEntry entry)
@@ -93,17 +99,23 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 case "Description":
                     element.Description = entry.Value as string;
                     break;
+                case "Value":
                 case "DefaultValue":
-                    if (element is FormElement<string> stringElement && entry.Value is string strValue)
-                        stringElement.DefaultValue = strValue;
-                    else if (element is FormElement<int> intElement && entry.Value is int intValue)
-                        intElement.DefaultValue = intValue;
-                    else if (element is FormElement<bool> boolElement && entry.Value is bool boolValue)
-                        boolElement.DefaultValue = boolValue;
+                    if (element is ISelectableList<string>)
+                    {
+                        ParseSelectableList(element, entry);
+                    }
+                    else
+                    {
+                        ParseDefaultValue(element, entry);
+                    }
                     break;
                 case "DefaultIndex":
                 case "Items":
-                    ParseSelectableList(element, entry);
+                    if (element is ISelectableList<string>)
+                    {
+                        ParseSelectableList(element, entry);
+                    }
                     break;
                 case "Elements":
                     if (element is IFormGroup group && entry.Value is IEnumerable groupElements)
@@ -123,16 +135,55 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
         }
 
+        private void ParseGroupElements(IFormGroup group, IEnumerable groupElements)
+        {
+            foreach (IDictionary groupElementData in groupElements)
+            {
+                if (groupElementData["Type"] is FormElementType elementType)
+                {
+                    string groupElementId = string.Empty;
+                    string? groupElementName = groupElementData["Name"] as string;
+
+                    if (string.IsNullOrEmpty(groupElementName))
+                    {
+                        groupElementId = App.GenerateElementId(group.Name, elementType.GetName());
+                    }
+                    else
+                    {
+                        groupElementId = App.GenerateElementId(group.Name, groupElementName);
+                    }
+
+                    ParseParameter(groupElementId, groupElementData, group);
+                }
+            }
+        }
+
+        private void ParseDefaultValue(FormElementBase element, DictionaryEntry entry)
+        {
+            if (entry.Value is string valueString)
+                element.TrySetProperty("DefaultValue", valueString);
+            else if (entry.Value is int valueInteger)
+                element.TrySetProperty("DefaultValue", valueInteger);
+            else if (entry.Value is bool valueBoolean)
+                element.TrySetProperty("DefaultValue", valueBoolean);
+        }
+
         private void ParseSelectableList(FormElementBase element, DictionaryEntry entry)
         {
-            if (element is not ISelectableList<string> selectableList)
+            if (element is not  ISelectableList<string> selectableList)
+            {
                 return;
+            }
 
             switch (entry.Key.ToString())
             {
+                case "DefaultValue":
+                    if (entry.Value is string defaultValue)
+                        selectableList.DefaultValue = defaultValue;
+                    break;
                 case "DefaultIndex":
-                    if (entry.Value is int index)
-                        selectableList.DefaultIndex = index;
+                    if (entry.Value is int defaultIndex)
+                        selectableList.DefaultIndex = defaultIndex;
                     break;
 
                 case "Items":
@@ -184,29 +235,6 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
 
             element.ValidationRules.Add(validationRule);
-        }
-
-        private void ParseGroupElements(IFormGroup group, IEnumerable elements)
-        {
-            foreach (IDictionary elementData in elements)
-            {
-                if (elementData["Type"] is FormElementType elementType)
-                {
-                    FormBuilder.ElementId(group.Name,elementType.GetName());
-                    string elementName = elementData["Name"] as string ?? $"{group.Name}_{elementType}_{Guid.NewGuid().ToString("N")[..8]}";
-                    
-                    var element = FormElementFactory.Create(elementType, elementName, App);
-                    
-                    // Parse element properties
-                    foreach (DictionaryEntry entry in elementData)
-                    {
-                        ParseProperty(elementName, element, entry);
-                    }
-                    
-                    element.SetupElement();
-                    group.Elements[elementName] = element;
-                }
-            }
         }
     }
 }

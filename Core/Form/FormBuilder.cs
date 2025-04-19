@@ -67,21 +67,6 @@ namespace DynamicInterfaceBuilder.Core.Form
             return formattedText.Height;
         }
 
-        public static string ElementId(params string[] prefixes)
-        {
-            var guid = Guid.NewGuid().ToString("N")[..8];
-            
-            if (prefixes == null || prefixes.Length == 0)
-                return guid;
-                
-            string prefix = string.Join("_", prefixes.Where(p => !string.IsNullOrEmpty(p)));
-            
-            if (string.IsNullOrEmpty(prefix))
-                return guid;
-                
-            return $"{prefix}_{guid}";
-        }
-
         #endregion
 
         #region Event handlers

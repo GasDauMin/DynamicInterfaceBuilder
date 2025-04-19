@@ -111,20 +111,9 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             return null;
         }
 
-        public override string? GetValue()
-        {
-            if (ValueControl is TextBox textBox)
-            {
-                Value = textBox.Text ?? string.Empty;
-            }
-
-            return base.GetValue();
-        }
-
         public override bool ValidateRule(FormElementValidationRule rule)
         {
-            var value = GetValue() ?? string.Empty;
-            return ValidationHelper.ValidateText(rule, value);
+            return ValidationHelper.ValidateText(rule, ControlValue!);
         }
     }
 }

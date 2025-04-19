@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Xml.Linq;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Form;
@@ -10,6 +11,7 @@ using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Managers;
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.UI.Enums;
+using Microsoft.VisualBasic;
 
 namespace DynamicInterfaceBuilder
 {
@@ -39,7 +41,9 @@ namespace DynamicInterfaceBuilder
         public string? MessageText{get; set;} = string.Empty;
         public MessageType MessageType { get; set; } = MessageType.None;
         public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
+        public List<string> FormElementIds { get; set; } = new();
         public Dictionary<string, object> Parameters { get; set; } = new();
+
 
         #endregion
 
@@ -141,6 +145,71 @@ namespace DynamicInterfaceBuilder
             return ok;
         }
 
+        public string SetElementId (string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("Element ID cannot be null or empty.", nameof(id));
+            }
+            if (FormElementIds.Exists(existingId => existingId.Equals(id, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new ArgumentException($"Element ID '{id}' already exists.", nameof(id));
+            }
+
+            FormElementIds.Add(id);
+            return id;
+        }
+
+        public string GenerateElementId(params string[] data)
+        {
+            List<String> baseList = new List<string>();
+            if (data != null && data.Length > 0)
+            {
+                baseList.AddRange(data.Where(p => !string.IsNullOrEmpty(p)));
+            }
+            else
+            {
+                baseList.Add(General.FieldDefaultPrefix);
+            }
+
+            //..
+
+            string id, guid;
+            int sequence = 0;
+
+            do
+            {
+                var list = new List<string>(baseList);
+                sequence++;
+                if (sequence > 1)
+                {
+                    if (General.FieldGuidEnabled)
+                    {
+                        guid = General.FieldGuidSize > 0
+                            ? Guid.NewGuid().ToString("N").Substring(0, General.FieldGuidSize)
+                            : Guid.NewGuid().ToString("N");
+                        list.Add(guid);
+                    }
+                    else
+                    {
+                        if (General.FieldSequenceSeparate)
+                        {
+                            list.Add(sequence.ToString());
+                        }
+                        else
+                        {
+                            list[^1] = $"{list[^1]}{sequence}"; //..append sequence to the last element
+                        }
+                    }
+                }
+                id = string.Join(General.FieldPrefixSeparator, list);
+            } while (FormElementIds.Exists(existingId => existingId.Equals(id, StringComparison.OrdinalIgnoreCase)));
+
+            //..
+
+            return id;
+        }
+
         public void ResetDefaults(bool save = false)
         {
             Parameters.Clear();
@@ -212,6 +281,47 @@ namespace DynamicInterfaceBuilder
                             { "Label", "Test check box" },
                             { "Description", "Test check box description" },
                             { "DefaultValue", true },
+                        },
+                        new OrderedDictionary
+                        {
+                            { "Type", FormElementType.CheckBox },
+                            { "Label", "Test check box" },
+                            { "Description", "Test check box description" },
+                            { "DefaultValue", true },
+                        },
+                        new OrderedDictionary
+                        {
+                            { "Name", "NestedGroup" },
+                            { "Type", FormElementType.Group },
+                            { "Label", "Nested group" },
+                            { "Description", "Nested group description" },
+                            { "Elements", new[] {
+                                    new OrderedDictionary
+                                    {
+                                        { "Type", FormElementType.TextBox },
+                                        { "Label", "Nested text box" },
+                                        { "Value", "Nested text box default value" },
+                                        { "Description", "Nested text box description" },
+                                        { "Validation", new[]
+                                            {
+                                                new OrderedDictionary {
+                                                    { "Type", FormElementValidationType.Required },
+                                                    { "Value", true },
+                                                    { "Message", "Nested text box is required." }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        new OrderedDictionary
+                        {
+                            { "Type", FormElementType.ComboBox },
+                            { "Label", "Test combobox" },
+                            { "Description", "Test combobox description" },
+                            { "DefaultValue", "Item 3" },
+                            { "Items", new[] { "Item 1", "Item 2", "Item 3" } }
                         }
                     }
                 }

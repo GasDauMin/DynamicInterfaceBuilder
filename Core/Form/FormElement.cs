@@ -12,11 +12,31 @@ namespace DynamicInterfaceBuilder.Core.Form
     public abstract class FormElement<T>(App application, string name, FormElementType type) : FormElementBase(application, name, type)
     {
         public virtual T? DefaultValue { get; set; }
-        public virtual T? Value { get; set; }
-
-        public virtual T? GetValue()
+        public virtual T? ControlValue
         {
-            return Value != null ? Value : default;
+            get
+            {
+                return ValueControl switch
+                {
+                    TextBox textBox => TryConvertValue<T>(textBox.Text),
+                    ComboBox comboBox => TryConvertValue<T>(comboBox.SelectedItem),
+                    CheckBox checkBox => TryConvertValue<T>(checkBox.IsChecked),
+                    RadioButton radioButton => TryConvertValue<T>(radioButton.IsChecked),
+                    ListBox listBox => TryConvertValue<T>(listBox.SelectedItem),
+                    _ => default,
+                };
+            }
+        }
+        private static T? TryConvertValue<U>(object? value)
+        {
+            try
+            {
+                return (T?)Convert.ChangeType(value, typeof(U));
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         #region Controls
