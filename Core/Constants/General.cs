@@ -7,7 +7,7 @@ namespace DynamicInterfaceBuilder.Core.Constants
         public const string EndLine = "\r\n";
 
         public const bool FieldSequenceSeparate = false;
-        public const bool FieldGuidEnabled = true;
+        public const bool FieldGuidEnabled = false;
         public const int FieldGuidSize = 4;
         public const string FieldPrefixSeparator = "_";
         public const string FieldDefaultPrefix = "Field";

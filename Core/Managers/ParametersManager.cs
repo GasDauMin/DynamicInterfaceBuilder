@@ -141,16 +141,19 @@ namespace DynamicInterfaceBuilder.Core.Managers
             {
                 if (groupElementData["Type"] is FormElementType elementType)
                 {
-                    string groupElementId = string.Empty;
-                    string? groupElementName = groupElementData["Name"] as string;
-
-                    if (string.IsNullOrEmpty(groupElementName))
+                    string? groupElementId;
+                    if (groupElementData["Name"] is string exactElementName)
                     {
-                        groupElementId = App.GenerateElementId(group.Name, elementType.GetName());
+                        groupElementId = exactElementName;
+                    }
+                    else
+                    if (groupElementData["GroupName"] is string groupElementName)
+                    {
+                        groupElementId = App.GenerateElementId(group.Name, groupElementName);
                     }
                     else
                     {
-                        groupElementId = App.GenerateElementId(group.Name, groupElementName);
+                        groupElementId = App.GenerateElementId(group.Name, elementType.GetName());
                     }
 
                     ParseParameter(groupElementId, groupElementData, group);

@@ -145,7 +145,7 @@ namespace DynamicInterfaceBuilder
             return ok;
         }
 
-        public string SetElementId (string id)
+        public string SetElementId(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -291,7 +291,7 @@ namespace DynamicInterfaceBuilder
                         },
                         new OrderedDictionary
                         {
-                            { "Name", "NestedGroup" },
+                            { "GroupName", "NestedGroup" },
                             { "Type", FormElementType.Group },
                             { "Label", "Nested group" },
                             { "Description", "Nested group description" },
