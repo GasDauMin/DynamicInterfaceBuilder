@@ -106,9 +106,9 @@ namespace DynamicInterfaceBuilder.Core.Form
                 Height = App.Height,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = App.AdvancedProperties.AllowResize ? ResizeMode.CanResize : ResizeMode.NoResize,
-                FontFamily = new FontFamily(App.FontName),
-                FontSize = App.FontSize,
-                Style = (Style)Application.Current.Resources["CustomWindowStyle"]
+                FontFamily = App.StyleProperties.FontFamily,
+                FontSize = App.StyleProperties.FontSize,
+                Style = (System.Windows.Style)Application.Current.Resources["CustomWindowStyle"]
             };
 
             // Set icon if provided
@@ -209,7 +209,7 @@ namespace DynamicInterfaceBuilder.Core.Form
                 {
                     if (element is FrameworkElement control)
                     {
-                        control.Margin = new Thickness(App.Spacing, App.Spacing, App.Spacing, 0);
+                        control.Margin = new Thickness(App.StyleProperties.Spacing, App.StyleProperties.Spacing, App.StyleProperties.Spacing, 0);
                     }
                 }
             };
@@ -440,7 +440,7 @@ namespace DynamicInterfaceBuilder.Core.Form
 
             if (double.IsNaN(availableWidth) || availableWidth <= 0)
             {
-                availableWidth = App.Width - ((App.Spacing != 0 ? App.Spacing : 1) * 2 + 20);
+                availableWidth = App.Width - ((App.StyleProperties.Spacing != 0 ? App.StyleProperties.Spacing : 1) * 2 + 20);
             }
 
             if (IsScrollbarVisible())

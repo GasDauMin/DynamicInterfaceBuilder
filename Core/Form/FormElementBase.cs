@@ -2,6 +2,9 @@ using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Interfaces;
 using DynamicInterfaceBuilder.Core.Form.Models;
 using DynamicInterfaceBuilder.Core.Models;
+using DynamicInterfaceBuilder.Core.Constants;
+using Newtonsoft.Json;
+using DynamicInterfaceBuilder.Core.Helpers;
 
 namespace DynamicInterfaceBuilder.Core.Form
 {
@@ -12,6 +15,7 @@ namespace DynamicInterfaceBuilder.Core.Form
         public string? Description { get; set; }
         public string? Tooltip { get; set; }
         public bool Valid { get; set; } = true;
+        public StyleProperties Style { get; set; } = new();
 
         public List<FormElementValidationRule> ValidationRules { get; protected set; } = [];
 

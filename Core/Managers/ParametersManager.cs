@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Interfaces;
 using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Models;
 
 namespace DynamicInterfaceBuilder.Core.Managers
@@ -132,6 +135,12 @@ namespace DynamicInterfaceBuilder.Core.Managers
                         }
                     }
                     break;
+                case "Style":
+                    if (entry.Value is IDictionary styleData)
+                    {
+                        ParseStyle(element, styleData);
+                    }
+                    break;
             }
         }
 
@@ -238,6 +247,39 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
 
             element.ValidationRules.Add(validationRule);
+        }
+
+        private void ParseStyle(FormElementBase element, IDictionary styleData)
+        {
+            foreach (DictionaryEntry entry in styleData)
+            {
+                string propertyName = entry.Key.ToString() ?? string.Empty;
+
+                if (entry.Value == null)
+                    continue;
+                    
+                try
+                {
+                    var property = element.Style.GetType().GetProperty(propertyName);
+                    if (property != null && property.CanWrite)
+                    {
+                        object? convertedValue = TypeConversionHelper.ConvertValueToType(entry.Value, property.PropertyType);
+                        
+                        if (convertedValue != null)
+                        {
+                            property.SetValue(element.Style, convertedValue);
+                        }
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Property {propertyName} not found on StyleProperties");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error setting style property {propertyName}: {ex.Message}");
+                }
+            }
         }
     }
 }

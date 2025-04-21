@@ -22,9 +22,9 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
+;
             bool isLabelVisible = Label != null && Label.Length > 0;
-            double spacing = isLabelVisible ? App.Spacing : 0;
+            double spacing = isLabelVisible ? Style.Spacing : 0;
 
             if (isLabelVisible)
             {

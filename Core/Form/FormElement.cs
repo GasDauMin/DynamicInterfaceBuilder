@@ -1,4 +1,6 @@
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Form.Elements;
@@ -71,39 +73,49 @@ namespace DynamicInterfaceBuilder.Core.Form
             }
         }
 
-        public override bool SetupValueControl(object? control)
+        public override bool SetupValueControl(object? controlObject)
         {
-            if (control != null)
+            if (controlObject != null)
             {
-                ValueControl = control;
+                ValueControl = controlObject;
+
+                if (ValueControl is Control control)
+                {
+                    control.FontFamily = Style.FontFamily;
+                    control.FontSize = Style.FontSize;
+                    control.FontWeight = Style.FontWeight;
+                    control.Margin = Style.Margin;
+                    control.Padding = Style.Padding;
+                }
 
                 if (ValueControl is TextBox textBox)
                 {
                     textBox.ToolTip = Tooltip;
                 }
-
+                
                 return true;
             }
 
             return false;
         }
 
-        public override bool SetupPanelControl(object? control)
+        public override bool SetupPanelControl(object? controlObject)
         {
-            if (control != null)
+            if (controlObject != null)
             {
-                PanelControl = control;
+                PanelControl = controlObject;
+                
                 return true;
             }
 
             return false;
         }
 
-        public override bool SetupLabelControl(object? control)
+        public override bool SetupLabelControl(object? controlObject)
         {
-            if (control != null)
+            if (controlObject != null)
             {
-                LabelControl = control;
+                LabelControl = controlObject;
                 return true;
             }
 

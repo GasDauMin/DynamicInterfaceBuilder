@@ -13,7 +13,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             var panel = new Grid
             {
                 Name = $"{Name}_Panel",
-                VerticalAlignment = VerticalAlignment.Top
+                VerticalAlignment = VerticalAlignment.Top,
             };
 
             var checkBox = new CheckBox
@@ -21,7 +21,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 Name = $"{Name}_CheckBox",
                 Content = Label,
                 IsChecked = DefaultValue,
-                VerticalAlignment = VerticalAlignment.Top
+                VerticalAlignment = VerticalAlignment.Top,
             };
 
             panel.Children.Add(checkBox);

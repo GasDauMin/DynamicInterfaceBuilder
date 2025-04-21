@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Media;
 using System.Xml.Linq;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Form.Enums;
 using DynamicInterfaceBuilder.Core.Form.Helpers;
+using DynamicInterfaceBuilder.Core.Form.Models;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Managers;
 using DynamicInterfaceBuilder.Core.Models;
@@ -21,6 +23,7 @@ namespace DynamicInterfaceBuilder
 
         public ConfigManager ConfigManager;
         public ParametersManager ParametersManager;
+        public StartupManager StartupManager;
 
         #endregion
 
@@ -38,13 +41,13 @@ namespace DynamicInterfaceBuilder
 
         public Application Application;
         public FormBuilder FormBuilder;
+        public string ConfigPath { get; set; } = General.ConfigPropertiesFile;
         public string? MessageText{get; set;} = string.Empty;
         public MessageType MessageType { get; set; } = MessageType.None;
         public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
         public List<string> FormElementIds { get; set; } = new();
         public Dictionary<string, object> Parameters { get; set; } = new();
-
-
+        
         #endregion
 
         #region Properties [CP]
@@ -53,25 +56,25 @@ namespace DynamicInterfaceBuilder
         public required string Title { get; set; } = Default.Title;
 
         [ConfigProperty]
-        public required int Width { get; set; } = Default.Width;
+        public required int Width { get; set; } = DefaultStyle.FormWidth;
         
         [ConfigProperty]
-        public required int Height { get; set; } = Default.Height;
+        public required int Height { get; set; } = DefaultStyle.FormHeight;
 
         [ConfigProperty]
-        public int Spacing { get; set; } = Default.Spacing;
+        public Thickness Margin { get; set; } = DefaultStyle.FormMargin;
 
         [ConfigProperty]
-        public string FontName { get; set; } = Default.FontName;
-
-        [ConfigProperty]
-        public int FontSize { get; set; } = Default.FontSize;
+        public Thickness Padding { get; set; } = DefaultStyle.FormPadding;
 
         [ConfigProperty]
         public ThemeType Theme { get; set; } = Default.Theme;
 
         [ConfigProperty]
         public AdvancedProperties AdvancedProperties { get; set; } = new();
+
+        [ConfigProperty]
+        public StyleProperties StyleProperties { get; set; } = new();
 
         [ConfigProperty]
         public string? Icon { get; set; } = Default.Icon;
@@ -81,24 +84,25 @@ namespace DynamicInterfaceBuilder
         #region Constructors
 
         public App()
-            : this(Default.Title, Default.Width, Default.Height)
+            : this(Default.Title, DefaultStyle.FormWidth, DefaultStyle.FormHeight)
         {
         }
 
-        public App(string title = Default.Title, int width = Default.Width, int height = Default.Height)
+        public App(string title = Default.Title, int width = DefaultStyle.FormWidth, int height = DefaultStyle.FormHeight)
         {
             Application = new System.Windows.Application();
 
-            ConfigManager       = new(this);
-            ParametersManager   = new(this);
-            ThemesManager       = new(this);
+            StartupManager = new(this);
+            ConfigManager = new(this);
+            ParametersManager = new(this);
+            ThemesManager = new(this);
 
-            MessageHelper       = new(this);
-            ValidationHelper    = new(this);
-            WindowsHelper       = new(this);
-            WpfHelper           = new(this);
+            MessageHelper = new(this);
+            ValidationHelper = new(this);
+            WindowsHelper = new(this);
+            WpfHelper = new(this);
 
-            FormBuilder         = new(this);
+            FormBuilder = new(this);
 
             Title = title;
             Width = width;
@@ -125,7 +129,9 @@ namespace DynamicInterfaceBuilder
             if (AdvancedProperties.AutoSaveConfig)
             {
                 SaveConfiguration();
-            }  
+            }
+
+            StartupManager.UpdateStartupSettings();
         }
 
         public bool Validate()
@@ -210,28 +216,18 @@ namespace DynamicInterfaceBuilder
             return id;
         }
 
-        public void ResetDefaults(bool save = false)
+        public void ResetDefaults()
         {
             Parameters.Clear();
 
             Title = Default.Title;
-            Width = Default.Width;
-            Height = Default.Height;
-            Spacing = Default.Spacing;
-            FontName = Default.FontName;
-            FontSize = Default.FontSize;
+            Width = DefaultStyle.FormWidth;
+            Height = DefaultStyle.FormHeight;
             Theme = Default.Theme;
             Icon = Default.Icon;
 
-            AdvancedProperties = new AdvancedProperties
-            {
-                ReverseButtons = Default.ReverseButtons,
-                AllowResize = Default.AllowResize,
-                AdjustLabels = Default.AdjustLabels,
-                AutoLoadConfig = Default.AutoLoadConfig,
-                AutoSaveConfig = Default.AutoSaveConfig,
-                MaxMessageLines = Default.MaxMessageLines,
-            };
+            AdvancedProperties.ResetDefaults();
+            StyleProperties.ResetDefaults();
         }
         
         public void SaveConfiguration() => ConfigManager.SaveConfiguration(this);
@@ -239,100 +235,6 @@ namespace DynamicInterfaceBuilder
         public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
         public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path); 
         
-        #endregion
-
-        #region Main 
-
-        [STAThread]
-        static void Main()
-        {       
-            var application = new App()
-            {
-                Title = Default.Title,
-                Width = Default.Width,
-                Height = Default.Height
-            };
-
-            application.Parameters["TestGroup"] = new OrderedDictionary
-            {
-                { "Type", FormElementType.Group },
-                { "Label", "Test group" },
-                { "Description", "Test group description" },
-                { "Elements", new[] {
-                        new OrderedDictionary
-                        {
-                            { "Type", FormElementType.TextBox },
-                            { "Label", "Test text box" },
-                            { "Description", "Test text box description" },
-                            { "DefaultValue", "Test text box default value" },
-                            { "Validation", new[]
-                                {
-                                    new OrderedDictionary { 
-                                        { "Type", FormElementValidationType.Required },
-                                        { "Value", true },
-                                        { "Message", "Test text box is required." }
-                                    }
-                                }
-                            }
-                        },
-                        new OrderedDictionary
-                        {
-                            { "Type", FormElementType.CheckBox },
-                            { "Label", "Test check box" },
-                            { "Description", "Test check box description" },
-                            { "DefaultValue", true },
-                        },
-                        new OrderedDictionary
-                        {
-                            { "Type", FormElementType.CheckBox },
-                            { "Label", "Test check box" },
-                            { "Description", "Test check box description" },
-                            { "DefaultValue", true },
-                        },
-                        new OrderedDictionary
-                        {
-                            { "GroupName", "NestedGroup" },
-                            { "Type", FormElementType.Group },
-                            { "Label", "Nested group" },
-                            { "Description", "Nested group description" },
-                            { "Elements", new[] {
-                                    new OrderedDictionary
-                                    {
-                                        { "Type", FormElementType.TextBox },
-                                        { "Label", "Nested text box" },
-                                        { "Value", "Nested text box default value" },
-                                        { "Description", "Nested text box description" },
-                                        { "Validation", new[]
-                                            {
-                                                new OrderedDictionary {
-                                                    { "Type", FormElementValidationType.Required },
-                                                    { "Value", true },
-                                                    { "Message", "Nested text box is required." }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        new OrderedDictionary
-                        {
-                            { "Type", FormElementType.ComboBox },
-                            { "Label", "Test combobox" },
-                            { "Description", "Test combobox description" },
-                            { "DefaultValue", "Item 3" },
-                            { "Items", new[] { "Item 1", "Item 2", "Item 3" } }
-                        }
-                    }
-                }
-            };
-
-            application.Run();
-            
-            // Exit the application when the form is closed
-            // application.Shutdown();
-        }
-
         #endregion
     }
 }
