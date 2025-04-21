@@ -235,7 +235,6 @@ namespace DynamicInterfaceBuilder.Core.Form
             //     //return rule.ValidateText(Value.ToString());
             // }
 
-
             return true;
         }
 

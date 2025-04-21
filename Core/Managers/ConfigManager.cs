@@ -152,7 +152,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
         // Helper to get the full path from AdvancedProperties.ConfigPath
         private string GetFullConfigPath(DynamicInterfaceBuilder.App app)
         {
-            string configPath = app.ConfigPath;
+            string configPath = app.StartupProperties.ConfigPath;
             
             // If the path is not absolute, make it relative to the assembly directory
             if (!Path.IsPathRooted(configPath))

@@ -25,8 +25,8 @@ namespace DynamicInterfaceBuilder
             var application = new App()
             {
                 Title = Default.Title,
-                Width = DefaultStyle.FormWidth,
-                Height = DefaultStyle.FormHeight
+                Width = Default.Width,
+                Height = Default.Height
             };
             
             application.Parameters["TestGroup"] = new OrderedDictionary

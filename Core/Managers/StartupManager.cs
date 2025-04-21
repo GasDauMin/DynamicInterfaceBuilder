@@ -35,20 +35,20 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 try
                 {
                     string json = File.ReadAllText(path);
-                    var settings = JsonConvert.DeserializeObject<StartupSettingsData>(json);
+                    var settings = JsonConvert.DeserializeObject<StartupProperties>(json);
                     
                     if (settings != null)
                     {
                         var app = (DynamicInterfaceBuilder.App)App;
                         
                         // Load auto settings
-                        app.AdvancedProperties.AutoLoadConfig = settings.AutoLoadConfig;
-                        app.AdvancedProperties.AutoSaveConfig = settings.AutoSaveConfig;
+                        app.StartupProperties.AutoLoadConfig = settings.AutoLoadConfig;
+                        app.StartupProperties.AutoSaveConfig = settings.AutoSaveConfig;
                         
                         // Load config path if provided
                         if (!string.IsNullOrEmpty(settings.ConfigPath))
                         {
-                            app.ConfigPath = settings.ConfigPath;
+                            app.StartupProperties.ConfigPath = settings.ConfigPath;
                         }
                     }
                 }
@@ -74,11 +74,11 @@ namespace DynamicInterfaceBuilder.Core.Managers
             {
                 var app = (DynamicInterfaceBuilder.App)App;
                 
-                var settings = new StartupSettingsData
+                var settings = new StartupProperties
                 {
-                    AutoLoadConfig = app.AdvancedProperties.AutoLoadConfig,
-                    AutoSaveConfig = app.AdvancedProperties.AutoSaveConfig,
-                    ConfigPath = app.ConfigPath
+                    AutoLoadConfig = app.StartupProperties.AutoLoadConfig,
+                    AutoSaveConfig = app.StartupProperties.AutoSaveConfig,
+                    ConfigPath = app.StartupProperties.ConfigPath
                 };
                 
                 string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
@@ -103,22 +103,15 @@ namespace DynamicInterfaceBuilder.Core.Managers
             var app = (DynamicInterfaceBuilder.App)App;
             
             if (autoLoad.HasValue)
-                app.AdvancedProperties.AutoLoadConfig = autoLoad.Value;
+                app.StartupProperties.AutoLoadConfig = autoLoad.Value;
                 
             if (autoSave.HasValue)
-                app.AdvancedProperties.AutoSaveConfig = autoSave.Value;
+                app.StartupProperties.AutoSaveConfig = autoSave.Value;
                 
             if (configPath != null)
-                app.ConfigPath = configPath;
+                app.StartupProperties.ConfigPath = configPath;
                 
             SaveStartupSettings();
-        }
-        
-        private class StartupSettingsData
-        {
-            public bool AutoLoadConfig { get; set; } = Default.AutoLoadConfig;
-            public bool AutoSaveConfig { get; set; } = Default.AutoSaveConfig;
-            public string ConfigPath { get; set; } = General.ConfigPropertiesFile;
         }
     }
 } 

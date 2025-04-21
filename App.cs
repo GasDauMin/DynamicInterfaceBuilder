@@ -41,13 +41,13 @@ namespace DynamicInterfaceBuilder
 
         public Application Application;
         public FormBuilder FormBuilder;
-        public string ConfigPath { get; set; } = General.ConfigPropertiesFile;
         public string? MessageText{get; set;} = string.Empty;
         public MessageType MessageType { get; set; } = MessageType.None;
         public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
         public List<string> FormElementIds { get; set; } = new();
         public Dictionary<string, object> Parameters { get; set; } = new();
-        
+        public StartupProperties StartupProperties { get; set; } = new();
+
         #endregion
 
         #region Properties [CP]
@@ -56,16 +56,16 @@ namespace DynamicInterfaceBuilder
         public required string Title { get; set; } = Default.Title;
 
         [ConfigProperty]
-        public required int Width { get; set; } = DefaultStyle.FormWidth;
+        public required int Width { get; set; } = Default.Width;
         
         [ConfigProperty]
-        public required int Height { get; set; } = DefaultStyle.FormHeight;
+        public required int Height { get; set; } = Default.Height;
 
         [ConfigProperty]
-        public Thickness Margin { get; set; } = DefaultStyle.FormMargin;
+        public Thickness Margin { get; set; } = Default.Margin;
 
         [ConfigProperty]
-        public Thickness Padding { get; set; } = DefaultStyle.FormPadding;
+        public Thickness Padding { get; set; } = Default.Padding;
 
         [ConfigProperty]
         public ThemeType Theme { get; set; } = Default.Theme;
@@ -84,11 +84,11 @@ namespace DynamicInterfaceBuilder
         #region Constructors
 
         public App()
-            : this(Default.Title, DefaultStyle.FormWidth, DefaultStyle.FormHeight)
+            : this(Default.Title, Default.Width, Default.Height)
         {
         }
 
-        public App(string title = Default.Title, int width = DefaultStyle.FormWidth, int height = DefaultStyle.FormHeight)
+        public App(string title = Default.Title, int width = Default.Width, int height = Default.Height)
         {
             Application = new System.Windows.Application();
 
@@ -115,7 +115,7 @@ namespace DynamicInterfaceBuilder
 
         public void Run()
         {
-            if (AdvancedProperties.AutoLoadConfig)
+            if (StartupProperties.AutoLoadConfig)
             {
                 LoadConfiguration();
             }  
@@ -126,7 +126,7 @@ namespace DynamicInterfaceBuilder
 
             FormBuilder.Run();
 
-            if (AdvancedProperties.AutoSaveConfig)
+            if (StartupProperties.AutoSaveConfig)
             {
                 SaveConfiguration();
             }
@@ -221,11 +221,12 @@ namespace DynamicInterfaceBuilder
             Parameters.Clear();
 
             Title = Default.Title;
-            Width = DefaultStyle.FormWidth;
-            Height = DefaultStyle.FormHeight;
+            Width = Default.Width;
+            Height = Default.Height;
             Theme = Default.Theme;
             Icon = Default.Icon;
 
+            StartupProperties.ResetDefaults();
             AdvancedProperties.ResetDefaults();
             StyleProperties.ResetDefaults();
         }

@@ -1,13 +1,12 @@
 using DynamicInterfaceBuilder.Core.Attributes;
+using DynamicInterfaceBuilder.Core.Interfaces;
 using DynamicInterfaceBuilder.Core.Constants;
 
 namespace DynamicInterfaceBuilder.Core.Models
 {
     [ExtendedProperties]
-    public class AdvancedProperties
+    public class AdvancedProperties : IProperties
     {
-        public bool AutoLoadConfig { get; set; } = Default.AutoLoadConfig;
-        public bool AutoSaveConfig { get; set; } = Default.AutoSaveConfig;
         public bool AdjustLabels { get; set; } = Default.AdjustLabels;
         public bool ReverseButtons { get; set; } = Default.ReverseButtons;
         public bool AllowResize { get; set; } = Default.AllowResize;
@@ -15,8 +14,6 @@ namespace DynamicInterfaceBuilder.Core.Models
 
         public void ResetDefaults()
         {
-            AutoLoadConfig = Default.AutoLoadConfig;
-            AutoSaveConfig = Default.AutoSaveConfig;
             AdjustLabels = Default.AdjustLabels;
             ReverseButtons = Default.ReverseButtons;
             AllowResize = Default.AllowResize;
