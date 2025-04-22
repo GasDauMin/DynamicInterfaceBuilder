@@ -1,19 +1,8 @@
-using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Media;
-using System.Xml.Linq;
-using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
-using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Helpers;
-using DynamicInterfaceBuilder.Core.Form.Models;
-using DynamicInterfaceBuilder.Core.Helpers;
-using DynamicInterfaceBuilder.Core.Managers;
-using DynamicInterfaceBuilder.Core.Models;
-using DynamicInterfaceBuilder.Core.UI.Enums;
-using Microsoft.VisualBasic;
 
 namespace DynamicInterfaceBuilder
 {
@@ -36,9 +25,9 @@ namespace DynamicInterfaceBuilder
                 { "Description", "Test group description" },
                 { "Style", new OrderedDictionary
                     {
-                        { "FontSize", 25 },
-                        { "FontWeight", FontWeights.Bold },
-                        { "FontFamily", new FontFamily("Consolas") }
+                        { "ValueControlFontSize", 15 },
+                        { "ValueControlFontWeight", FontWeights.Bold },
+                        { "ValueControlFontFamily", new FontFamily("Consolas") }
                     }
                 },
                 { "Elements", new[] {
@@ -47,7 +36,7 @@ namespace DynamicInterfaceBuilder
                             { "Type", FormElementType.TextBox },
                             { "Label", "Test text box" },
                             { "Description", "Test text box description" },
-                            { "DefaultValue", "Test text box default value" },
+                            { "DefaultValue", "" },
                             { "Validation", new[]
                                 {
                                     new OrderedDictionary { 
@@ -56,7 +45,13 @@ namespace DynamicInterfaceBuilder
                                         { "Message", "Test text box is required." }
                                     }
                                 }
-                            }
+                            },
+                            { "Style", new OrderedDictionary
+                                {
+                                    { "ValueControlBackground", Colors.LightGray.ToString() },
+                                    { "ValueControlForeground", Colors.Black.ToString() },
+                                }
+                            },
                         },
                         new OrderedDictionary
                         {
@@ -83,7 +78,7 @@ namespace DynamicInterfaceBuilder
                                     {
                                         { "Type", FormElementType.TextBox },
                                         { "Label", "Nested text box" },
-                                        { "Value", "Nested text box default value" },
+                                        { "Value", "" },
                                         { "Description", "Nested text box description" },
                                         { "Validation", new[]
                                             {

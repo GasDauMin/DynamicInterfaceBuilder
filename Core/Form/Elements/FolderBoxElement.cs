@@ -26,7 +26,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
            
             bool isLabelVisible = Label != null && Label.Length > 0;
-            double spacing = isLabelVisible ? Style.Spacing : 0;
+            double spacing = isLabelVisible ? StyleProperties.Spacing : 0;
 
             if (isLabelVisible)
             {

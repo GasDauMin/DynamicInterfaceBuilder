@@ -23,6 +23,12 @@ namespace DynamicInterfaceBuilder.Core.Helpers
                     return null;
                 }
 
+                // Handle nullable types
+                if (Nullable.GetUnderlyingType(targetType) is Type underlyingType)
+                {
+                    targetType = underlyingType;
+                }
+
                 // Handle WPF Thickness
                 if (targetType == typeof(Thickness) && value is string thicknessStr)
                 {
@@ -151,4 +157,4 @@ namespace DynamicInterfaceBuilder.Core.Helpers
             }
         }
     }
-} 
+}

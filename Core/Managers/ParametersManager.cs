@@ -59,6 +59,12 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
             var element = FormElementFactory.Create(type, App.SetElementId(id), App);
 
+            // Set parent-child relationship
+            if (group is FormElementBase parentElement)
+            {
+                element.SetParent(parentElement);
+            }
+
             // First pass - ordered properties
             foreach (var propertyName in ParsingOrder)
             {
@@ -81,7 +87,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
             if (group != null)
             {
-                group.Elements[id] = element;
+                group.Elements[id] = element;      
             }
             else
             {
@@ -260,14 +266,14 @@ namespace DynamicInterfaceBuilder.Core.Managers
                     
                 try
                 {
-                    var property = element.Style.GetType().GetProperty(propertyName);
+                    var property = element.StyleProperties.GetType().GetProperty(propertyName);
                     if (property != null && property.CanWrite)
                     {
                         object? convertedValue = TypeConversionHelper.ConvertValueToType(entry.Value, property.PropertyType);
                         
                         if (convertedValue != null)
                         {
-                            property.SetValue(element.Style, convertedValue);
+                            property.SetValue(element.StyleProperties, convertedValue);
                         }
                     }
                     else

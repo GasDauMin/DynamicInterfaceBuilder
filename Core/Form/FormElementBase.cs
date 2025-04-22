@@ -15,7 +15,10 @@ namespace DynamicInterfaceBuilder.Core.Form
         public string? Description { get; set; }
         public string? Tooltip { get; set; }
         public bool Valid { get; set; } = true;
-        public StyleProperties Style { get; set; } = new();
+        public StyleProperties StyleProperties { get; set; } = new();
+        
+        [JsonIgnore]
+        public FormElementBase? Parent { get; protected set; }
 
         public List<FormElementValidationRule> ValidationRules { get; protected set; } = [];
 
@@ -23,6 +26,8 @@ namespace DynamicInterfaceBuilder.Core.Form
         {
             Name = name;
             Type = type;
+
+            InheritStyle();
         }
 
         public bool TrySetProperty(string propertyName, object? value)
@@ -42,6 +47,26 @@ namespace DynamicInterfaceBuilder.Core.Form
             }
             
             return false;
+        }
+        
+        public void SetParent(FormElementBase parent)
+        {
+            Parent = parent;
+            InheritStyle();
+        }
+        
+        public void InheritStyle()
+        {
+            if (Parent != null)
+            {
+                // Inherit style from parent element
+                StyleProperties = ObjectHelper.Clone(Parent.StyleProperties);
+            }
+            else if (App != null)
+            {
+                // If no parent, inherit from App's StyleProperties
+                StyleProperties = ObjectHelper.Clone(App.StyleProperties);
+            }
         }
 
         public abstract object? BuildElement();

@@ -81,11 +81,7 @@ namespace DynamicInterfaceBuilder.Core.Form
 
                 if (ValueControl is Control control)
                 {
-                    control.FontFamily = Style.FontFamily;
-                    control.FontSize = Style.FontSize;
-                    control.FontWeight = Style.FontWeight;
-                    control.Margin = Style.Margin;
-                    control.Padding = Style.Padding;
+                    StyleHelper.ApplyValueControlStyles(control, StyleProperties);
                 }
 
                 if (ValueControl is TextBox textBox)
@@ -105,6 +101,11 @@ namespace DynamicInterfaceBuilder.Core.Form
             {
                 PanelControl = controlObject;
                 
+                if (PanelControl is Control control)
+                {
+                    StyleHelper.ApplyPanelControlStyles(control, StyleProperties);
+                }
+                
                 return true;
             }
 
@@ -116,6 +117,12 @@ namespace DynamicInterfaceBuilder.Core.Form
             if (controlObject != null)
             {
                 LabelControl = controlObject;
+                
+                if (LabelControl is Control control)
+                {
+                    StyleHelper.ApplyLabelControlStyles(control, StyleProperties);
+                }
+
                 return true;
             }
 
@@ -144,9 +151,8 @@ namespace DynamicInterfaceBuilder.Core.Form
         {
             if (ValueControl is Control control)
             {
-                control.ClearValue(Control.BackgroundProperty);
-                control.ClearValue(Control.ForegroundProperty);
-                control.ClearValue(Control.BorderBrushProperty);
+                StyleHelper.ResetControlStyle(control);
+                StyleHelper.ApplyValueControlStyles(control, StyleProperties);
             }
             
             if (ValueControl is TextBox textBox)
@@ -157,21 +163,19 @@ namespace DynamicInterfaceBuilder.Core.Form
 
         public override void ResetLabelControl()
         {
-            if (ValueControl is Control control)
+            if (LabelControl is Control control)
             {
-                control.ClearValue(Control.BackgroundProperty);
-                control.ClearValue(Control.ForegroundProperty);
-                control.ClearValue(Control.BorderBrushProperty);
+                StyleHelper.ResetControlStyle(control);
+                StyleHelper.ApplyLabelControlStyles(control, StyleProperties);
             }
         }
 
         public override void ResetPanelControl()
         {
-            if (ValueControl is Control control)
+            if (PanelControl is Control control)
             {
-                control.ClearValue(Control.BackgroundProperty);
-                control.ClearValue(Control.ForegroundProperty);
-                control.ClearValue(Control.BorderBrushProperty);
+                StyleHelper.ResetControlStyle(control);
+                StyleHelper.ApplyPanelControlStyles(control, StyleProperties);
             }
         }
 
@@ -220,8 +224,7 @@ namespace DynamicInterfaceBuilder.Core.Form
                 if (allowAlertControl && !Valid)
                 {   
                     alertControl!.ToolTip += (alertControl!.ToolTip.ToString() == String.Empty ? "" : General.EndLine) + tooltipValue;         
-                    alertControl.Background = ThemeManager.GetBrush("ABrush.AlertTone2");
-                    alertControl.BorderBrush = ThemeManager.GetBrush("ABrush.AlertTone3");
+                    StyleHelper.ApplyValueControlAlertStyle(alertControl, StyleProperties);
                 }
             }
 

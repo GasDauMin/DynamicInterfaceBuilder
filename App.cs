@@ -62,19 +62,18 @@ namespace DynamicInterfaceBuilder
         public required int Height { get; set; } = Default.Height;
 
         [ConfigProperty]
-        public Thickness Margin { get; set; } = Default.Margin;
+        public Thickness? Margin { get; set; } = Default.Margin;
 
         [ConfigProperty]
-        public Thickness Padding { get; set; } = Default.Padding;
+        public Thickness? Padding { get; set; } = Default.Padding;
 
         [ConfigProperty]
         public ThemeType Theme { get; set; } = Default.Theme;
 
         [ConfigProperty]
-        public AdvancedProperties AdvancedProperties { get; set; } = new();
-
+        public AdvancedProperties AdvancedProperties { get; set; }
         [ConfigProperty]
-        public StyleProperties StyleProperties { get; set; } = new();
+        public StyleProperties StyleProperties { get; set; }
 
         [ConfigProperty]
         public string? Icon { get; set; } = Default.Icon;
@@ -96,6 +95,9 @@ namespace DynamicInterfaceBuilder
             ConfigManager = new(this);
             ParametersManager = new(this);
             ThemesManager = new(this);
+
+            AdvancedProperties = new AdvancedProperties();
+            StyleProperties = new StyleProperties();
 
             MessageHelper = new(this);
             ValidationHelper = new(this);
@@ -230,7 +232,11 @@ namespace DynamicInterfaceBuilder
             AdvancedProperties.ResetDefaults();
             StyleProperties.ResetDefaults();
         }
-        
+
+        public void ResetStartupProperties() => StartupProperties.ResetDefaults();
+        public void ResetAdvancedProperties() => AdvancedProperties.ResetDefaults();
+        public void ResetStyleProperties() => StyleProperties.ResetDefaults();
+
         public void SaveConfiguration() => ConfigManager.SaveConfiguration(this);
         public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);
         public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
