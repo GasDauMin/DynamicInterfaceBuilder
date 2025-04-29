@@ -1,0 +1,13 @@
+# Ignore system files
+.vs
+.DS_Store
+Thumbs.db
+bin
+obj
+
+# Ignore files
+*.log
+
+# Ignore directories
+**/tmp/**/*
+**/netcoredbg/**

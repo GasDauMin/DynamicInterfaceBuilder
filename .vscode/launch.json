@@ -1,0 +1,51 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PowerShell debug",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${file}",
+        },
+        {
+            "name": "Powershell debug (and c# build)",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "cwd": "${fileDirname}",
+            "preLaunchTask": "BuildDelayed",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "name": "C# debug (cursors)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build",
+            "program": "bin/Debug/net9.0-windows/FormBuilder.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Windows/Tools/DynamicInterfaceBuilder",
+            "console": "internalConsole",
+            "internalConsoleOptions": "neverOpen",
+            "stopAtEntry": false,
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}/Windows/Tools/DynamicInterfaceBuilder",
+                "pipeProgram": "bash",
+                "pipeArgs": ["-c"],
+                "debuggerPath": "debug/netcoredbg/netcoredbg.exe",
+                "debuggerArgs": ["--interpreter=vscode"],
+                "quoteArgs": true
+            }
+        },
+        {
+            "name": "C# attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}",
+            "justMyCode": true
+        },
+    ]
+}
