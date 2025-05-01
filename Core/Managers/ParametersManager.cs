@@ -9,6 +9,7 @@ using DynamicInterfaceBuilder.Core.Form.Interfaces;
 using DynamicInterfaceBuilder.Core.Form.Models;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Models;
+using System.Reflection;
 
 namespace DynamicInterfaceBuilder.Core.Managers
 {
@@ -255,35 +256,64 @@ namespace DynamicInterfaceBuilder.Core.Managers
             element.ValidationRules.Add(validationRule);
         }
 
+        private (PropertyInfo? Property, object? TargetObject) GetPropertyFromPath(object rootObject, string propertyPath)
+        {
+            string[] propertyParts = propertyPath.Split('.');
+            object currentObject = rootObject;
+            PropertyInfo? property = null;
+
+            for (int i = 0; i < propertyParts.Length; i++)
+            {
+                if (currentObject == null)
+                    break;
+
+                property = currentObject.GetType().GetProperty(propertyParts[i]);
+                if (property == null)
+                    break;
+
+                if (i < propertyParts.Length - 1)
+                {
+                    object? value = property.GetValue(currentObject);
+                    if (value == null)
+                        break;
+                    
+                    currentObject = value;
+                }
+            }
+
+            return (property, currentObject);
+        }
+
         private void ParseStyle(FormElementBase element, IDictionary styleData)
         {
             foreach (DictionaryEntry entry in styleData)
             {
-                string propertyName = entry.Key.ToString() ?? string.Empty;
+                string propertyPath = entry.Key.ToString() ?? string.Empty;
 
                 if (entry.Value == null)
                     continue;
                     
                 try
                 {
-                    var property = element.StyleProperties.GetType().GetProperty(propertyName);
-                    if (property != null && property.CanWrite)
+                    var (property, targetObject) = GetPropertyFromPath(element.StyleProperties, propertyPath);
+
+                    if (property != null && property.CanWrite && targetObject != null)
                     {
                         object? convertedValue = TypeConversionHelper.ConvertValueToType(entry.Value, property.PropertyType);
                         
                         if (convertedValue != null)
                         {
-                            property.SetValue(element.StyleProperties, convertedValue);
+                            property.SetValue(targetObject, convertedValue);
                         }
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine($"Property {propertyName} not found on StyleProperties");
+                        System.Diagnostics.Debug.WriteLine($"Property {propertyPath} not found on StyleProperties");
                     }
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Error setting style property {propertyName}: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine($"Error setting style property {propertyPath}: {ex.Message}");
                 }
             }
         }

@@ -56,19 +56,15 @@ namespace DynamicInterfaceBuilder.Core.Managers
             foreach (var property in properties)
             {
                 object? value = property.GetValue(target);
-                if (value != null)
+                if (value != null && IsComplexType(property.PropertyType))
                 {
-                    if (IsComplexType(property.PropertyType))
-                    {
-                        // Handle complex types recursively
-                        var nestedValues = new Dictionary<string, object>();
-                        SaveConfigProperties(value, nestedValues);
-                        configValues[property.Name] = nestedValues;
-                    }
-                    else
-                    {
-                        configValues[property.Name] = value;
-                    }
+                    var nestedValues = new Dictionary<string, object>();
+                    SaveConfigProperties(value, nestedValues);
+                    configValues[property.Name] = nestedValues;
+                }
+                else
+                {
+                    configValues[property.Name] = value ?? JValue.CreateNull();
                 }
             }
         }

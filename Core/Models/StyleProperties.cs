@@ -4,123 +4,78 @@ using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Interfaces;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Managers;
+using System.Reflection.Emit;
 
 namespace DynamicInterfaceBuilder.Core.Models
 {
     [ExtendedProperties]
     public class StyleProperties : IProperties
     {
-        #region Form Style Properties
+        #region General Style Properties
         
-        public int Spacing { get; set; } = Default.Spacing;
-        public FontWeight FontWeight { get; set; } = Default.FontWeight;
-        public FontFamily FontFamily { get; set; } = Default.FontFamily;
-        public double FontSize { get; set; } = Default.FontSize;
-        public HorizontalAlignment? HorizontalAlignment { get; set; } = Default.HorizontalAlignment;
-        public VerticalAlignment? VerticalAlignment { get; set; } = Default.VerticalAlignment;
-        public SolidColorBrush? BorderColor { get; set; } = Default.BorderColor;
-        public Thickness? BorderThickness { get; set; } = Default.BorderThickness;
-        public Thickness? Margin { get; set; } = Default.Margin;
-        public Thickness? Padding { get; set; } = Default.Padding;
-        public double? Width { get; set; } = Default.Width;
-        public double? MinWidth { get; set; } = Default.MinWidth;
-        public double? MaxWidth { get; set; } = Default.MaxWidth;
-        public double? Height { get; set; } = Default.Height;
-        public double? MinHeight { get; set; } = Default.MinHeight;
-        public double? MaxHeight { get; set; } = Default.MaxHeight;
-        
-        #endregion
-        
-        #region Panel Control Style Properties
-        
-        public Thickness? PanelControlMargin { get; set; } = Default.PanelControlMargin;
-        public Thickness? PanelControlPadding { get; set; } = Default.PanelControlPadding;
-        public HorizontalAlignment? PanelControlHorizontalAlignment { get; set; } = Default.PanelControlHorizontalAlignment;
-        public VerticalAlignment? PanelControlVerticalAlignment { get; set; } = Default.PanelControlVerticalAlignment;
-        public Thickness? PanelControlBorderThickness { get; set; } = Default.PanelControlBorderThickness;
-        public SolidColorBrush? PanelControlBorderColor { get; set; } = Default.PanelControlBorderColor;
-        public double? PanelControlWidth { get; set; } = null;
-        public double? PanelControlMinWidth { get; set; } = null;
-        public double? PanelControlMaxWidth { get; set; } = null;
-        public double? PanelControlHeight { get; set; } = null;
-        public double? PanelControlMinHeight { get; set; } = null;
-        public double? PanelControlMaxHeight { get; set; } = null;
+        public int Spacing { get; set; }
+        public FontWeight FontWeight { get; set; }
+        public FontFamily? FontFamily { get; set; }
+        public double FontSize { get; set; }
+        public HorizontalAlignment? HorizontalAlignment { get; set; }
+        public VerticalAlignment? VerticalAlignment { get; set; }
+        public string? BorderColor { get; set; }
+        public Thickness? BorderThickness { get; set; }
+        public Thickness? Margin { get; set; }
+        public Thickness? Padding { get; set; }
+        public double? Width { get; set; }
+        public double? MinWidth { get; set; }
+        public double? MaxWidth { get; set; }
+        public double? Height { get; set; }
+        public double? MinHeight { get; set; }
+        public double? MaxHeight { get; set; }
         
         #endregion
+
+        #region Group Style Properties
         
-        #region Value Control Style Properties
-        
-        public Thickness? ValueControlMargin { get; set; } = Default.ValueControlMargin;
-        public Thickness? ValueControlPadding { get; set; } = Default.ValueControlPadding;
-        public FontWeight? ValueControlFontWeight { get; set; } = Default.ValueControlFontWeight;
-        public FontFamily? ValueControlFontFamily { get; set; } = Default.ValueControlFontFamily;
-        public double? ValueControlFontSize { get; set; } = Default.ValueControlFontSize;
-        public SolidColorBrush? ValueControlForeground { get; set; } = Default.ValueControlForeground;
-        public SolidColorBrush? ValueControlBackground { get; set; } = Default.ValueControlBackground;
-        public HorizontalAlignment? ValueControlHorizontalAlignment { get; set; } = Default.ValueControlHorizontalAlignment;
-        public VerticalAlignment? ValueControlVerticalAlignment { get; set; } = Default.ValueControlVerticalAlignment;
-        public double? ValueControlWidth { get; set; } = null;
-        public double? ValueControlMinWidth { get; set; } = null;
-        public double? ValueControlMaxWidth { get; set; } = null;
-        public double? ValueControlHeight { get; set; } = null;
-        public double? ValueControlMinHeight { get; set; } = null;
-        public double? ValueControlMaxHeight { get; set; } = null;
-        
-        #endregion
-        
-        #region Label Control Style Properties
-        
-        public Thickness? LabelControlMargin { get; set; } = Default.LabelControlMargin;
-        public Thickness? LabelControlPadding { get; set; } = Default.LabelControlPadding;
-        public FontWeight? LabelControlFontWeight { get; set; } = Default.LabelControlFontWeight;
-        public FontFamily? LabelControlFontFamily { get; set; } = Default.LabelControlFontFamily;
-        public double? LabelControlFontSize { get; set; } = Default.LabelControlFontSize;
-        public SolidColorBrush? LabelControlForeground { get; set; } = Default.LabelControlForeground;
-        public SolidColorBrush? LabelControlBackground { get; set; } = Default.LabelControlBackground;
-        public HorizontalAlignment? LabelControlHorizontalAlignment { get; set; } = Default.LabelControlHorizontalAlignment;
-        public VerticalAlignment? LabelControlVerticalAlignment { get; set; } = Default.LabelControlVerticalAlignment;
-        public double? LabelControlWidth { get; set; } = null;
-        public double? LabelControlMinWidth { get; set; } = null;
-        public double? LabelControlMaxWidth { get; set; } = null;
-        public double? LabelControlHeight { get; set; } = null;
-        public double? LabelControlMinHeight { get; set; } = null;
-        public double? LabelControlMaxHeight { get; set; } = null;
-        
-        #endregion
-        
-        #region Button Control Style Properties
-        
-        public Thickness? ButtonControlMargin { get; set; } = Default.ButtonControlMargin;
-        public Thickness? ButtonControlPadding { get; set; } = Default.ButtonControlPadding;
-        public FontWeight? ButtonControlFontWeight { get; set; } = Default.ButtonControlFontWeight;
-        public FontFamily? ButtonControlFontFamily { get; set; } = Default.ButtonControlFontFamily;
-        public double? ButtonControlFontSize { get; set; } = Default.ButtonControlFontSize;
-        public SolidColorBrush? ButtonControlForeground { get; set; } = Default.ButtonControlForeground;
-        public SolidColorBrush? ButtonControlBackground { get; set; } = Default.ButtonControlBackground;
-        public HorizontalAlignment? ButtonControlHorizontalAlignment { get; set; } = Default.ButtonControlHorizontalAlignment;
-        public VerticalAlignment? ButtonControlVerticalAlignment { get; set; } = Default.ButtonControlVerticalAlignment;
-        public Thickness? ButtonControlBorderThickness { get; set; } = Default.ButtonControlBorderThickness;
-        public SolidColorBrush? ButtonControlBorderColor { get; set; } = Default.ButtonControlBorderColor;
-        public double? ButtonControlWidth { get; set; } = null;
-        public double? ButtonControlMinWidth { get; set; } = null;
-        public double? ButtonControlMaxWidth { get; set; } = null;
-        public double? ButtonControlHeight { get; set; } = null;
-        public double? ButtonControlMinHeight { get; set; } = null;
-        public double? ButtonControlMaxHeight { get; set; } = null;
+        public double? GroupSpacing { get; set; }
+        public Thickness? GroupMargin { get; set; }
+        public Thickness? GroupPadding { get; set; }
+        public bool? GroupShowBorder { get; set; }
+        public double? GroupBorderThickness { get; set; }
+        public CornerRadius? GroupCornerRadius { get; set; }
+        public string? GroupBorderColor { get; set; }
+        public string? GroupHeaderBackground { get; set; }
+        public string? GroupHeaderForeground { get; set; }
+        public string? GroupBackground { get; set; }
         
         #endregion
 
         #region Alert Style Properties
 
-        public SolidColorBrush? AlertBackground { get; set; } = ThemeManager.GetBrush("ABrush.AlertTone2");
-        public SolidColorBrush? AlertForeground { get; set; } = ThemeManager.GetBrush("ABrush.AlertTone5");
-        public SolidColorBrush? AlertBorderBrush { get; set; } = ThemeManager.GetBrush("ABrush.AlertTone3");
+        public string? AlertBackground { get; set; }
+        public string? AlertForeground { get; set; }
+        public string? AlertBorderColor { get; set; }
 
         #endregion
+        
+        #region Controls Style Properties
 
-        #region Reset Defaults
+        public StyleControlProperties? PanelControl { get; set; }
+        public StyleControlProperties? ValueControl { get; set; }
+        public StyleControlProperties? LabelControl { get; set; }
+        public StyleControlProperties? ButtonControl { get; set; }
+        
+        #endregion
 
-        public void ResetDefaults()
+        #region Constructor
+        
+        public StyleProperties()
+        {
+            Init();
+        }
+        
+        #endregion
+
+        #region Initialize
+
+        public void Init()
         {
             // Form Styles
             Spacing = Default.Spacing;
@@ -140,72 +95,100 @@ namespace DynamicInterfaceBuilder.Core.Models
             MinHeight = null;
             MaxHeight = null;
             
-            // Panel Control Styles
-            PanelControlMargin = Default.PanelControlMargin;
-            PanelControlPadding = Default.PanelControlPadding;
-            PanelControlHorizontalAlignment = Default.PanelControlHorizontalAlignment;
-            PanelControlVerticalAlignment = Default.PanelControlVerticalAlignment;
-            PanelControlBorderThickness = Default.PanelControlBorderThickness;
-            PanelControlBorderColor = Default.PanelControlBorderColor;
-            PanelControlWidth = null;
-            PanelControlMinWidth = null;
-            PanelControlMaxWidth = null;
-            PanelControlHeight = null;
-            PanelControlMinHeight = null;
-            PanelControlMaxHeight = null;
+            // Group Element Styles
+            GroupSpacing = Default.GroupSpacing;
+            GroupShowBorder = Default.GroupShowBorder;
+            GroupMargin = Default.GroupMargin;
+            GroupPadding = Default.GroupPadding;
+            GroupBorderColor = Default.GroupBorderColor;
+            GroupBorderThickness = Default.GroupBorderThickness;
+            GroupCornerRadius = Default.GroupCornerRadius;
+            GroupHeaderBackground = Default.GroupHeaderBackground;
+            GroupHeaderForeground = Default.GroupHeaderForeground;
+            GroupBackground = Default.GroupBackground;
             
-            // Value Control Styles
-            ValueControlMargin = Default.ValueControlMargin;
-            ValueControlPadding = Default.ValueControlPadding;
-            ValueControlFontWeight = Default.ValueControlFontWeight;
-            ValueControlFontFamily = Default.ValueControlFontFamily;
-            ValueControlFontSize = Default.ValueControlFontSize;
-            ValueControlForeground = Default.ValueControlForeground;
-            ValueControlBackground = Default.ValueControlBackground;
-            ValueControlHorizontalAlignment = Default.ValueControlHorizontalAlignment;
-            ValueControlVerticalAlignment = Default.ValueControlVerticalAlignment;
-            ValueControlWidth = null;
-            ValueControlMinWidth = null;
-            ValueControlMaxWidth = null;
-            ValueControlHeight = null;
-            ValueControlMinHeight = null;
-            ValueControlMaxHeight = null;
+            // Alert Styles
+            AlertBackground = Default.AlertBackground;
+            AlertForeground = Default.AlertForeground;
+            AlertBorderColor = Default.AlertBorderColor;
+
+            // Controls Styles
+            PanelControl = new StyleControlProperties
+            {
+                Margin = Default.PanelControlMargin,
+                Padding = Default.PanelControlPadding,
+                Foreground = Default.PanelControlForeground,
+                Background = Default.PanelControlBackground,
+                HorizontalAlignment = Default.PanelControlHorizontalAlignment,
+                VerticalAlignment = Default.PanelControlVerticalAlignment,
+                BorderThickness = Default.PanelControlBorderThickness,
+                BorderColor = Default.PanelControlBorderColor,
+                Width = null,
+                MinWidth = null,
+                MaxWidth = null,
+                Height = null,
+                MinHeight = null,
+                MaxHeight = null
+            };
             
-            // Label Control Styles
-            LabelControlMargin = Default.LabelControlMargin;
-            LabelControlPadding = Default.LabelControlPadding;
-            LabelControlFontWeight = Default.LabelControlFontWeight;
-            LabelControlFontFamily = Default.LabelControlFontFamily;
-            LabelControlFontSize = Default.LabelControlFontSize;
-            LabelControlForeground = Default.LabelControlForeground;
-            LabelControlBackground = Default.LabelControlBackground;
-            LabelControlHorizontalAlignment = Default.LabelControlHorizontalAlignment;
-            LabelControlVerticalAlignment = Default.LabelControlVerticalAlignment;
-            LabelControlWidth = null;
-            LabelControlMinWidth = null;
-            LabelControlMaxWidth = null;
-            LabelControlHeight = null;
-            LabelControlMinHeight = null;
-            LabelControlMaxHeight = null;
+            ValueControl = new StyleControlProperties
+            {
+                Margin = Default.ValueControlMargin,
+                Padding = Default.ValueControlPadding,
+                FontWeight = Default.ValueControlFontWeight,
+                FontFamily = Default.ValueControlFontFamily,
+                FontSize = Default.ValueControlFontSize,
+                Foreground = Default.ValueControlForeground,
+                Background = Default.ValueControlBackground,
+                HorizontalAlignment = Default.ValueControlHorizontalAlignment,
+                VerticalAlignment = Default.ValueControlVerticalAlignment,
+                Width = null,
+                MinWidth = null,
+                MaxWidth = null,
+                Height = null,
+                MinHeight = null,
+                MaxHeight = null
+            };
             
-            // Button Control Styles
-            ButtonControlMargin = Default.ButtonControlMargin;
-            ButtonControlPadding = Default.ButtonControlPadding;
-            ButtonControlFontWeight = Default.ButtonControlFontWeight;
-            ButtonControlFontFamily = Default.ButtonControlFontFamily;
-            ButtonControlFontSize = Default.ButtonControlFontSize;
-            ButtonControlForeground = Default.ButtonControlForeground;
-            ButtonControlBackground = Default.ButtonControlBackground;
-            ButtonControlHorizontalAlignment = Default.ButtonControlHorizontalAlignment;
-            ButtonControlVerticalAlignment = Default.ButtonControlVerticalAlignment;
-            ButtonControlBorderThickness = Default.ButtonControlBorderThickness;
-            ButtonControlBorderColor = Default.ButtonControlBorderColor;
-            ButtonControlWidth = null;
-            ButtonControlMinWidth = null;
-            ButtonControlMaxWidth = null;
-            ButtonControlHeight = null;
-            ButtonControlMinHeight = null;
-            ButtonControlMaxHeight = null;
+            LabelControl = new StyleControlProperties
+            {
+                Margin = Default.LabelControlMargin,
+                Padding = Default.LabelControlPadding,
+                FontWeight = Default.LabelControlFontWeight,
+                FontFamily = Default.LabelControlFontFamily,
+                FontSize = Default.LabelControlFontSize,
+                Foreground = Default.LabelControlForeground,
+                Background = Default.LabelControlBackground,
+                HorizontalAlignment = Default.LabelControlHorizontalAlignment,
+                VerticalAlignment = Default.LabelControlVerticalAlignment,
+                Width = null,
+                MinWidth = null,
+                MaxWidth = null,
+                Height = null,
+                MinHeight = null,
+                MaxHeight = null
+            };
+
+            ButtonControl = new StyleControlProperties
+            {
+                Margin = Default.ButtonControlMargin,
+                Padding = Default.ButtonControlPadding,
+                FontWeight = Default.ButtonControlFontWeight,
+                FontFamily = Default.ButtonControlFontFamily,
+                FontSize = Default.ButtonControlFontSize,
+                Foreground = Default.ButtonControlForeground,
+                Background = Default.ButtonControlBackground,
+                HorizontalAlignment = Default.ButtonControlHorizontalAlignment,
+                VerticalAlignment = Default.ButtonControlVerticalAlignment,
+                BorderThickness = Default.ButtonControlBorderThickness,
+                BorderColor = Default.ButtonControlBorderColor,
+                Width = null,
+                MinWidth = null,
+                MaxWidth = null,
+                Height = null,
+                MinHeight = null,
+                MaxHeight = null
+            };
         }
 
         #endregion

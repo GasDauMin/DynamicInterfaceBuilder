@@ -8,122 +8,150 @@ namespace DynamicInterfaceBuilder.Core.Form.Helpers
 {
     public static class StyleHelper
     {
+        public static SolidColorBrush? GetColorBrush(string? value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+            
+            // First check ThemeManager directly - this is likely more efficient than trying conversion
+            var themeBrush = ThemeManager.GetBrush(value);
+            if (themeBrush != null)
+                return themeBrush;
+            
+            // If theme manager didn't find a brush, try to convert from string
+            try
+            {
+                var color = (Color)ColorConverter.ConvertFromString(value);
+                return new SolidColorBrush(color);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public static void ApplyValueControlAlertStyle(Control control, StyleProperties styleProperties)
         {
-            control.Background = styleProperties.AlertBackground;
-            control.Foreground = styleProperties.AlertForeground;
-            control.BorderBrush = styleProperties.AlertBorderBrush;
+            control.Background = GetColorBrush(styleProperties.AlertBackground);
+            control.Foreground = GetColorBrush(styleProperties.AlertForeground);
+            control.BorderBrush = GetColorBrush(styleProperties.AlertBorderColor);
         }
 
         public static void ApplyValueControlStyles(Control control, StyleProperties styleProperties)
         {
-            if (styleProperties.ValueControlMargin != null)
-                control.Margin = (Thickness)styleProperties.ValueControlMargin;
+            if (styleProperties?.ValueControl?.Margin != null)
+                control.Margin = (Thickness)styleProperties.ValueControl.Margin;
 
-            if (styleProperties.ValueControlPadding != null)
-                control.Padding = (Thickness)styleProperties.ValueControlPadding;
+            if (styleProperties?.ValueControl?.Padding != null)
+                control.Padding = (Thickness)styleProperties.ValueControl.Padding;
 
-            if (styleProperties.ValueControlFontWeight != null)
-                control.FontWeight = (FontWeight)styleProperties.ValueControlFontWeight;
+            if (styleProperties?.ValueControl?.FontWeight != null)
+                control.FontWeight = (FontWeight)styleProperties.ValueControl.FontWeight;
 
-            if (styleProperties.ValueControlFontFamily != null)
-                control.FontFamily = styleProperties.ValueControlFontFamily;
+            if (styleProperties?.ValueControl?.FontFamily != null)
+                control.FontFamily = styleProperties.ValueControl.FontFamily;
 
-            if (styleProperties.ValueControlFontSize != null)
-                control.FontSize = (double)styleProperties.ValueControlFontSize;
+            if (styleProperties?.ValueControl?.FontSize != null)
+                control.FontSize = (double)styleProperties.ValueControl.FontSize;
 
-            if (styleProperties.ValueControlForeground != null)
-                control.Foreground = styleProperties.ValueControlForeground;
+            if (styleProperties?.ValueControl?.Foreground != null)
+                control.Foreground = GetColorBrush(styleProperties?.ValueControl?.Foreground);
 
-            if (styleProperties.ValueControlBackground != null)
-                control.Background = styleProperties.ValueControlBackground;
+            if (styleProperties?.ValueControl?.Background != null)
+                control.Background = GetColorBrush(styleProperties?.ValueControl?.Background);
 
-            if (styleProperties.ValueControlHorizontalAlignment != null)
-                control.HorizontalAlignment = (HorizontalAlignment)styleProperties.ValueControlHorizontalAlignment;
+            if (styleProperties?.ValueControl?.HorizontalAlignment != null)
+                control.HorizontalAlignment = (HorizontalAlignment)styleProperties.ValueControl.HorizontalAlignment;
 
-            if (styleProperties.ValueControlVerticalAlignment != null)
-                control.VerticalAlignment = (VerticalAlignment)styleProperties.ValueControlVerticalAlignment;
+            if (styleProperties?.ValueControl?.VerticalAlignment != null)
+                control.VerticalAlignment = (VerticalAlignment)styleProperties.ValueControl.VerticalAlignment;
         }
 
         public static void ApplyPanelControlStyles(Control control, StyleProperties styleProperties)
         {
-            if (styleProperties.PanelControlMargin != null)
-                control.Margin = (Thickness)styleProperties.PanelControlMargin;
+            if (styleProperties?.PanelControl?.Margin != null)
+                control.Margin = (Thickness)styleProperties.PanelControl.Margin;
 
-            if (styleProperties.PanelControlPadding != null)
-                control.Padding = (Thickness)styleProperties.PanelControlPadding;
+            if (styleProperties?.PanelControl?.Padding != null)
+                control.Padding = (Thickness)styleProperties.PanelControl.Padding;
 
-            if (styleProperties.PanelControlHorizontalAlignment != null)
-                control.HorizontalAlignment = (HorizontalAlignment)styleProperties.PanelControlHorizontalAlignment;
+            if (styleProperties?.PanelControl?.HorizontalAlignment != null)
+                control.HorizontalAlignment = (HorizontalAlignment)styleProperties.PanelControl.HorizontalAlignment;
 
-            if (styleProperties.PanelControlVerticalAlignment != null)
-                control.VerticalAlignment = (VerticalAlignment)styleProperties.PanelControlVerticalAlignment;
+            if (styleProperties?.PanelControl?.VerticalAlignment != null)
+                control.VerticalAlignment = (VerticalAlignment)styleProperties.PanelControl.VerticalAlignment;
             
-            if (styleProperties.PanelControlWidth != null)
-                control.Width = (double)styleProperties.PanelControlWidth;
+            if (styleProperties?.PanelControl?.BorderColor != null)
+                control.BorderBrush = GetColorBrush(styleProperties?.PanelControl?.BorderColor);
+                
+            if (styleProperties?.PanelControl?.BorderThickness != null)
+                control.BorderThickness = (Thickness)styleProperties.PanelControl.BorderThickness;
             
-            if (styleProperties.PanelControlMinWidth != null)
-                control.MinWidth = (double)styleProperties.PanelControlMinWidth;
+            if (styleProperties?.PanelControl?.Width != null)
+                control.Width = (double)styleProperties.PanelControl.Width;
             
-            if (styleProperties.PanelControlMaxWidth != null)
-                control.MaxWidth = (double)styleProperties.PanelControlMaxWidth;
+            if (styleProperties?.PanelControl?.MinWidth != null)
+                control.MinWidth = (double)styleProperties.PanelControl.MinWidth;
             
-            if (styleProperties.PanelControlHeight != null)
-                control.Height = (double)styleProperties.PanelControlHeight;
+            if (styleProperties?.PanelControl?.MaxWidth != null)
+                control.MaxWidth = (double)styleProperties.PanelControl.MaxWidth;
             
-            if (styleProperties.PanelControlMinHeight != null)
-                control.MinHeight = (double)styleProperties.PanelControlMinHeight;
+            if (styleProperties?.PanelControl?.Height != null)
+                control.Height = (double)styleProperties.PanelControl.Height;
             
-            if (styleProperties.PanelControlMaxHeight != null)
-                control.MaxHeight = (double)styleProperties.PanelControlMaxHeight;
+            if (styleProperties?.PanelControl?.MinHeight != null)
+                control.MinHeight = (double)styleProperties.PanelControl.MinHeight;
+            
+            if (styleProperties?.PanelControl?.MaxHeight != null)
+                control.MaxHeight = (double)styleProperties.PanelControl.MaxHeight;
         }
 
         public static void ApplyLabelControlStyles(Control control, StyleProperties styleProperties)
         {
-            if (styleProperties.LabelControlMargin != null)
-                control.Margin = (Thickness)styleProperties.LabelControlMargin;
+            if (styleProperties?.LabelControl?.Margin != null)
+                control.Margin = (Thickness)styleProperties.LabelControl.Margin;
 
-            if (styleProperties.LabelControlPadding != null)
-                control.Padding = (Thickness)styleProperties.LabelControlPadding;
+            if (styleProperties?.LabelControl?.Padding != null)
+                control.Padding = (Thickness)styleProperties.LabelControl.Padding;
 
-            if (styleProperties.LabelControlFontWeight != null)
-                control.FontWeight = (FontWeight)styleProperties.LabelControlFontWeight;
+            if (styleProperties?.LabelControl?.FontWeight != null)
+                control.FontWeight = (FontWeight)styleProperties.LabelControl.FontWeight;
 
-            if (styleProperties.LabelControlFontFamily != null)
-                control.FontFamily = styleProperties.LabelControlFontFamily;
+            if (styleProperties?.LabelControl?.FontFamily != null)
+                control.FontFamily = styleProperties.LabelControl.FontFamily;
 
-            if (styleProperties.LabelControlFontSize != null)
-                control.FontSize = (double)styleProperties.LabelControlFontSize;
+            if (styleProperties?.LabelControl?.FontSize != null)
+                control.FontSize = (double)styleProperties.LabelControl.FontSize;
 
-            if (styleProperties.LabelControlForeground != null)
-                control.Foreground = styleProperties.LabelControlForeground;
+            if (styleProperties?.LabelControl?.Foreground != null)
+                control.Foreground = GetColorBrush(styleProperties?.LabelControl?.Foreground);
 
-            if (styleProperties.LabelControlBackground != null)
-                control.Background = styleProperties.LabelControlBackground;
+            if (styleProperties?.LabelControl?.Background != null)
+                control.Background = GetColorBrush(styleProperties?.LabelControl?.Background);
 
-            if (styleProperties.LabelControlHorizontalAlignment != null)
-                control.HorizontalAlignment = (HorizontalAlignment)styleProperties.LabelControlHorizontalAlignment;
+            if (styleProperties?.LabelControl?.HorizontalAlignment != null)
+                control.HorizontalAlignment = (HorizontalAlignment)styleProperties.LabelControl.HorizontalAlignment;
 
-            if (styleProperties.LabelControlVerticalAlignment != null)
-                control.VerticalAlignment = (VerticalAlignment)styleProperties.LabelControlVerticalAlignment;
+            if (styleProperties?.LabelControl?.VerticalAlignment != null)
+                control.VerticalAlignment = (VerticalAlignment)styleProperties.LabelControl.VerticalAlignment;
             
-            if (styleProperties.LabelControlWidth != null)
-                control.Width = (double)styleProperties.LabelControlWidth;
+            if (styleProperties?.LabelControl?.Width != null)
+                control.Width = (double)styleProperties.LabelControl.Width;
             
-            if (styleProperties.LabelControlMinWidth != null)
-                control.MinWidth = (double)styleProperties.LabelControlMinWidth;
+            if (styleProperties?.LabelControl?.MinWidth != null)
+                control.MinWidth = (double)styleProperties.LabelControl.MinWidth;
             
-            if (styleProperties.LabelControlMaxWidth != null)
-                control.MaxWidth = (double)styleProperties.LabelControlMaxWidth;
+            if (styleProperties?.LabelControl?.MaxWidth != null)
+                control.MaxWidth = (double)styleProperties.LabelControl.MaxWidth;
             
-            if (styleProperties.LabelControlHeight != null)
-                control.Height = (double)styleProperties.LabelControlHeight;
+            if (styleProperties?.LabelControl?.Height != null)
+                control.Height = (double)styleProperties.LabelControl.Height;
             
-            if (styleProperties.LabelControlMinHeight != null)
-                control.MinHeight = (double)styleProperties.LabelControlMinHeight;
+            if (styleProperties?.LabelControl?.MinHeight != null)
+                control.MinHeight = (double)styleProperties.LabelControl.MinHeight;
             
-            if (styleProperties.LabelControlMaxHeight != null)
-                control.MaxHeight = (double)styleProperties.LabelControlMaxHeight;
+            if (styleProperties?.LabelControl?.MaxHeight != null)
+                control.MaxHeight = (double)styleProperties.LabelControl.MaxHeight;
         }
 
         public static void ResetControlStyle(Control control)
@@ -133,4 +161,4 @@ namespace DynamicInterfaceBuilder.Core.Form.Helpers
             control.ClearValue(Control.BorderBrushProperty);
         }
     }
-} 
+}

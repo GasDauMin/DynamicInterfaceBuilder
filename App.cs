@@ -228,14 +228,10 @@ namespace DynamicInterfaceBuilder
             Theme = Default.Theme;
             Icon = Default.Icon;
 
-            StartupProperties.ResetDefaults();
-            AdvancedProperties.ResetDefaults();
-            StyleProperties.ResetDefaults();
+            StartupProperties.Init();
+            AdvancedProperties.Init();
+            StyleProperties.Init();
         }
-
-        public void ResetStartupProperties() => StartupProperties.ResetDefaults();
-        public void ResetAdvancedProperties() => AdvancedProperties.ResetDefaults();
-        public void ResetStyleProperties() => StyleProperties.ResetDefaults();
 
         public void SaveConfiguration() => ConfigManager.SaveConfiguration(this);
         public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);

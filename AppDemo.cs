@@ -25,9 +25,9 @@ namespace DynamicInterfaceBuilder
                 { "Description", "Test group description" },
                 { "Style", new OrderedDictionary
                     {
-                        { "ValueControlFontSize", 15 },
-                        { "ValueControlFontWeight", FontWeights.Bold },
-                        { "ValueControlFontFamily", new FontFamily("Consolas") }
+                        { "ValueControl.FontSize", 15 },
+                        { "ValueControl.FontWeight", FontWeights.Bold },
+                        { "ValueControl.FontFamily", new FontFamily("Consolas") }
                     }
                 },
                 { "Elements", new[] {
@@ -48,8 +48,8 @@ namespace DynamicInterfaceBuilder
                             },
                             { "Style", new OrderedDictionary
                                 {
-                                    { "ValueControlBackground", Colors.LightGray.ToString() },
-                                    { "ValueControlForeground", Colors.Black.ToString() },
+                                    { "ValueControl.Background", Colors.LightGray.ToString() },
+                                    { "ValueControl.Foreground", Colors.Black.ToString() },
                                 }
                             },
                         },

@@ -1,3 +1,5 @@
+using DynamicInterfaceBuilder.Core.Managers;
+using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.UI.Enums;
 using System.Windows;
 using System.Windows.Media;
@@ -40,7 +42,7 @@ namespace DynamicInterfaceBuilder.Core.Constants
         public static readonly HorizontalAlignment HorizontalAlignment = HorizontalAlignment.Stretch;
         public static readonly VerticalAlignment VerticalAlignment = VerticalAlignment.Stretch;
         public static readonly Thickness BorderThickness = new(0);
-        public static readonly SolidColorBrush? BorderColor = null;
+        public static readonly string? BorderColor = null;
         public static readonly int? MinWidth = null;
         public static readonly int? MaxWidth = null;
         public static readonly int? MinHeight = null;
@@ -53,31 +55,33 @@ namespace DynamicInterfaceBuilder.Core.Constants
         public static readonly HorizontalAlignment? PanelControlHorizontalAlignment = null;
         public static readonly VerticalAlignment? PanelControlVerticalAlignment = null;
         public static readonly Thickness? PanelControlBorderThickness = null;
-        public static readonly SolidColorBrush? PanelControlBorderColor = null;
+        public static readonly string? PanelControlBorderColor = null;
+        public static readonly string? PanelControlForeground = null;
+        public static readonly string? PanelControlBackground = null;
 
         // Value control style defaults
 
         public static readonly Thickness? ValueControlMargin = new(0);
         public static readonly Thickness? ValueControlPadding = new(0);
-        public static readonly FontWeight? ValueControlFontWeight = Default.FontWeight;
-        public static readonly FontFamily? ValueControlFontFamily = Default.FontFamily;
-        public static readonly double? ValueControlFontSize = Default.FontSize;
+        public static readonly FontWeight? ValueControlFontWeight = FontWeight;
+        public static readonly FontFamily? ValueControlFontFamily = FontFamily;
+        public static readonly double? ValueControlFontSize = FontSize;
         public static readonly HorizontalAlignment? ValueControlHorizontalAlignment = null;
         public static readonly VerticalAlignment? ValueControlVerticalAlignment = null;
-        public static readonly SolidColorBrush? ValueControlForeground = null;
-        public static readonly SolidColorBrush? ValueControlBackground = null;
+        public static readonly string? ValueControlForeground = null;
+        public static readonly string? ValueControlBackground = null;
 
         // Label control style defaults
 
         public static readonly Thickness? LabelControlMargin = new(0);
         public static readonly Thickness? LabelControlPadding = new(0);
-        public static readonly FontWeight? LabelControlFontWeight = Default.FontWeight;
-        public static readonly FontFamily? LabelControlFontFamily = Default.FontFamily;
-        public static readonly double? LabelControlFontSize = Default.FontSize;
+        public static readonly FontWeight? LabelControlFontWeight = FontWeight;
+        public static readonly FontFamily? LabelControlFontFamily = FontFamily;
+        public static readonly double? LabelControlFontSize = FontSize;
         public static readonly HorizontalAlignment? LabelControlHorizontalAlignment = null;
         public static readonly VerticalAlignment? LabelControlVerticalAlignment = null;
-        public static readonly SolidColorBrush? LabelControlForeground = null;
-        public static readonly SolidColorBrush? LabelControlBackground = null;
+        public static readonly string? LabelControlForeground = null;
+        public static readonly string? LabelControlBackground = null;
 
         // Button control style defaults
 
@@ -85,19 +89,32 @@ namespace DynamicInterfaceBuilder.Core.Constants
         public static readonly Thickness? ButtonControlPadding = new(0);
         public static readonly HorizontalAlignment? ButtonControlHorizontalAlignment = HorizontalAlignment.Right;
         public static readonly VerticalAlignment? ButtonControlVerticalAlignment = VerticalAlignment.Center;
-        public static readonly FontWeight? ButtonControlFontWeight = Default.FontWeight;
-        public static readonly FontFamily? ButtonControlFontFamily = Default.FontFamily;
-        public static readonly double? ButtonControlFontSize = Default.FontSize;
+        public static readonly FontWeight? ButtonControlFontWeight = FontWeight;
+        public static readonly FontFamily? ButtonControlFontFamily = FontFamily;
+        public static readonly double? ButtonControlFontSize = FontSize;
         public static readonly Thickness? ButtonControlBorderThickness = null;
-        public static readonly SolidColorBrush? ButtonControlBorderColor = null;
-        public static readonly SolidColorBrush? ButtonControlForeground = null;
-        public static readonly SolidColorBrush? ButtonControlBackground = null;
+        public static readonly string? ButtonControlBorderColor = null;
+        public static readonly string? ButtonControlForeground = null;
+        public static readonly string? ButtonControlBackground = null;
 
         // Alert control style defaults
 
-        public static readonly SolidColorBrush? AlertBackground = null;
-        public static readonly SolidColorBrush? AlertForeground = null;
-        public static readonly SolidColorBrush? AlertBorderColor = null;
+        public static readonly string? AlertBackground = "ABrush.AlertTone2";
+        public static readonly string? AlertForeground = "ABrush.AlertTone5";
+        public static readonly string? AlertBorderColor = "ABrush.AlertTone3";
+
+        // Group element style defaults
+        
+        public static readonly double? GroupSpacing = Spacing;
+        public static readonly Thickness? GroupMargin = null;
+        public static readonly Thickness? GroupPadding = null;
+        public static readonly bool? GroupShowBorder = true;
+        public static readonly double? GroupBorderThickness = 1;
+        public static readonly CornerRadius? GroupCornerRadius = new(3);
+        public static readonly string? GroupBorderColor = null;
+        public static readonly string? GroupBackground = null;
+        public static readonly string? GroupHeaderBackground = null;
+        public static readonly string? GroupHeaderForeground = Colors.White.ToString();
 
         #endregion
     }

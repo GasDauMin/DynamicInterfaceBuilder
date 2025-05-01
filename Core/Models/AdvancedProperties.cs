@@ -7,12 +7,17 @@ namespace DynamicInterfaceBuilder.Core.Models
     [ExtendedProperties]
     public class AdvancedProperties : IProperties
     {
-        public bool AdjustLabels { get; set; } = Default.AdjustLabels;
-        public bool ReverseButtons { get; set; } = Default.ReverseButtons;
-        public bool AllowResize { get; set; } = Default.AllowResize;
-        public int MaxMessageLines { get; set; } = Default.MaxMessageLines;
+        public bool AdjustLabels { get; set; }
+        public bool ReverseButtons { get; set; }
+        public bool AllowResize { get; set; }
+        public int MaxMessageLines { get; set; }
 
-        public void ResetDefaults()
+        public AdvancedProperties()
+        {
+            Init();
+        }
+
+        public void Init()
         {
             AdjustLabels = Default.AdjustLabels;
             ReverseButtons = Default.ReverseButtons;

@@ -87,9 +87,14 @@ namespace DynamicInterfaceBuilder.Core.Managers
             return ThemeDictionary[key];
         }
 
-        public static SolidColorBrush GetBrush(string name)
+        public static SolidColorBrush? GetBrush(string name)
         {
-            return GetResource(name) is SolidColorBrush brush ? brush : new SolidColorBrush(Colors.White);
+            if (GetResource(name) is SolidColorBrush brush)
+            {
+                return brush;
+            }
+
+            return null;
         }
 
         public static BitmapImage? GetApplicationIcon()
