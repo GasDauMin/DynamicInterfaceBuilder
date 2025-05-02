@@ -5,6 +5,7 @@ using DynamicInterfaceBuilder.Core.Interfaces;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Managers;
 using System.Reflection.Emit;
+using System.Windows.Controls;
 
 namespace DynamicInterfaceBuilder.Core.Models
 {
@@ -15,7 +16,7 @@ namespace DynamicInterfaceBuilder.Core.Models
         
         public int Spacing { get; set; }
         public FontWeight FontWeight { get; set; }
-        public FontFamily? FontFamily { get; set; }
+        public FontFamily FontFamily { get; set; }
         public double FontSize { get; set; }
         public HorizontalAlignment? HorizontalAlignment { get; set; }
         public VerticalAlignment? VerticalAlignment { get; set; }
@@ -34,12 +35,23 @@ namespace DynamicInterfaceBuilder.Core.Models
 
         #region Group Style Properties
         
-        public double? GroupSpacing { get; set; }
+        public Orientation GroupOrientation { get; set; }
+        public bool GroupShowHeader { get; set; }
+        public bool GroupShowBorder { get; set; }
+        public bool GroupEnableVerticalScroll { get; set; }
+        public bool GroupEnableHorizontalScroll { get; set; }
+        public double GroupBorderThickness { get; set; }
+        public CornerRadius GroupCornerRadius { get; set; }
+        public double GroupSpacing { get; set; }
+        public FontWeight GroupFontWeight { get; set; }
+        public FontFamily GroupFontFamily { get; set; }
+        public double GroupFontSize { get; set; }
         public Thickness? GroupMargin { get; set; }
         public Thickness? GroupPadding { get; set; }
-        public bool? GroupShowBorder { get; set; }
-        public double? GroupBorderThickness { get; set; }
-        public CornerRadius? GroupCornerRadius { get; set; }
+        public double GroupMaxWidth { get; set; }
+        public double GroupMinWidth { get; set; }
+        public double GroupMaxHeight { get; set; }
+        public double GroupMinHeight { get; set; }
         public string? GroupBorderColor { get; set; }
         public string? GroupHeaderBackground { get; set; }
         public string? GroupHeaderForeground { get; set; }
@@ -96,16 +108,28 @@ namespace DynamicInterfaceBuilder.Core.Models
             MaxHeight = null;
             
             // Group Element Styles
-            GroupSpacing = Default.GroupSpacing;
+            GroupOrientation = Default.GroupOrientation;
+            GroupShowHeader = Default.GroupShowHeader;
             GroupShowBorder = Default.GroupShowBorder;
+            GroupEnableVerticalScroll = Default.GroupEnableVerticalScroll;
+            GroupEnableHorizontalScroll = Default.GroupEnableHorizontalScroll;
+            GroupBorderThickness = Default.GroupBorderThickness;
+            GroupCornerRadius = Default.GroupCornerRadius;
+            GroupSpacing = Default.GroupSpacing;
+            GroupFontWeight = Default.GroupFontWeight;
+            GroupFontFamily = Default.GroupFontFamily;
+            GroupFontSize = Default.GroupFontSize;
+
             GroupMargin = Default.GroupMargin;
             GroupPadding = Default.GroupPadding;
             GroupBorderColor = Default.GroupBorderColor;
-            GroupBorderThickness = Default.GroupBorderThickness;
-            GroupCornerRadius = Default.GroupCornerRadius;
             GroupHeaderBackground = Default.GroupHeaderBackground;
             GroupHeaderForeground = Default.GroupHeaderForeground;
             GroupBackground = Default.GroupBackground;
+            GroupMaxWidth = Default.GroupMaxWidth;
+            GroupMaxHeight = Default.GroupMaxHeight;
+            GroupMinWidth = Default.GroupMinWidth;
+            GroupMinHeight = Default.GroupMinHeight;
             
             // Alert Styles
             AlertBackground = Default.AlertBackground;

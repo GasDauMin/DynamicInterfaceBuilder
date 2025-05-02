@@ -2,6 +2,7 @@ using DynamicInterfaceBuilder.Core.Managers;
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.UI.Enums;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace DynamicInterfaceBuilder.Core.Constants
@@ -99,22 +100,33 @@ namespace DynamicInterfaceBuilder.Core.Constants
 
         // Alert control style defaults
 
-        public static readonly string? AlertBackground = "ABrush.AlertTone2";
-        public static readonly string? AlertForeground = "ABrush.AlertTone5";
-        public static readonly string? AlertBorderColor = "ABrush.AlertTone3";
+        public static readonly string? AlertBackground = "AColour.AlertTone2";
+        public static readonly string? AlertForeground = "AColour.AlertTone5";
+        public static readonly string? AlertBorderColor = "AColour.AlertTone3";
 
         // Group element style defaults
-        
-        public static readonly double? GroupSpacing = Spacing;
+
+        public static readonly Orientation GroupOrientation = Orientation.Vertical;
+        public static readonly bool GroupShowHeader = true;
+        public static readonly bool GroupShowBorder = true;
+        public static readonly bool GroupEnableVerticalScroll = true;
+        public static readonly bool GroupEnableHorizontalScroll = false;
+        public static readonly double GroupBorderThickness = 1.25;
+        public static readonly CornerRadius GroupCornerRadius = new(5);
+        public static readonly double GroupSpacing = Spacing;
+        public static readonly FontWeight GroupFontWeight = FontWeights.SemiBold;
+        public static readonly FontFamily GroupFontFamily = FontFamily;
+        public static readonly double GroupFontSize = 14.0;
+        public static readonly double GroupMaxWidth = 0;
+        public static readonly double GroupMinWidth = 0;
+        public static readonly double GroupMaxHeight = 0;
+        public static readonly double GroupMinHeight = 0;
         public static readonly Thickness? GroupMargin = null;
         public static readonly Thickness? GroupPadding = null;
-        public static readonly bool? GroupShowBorder = true;
-        public static readonly double? GroupBorderThickness = 1;
-        public static readonly CornerRadius? GroupCornerRadius = new(3);
-        public static readonly string? GroupBorderColor = null;
-        public static readonly string? GroupBackground = null;
-        public static readonly string? GroupHeaderBackground = null;
-        public static readonly string? GroupHeaderForeground = Colors.White.ToString();
+        public static readonly string? GroupBorderColor = "AColour.Tone8.Border.Static";
+        public static readonly string? GroupBackground = "AColour.Tone4.Border.Static";
+        public static readonly string? GroupHeaderBackground = "AColour.Tone8.Background.Static";
+        public static readonly string? GroupHeaderForeground = "AColour.Foreground.Static";
 
         #endregion
     }

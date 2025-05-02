@@ -89,9 +89,33 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
         public static SolidColorBrush? GetBrush(string name)
         {
+            if (string.IsNullOrEmpty(name))
+                return null;
+                
             if (GetResource(name) is SolidColorBrush brush)
             {
                 return brush;
+            }
+            else if (GetResource(name) is Color color)
+            {
+                return new SolidColorBrush(color);
+            }
+
+            return null;
+        }
+
+        public static Color? GetColor(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return null;
+
+            if (GetResource(name) is Color color)
+            {
+                return color;
+            }
+            else if (GetResource(name) is SolidColorBrush brush)
+            {
+                return brush.Color;
             }
 
             return null;

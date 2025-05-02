@@ -52,7 +52,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 Text = DefaultValue,
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Margin = new Thickness(spacing, 0, 0, 0),
+                Margin = new Thickness(StyleProperties.Spacing, 0, 0, 0),
             };
 
             Grid.SetColumn(textBox, 1);

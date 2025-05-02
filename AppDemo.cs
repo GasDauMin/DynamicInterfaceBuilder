@@ -33,6 +33,20 @@ namespace DynamicInterfaceBuilder
                 { "Elements", new[] {
                         new OrderedDictionary
                         {
+                            { "Type", FormElementType.CheckBox },
+                            { "Label", "Test check box" },
+                            { "Description", "Test check box description" },
+                            { "DefaultValue", true },
+                        },
+                        new OrderedDictionary
+                        {
+                            { "Type", FormElementType.CheckBox },
+                            { "Label", "Test check box" },
+                            { "Description", "Test check box description" },
+                            { "DefaultValue", true },
+                        },
+                        new OrderedDictionary
+                        {
                             { "Type", FormElementType.TextBox },
                             { "Label", "Test text box" },
                             { "Description", "Test text box description" },
@@ -52,20 +66,6 @@ namespace DynamicInterfaceBuilder
                                     { "ValueControl.Foreground", Colors.Black.ToString() },
                                 }
                             },
-                        },
-                        new OrderedDictionary
-                        {
-                            { "Type", FormElementType.CheckBox },
-                            { "Label", "Test check box" },
-                            { "Description", "Test check box description" },
-                            { "DefaultValue", true },
-                        },
-                        new OrderedDictionary
-                        {
-                            { "Type", FormElementType.CheckBox },
-                            { "Label", "Test check box" },
-                            { "Description", "Test check box description" },
-                            { "DefaultValue", true },
                         },
                         new OrderedDictionary
                         {

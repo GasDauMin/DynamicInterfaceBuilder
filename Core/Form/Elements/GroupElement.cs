@@ -1,7 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Form.Enums;
+using DynamicInterfaceBuilder.Core.Form.Helpers;
 using DynamicInterfaceBuilder.Core.Form.Interfaces;
 using DynamicInterfaceBuilder.Core.Form.Models;
 
@@ -12,11 +14,6 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
     {
         public Dictionary<string, FormElementBase> Elements { get; set; } = new();
         public IReadOnlyList<FormElementBase> Children => [.. Elements.Values];
-        public Orientation Orientation { get; set; } = Orientation.Vertical;
-        public int Spacing { get; set; }
-        public bool ShowBorder { get; set; }
-        public Thickness Margin { get; set; }
-        public Thickness Padding { get; set; }
 
         public void AddChild(FormElementBase child)
         {
@@ -25,84 +22,119 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
         
         public override UIElement? BuildElement()
         {
-            var mainPanel = new DockPanel
+            var panel = new DockPanel
             {
-                Name = $"{Name}_MainPanel",
+                Name = $"{Name}_Panel",
                 VerticalAlignment = VerticalAlignment.Top
             };
+
+            // Create inner container for header and elements
+            var innerContainer = new StackPanel
+            {
+                Name = $"{Name}_InnerContainer",
+            };
             
+            // Add group header if label is provided and ShowHeader is true
+            if (StyleProperties.GroupShowHeader && !string.IsNullOrEmpty(Label))
+            {
+                var headerBorder = new Border
+                {
+                    Name = $"{Name}_HeaderBorder",
+                    Background = StyleHelper.GetColorBrush(StyleProperties.GroupHeaderBackground),
+                    CornerRadius = new CornerRadius(StyleProperties.GroupCornerRadius.TopLeft, StyleProperties.GroupCornerRadius.TopRight, 0, 0),
+                };
+
+                var headerContent = new TextBlock
+                {
+                    Name = $"{Name}_HeaderContent",
+                    Text = Label,
+                    FontWeight = StyleProperties.GroupFontWeight,
+                    FontSize = StyleProperties.GroupFontSize,
+                    Foreground = StyleHelper.GetColorBrush(StyleProperties.GroupHeaderForeground),
+                    Margin = new Thickness(StyleProperties.GroupSpacing)
+                };
+
+                headerBorder.Child = headerContent;
+                innerContainer.Children.Add(headerBorder);
+                
+                // Add separator line with same color and thickness as border
+                var headerSeparator = new Border
+                {
+                    Name = $"{Name}_HeaderSeparator",
+                    BorderBrush = StyleHelper.GetColorBrush(StyleProperties.BorderColor),
+                    BorderThickness = new Thickness(0, StyleProperties.GroupBorderThickness, 0, 0),
+                    Height = StyleProperties.GroupBorderThickness
+                };
+                
+                innerContainer.Children.Add(headerSeparator);
+            }
+
             // Create container for elements
             var elementsPanel = new StackPanel
             {
-                Name = $"{Name}_Elements",
-                Orientation = Orientation,
-                Margin = new Thickness(Margin.Left + Padding.Left, 
-                                     Margin.Top + Padding.Top, 
-                                     Margin.Right + Padding.Right, 
-                                     Margin.Bottom + Padding.Bottom)
+                Name = $"{Name}_ElementsPanel",
+                Orientation = StyleProperties.GroupOrientation,
+                Margin = new Thickness(StyleProperties.GroupSpacing)
             };
 
-            // Set spacing between elements
-            if (Spacing > 0)
-            {
-                elementsPanel.Margin = new Thickness(
-                    elementsPanel.Margin.Left,
-                    elementsPanel.Margin.Top,
-                    elementsPanel.Margin.Right,
-                    elementsPanel.Margin.Bottom + Spacing
-                );
-            }
-            
-            // Add group header if label is provided
-            if (!string.IsNullOrEmpty(Label))
-            {
-                var header = new TextBlock
-                {
-                    Name = $"{Name}_Header",
-                    Text = Label,
-                    FontWeight = FontWeights.Bold,
-                    Margin = new Thickness(0, 0, 0, Spacing > 0 ? Spacing : 5)
-                };
-                DockPanel.SetDock(header, Dock.Top);
-                mainPanel.Children.Add(header);
-            }
-            
             // Add elements to the panel
+            int index = 0;
             foreach (var element in Elements.Values)
             {
                 if (element.BuildElement() is UIElement control)
                 {
-                    if (Spacing > 0 && elementsPanel.Children.Count > 0)
+                    if (StyleProperties.GroupSpacing > 0 && index > 0) // Apply margin only to non-first elements
                     {
                         if (control is FrameworkElement frameworkElement)
                         {
-                            if (Orientation == Orientation.Horizontal)
-                            {
-                                frameworkElement.Margin = new Thickness(Spacing, 0, 0, 0);
-                            }
-                            else
-                            {
-                                frameworkElement.Margin = new Thickness(0, Spacing, 0, 0);
-                            }
+                            frameworkElement.Margin = StyleProperties.GroupOrientation == Orientation.Horizontal
+                                ? new Thickness(StyleProperties.GroupSpacing, 0, 0, 0)
+                                : new Thickness(0, StyleProperties.GroupSpacing, 0, 0);
                         }
                     }
                     elementsPanel.Children.Add(control);
+                    index++;
                 }
             }
-            
-            // Wrap elements panel in a ScrollViewer
+
+            // Create elements border
+            var elementsBorder = new Border
+            {
+                Name = $"{Name}_ElementsBorder",
+                CornerRadius = StyleProperties.GroupShowHeader 
+                    ? new CornerRadius(0, 0, StyleProperties.GroupCornerRadius.BottomLeft, StyleProperties.GroupCornerRadius.BottomRight)
+                    : StyleProperties.GroupCornerRadius,
+                Child = elementsPanel,
+            };
+
+            innerContainer.Children.Add(elementsBorder);
+
+            // Create single border for the group
+            var innerBorder = new Border
+            {
+                Name = $"{Name}_StackBorder",
+                BorderBrush = StyleProperties.GroupShowBorder ? StyleHelper.GetColorBrush(StyleProperties.GroupBorderColor) : null,
+                BorderThickness = StyleProperties.GroupShowBorder ? new Thickness(StyleProperties.GroupBorderThickness) : new Thickness(0),
+                CornerRadius = StyleProperties.GroupCornerRadius,
+                Child = innerContainer,
+                ClipToBounds = true,
+            };
+
+            // Configure ScrollViewer
             var scrollViewer = new ScrollViewer
             {
                 Name = $"{Name}_ScrollViewer",
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                Content = elementsPanel
+                VerticalScrollBarVisibility = StyleProperties.GroupEnableVerticalScroll ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
+                HorizontalScrollBarVisibility = StyleProperties.GroupEnableHorizontalScroll ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
+                Content = innerBorder,
+                MaxHeight = StyleProperties.GroupMaxHeight > 0 ? StyleProperties.GroupMaxHeight : double.PositiveInfinity,
+                MaxWidth = StyleProperties.GroupMaxWidth > 0 ? StyleProperties.GroupMaxWidth : double.PositiveInfinity
             };
             
-            mainPanel.Children.Add(scrollViewer);
-            SetupPanelControl(mainPanel);
+            panel.Children.Add(scrollViewer);
+            SetupPanelControl(panel);
             
-            return mainPanel;
+            return panel;
         }
         
         public override bool ValidateElement()
