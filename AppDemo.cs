@@ -14,8 +14,8 @@ namespace DynamicInterfaceBuilder
             var application = new App()
             {
                 Title = Default.Title,
-                Width = Default.Width,
-                Height = Default.Height
+                //Width = Default.Width,
+                //Height = Default.Height
             };
             
             application.Parameters["TestGroup"] = new OrderedDictionary
@@ -23,13 +23,13 @@ namespace DynamicInterfaceBuilder
                 { "Type", FormElementType.Group },
                 { "Label", "Test group" },
                 { "Description", "Test group description" },
-                { "Style", new OrderedDictionary
-                    {
-                        { "ValueControl.FontSize", 15 },
-                        { "ValueControl.FontWeight", FontWeights.Bold },
-                        { "ValueControl.FontFamily", new FontFamily("Consolas") }
-                    }
-                },
+                // { "Style", new OrderedDictionary
+                //     {
+                //         { "ValueControl.FontSize", 15 },
+                //         { "ValueControl.FontWeight", FontWeights.Bold },
+                //         { "ValueControl.FontFamily", new FontFamily("Consolas") }
+                //     }
+                // },
                 { "Elements", new[] {
                         new OrderedDictionary
                         {
@@ -60,12 +60,12 @@ namespace DynamicInterfaceBuilder
                                     }
                                 }
                             },
-                            { "Style", new OrderedDictionary
-                                {
-                                    { "ValueControl.Background", Colors.LightGray.ToString() },
-                                    { "ValueControl.Foreground", Colors.Black.ToString() },
-                                }
-                            },
+                            // { "Style", new OrderedDictionary
+                            //     {
+                            //         { "ValueControl.Background", Colors.LightGray.ToString() },
+                            //         { "ValueControl.Foreground", Colors.Black.ToString() },
+                            //     }
+                            // },
                         },
                         new OrderedDictionary
                         {

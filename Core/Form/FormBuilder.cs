@@ -86,11 +86,6 @@ namespace DynamicInterfaceBuilder.Core.Form
 
         private void HandleFormResize(object? sender, EventArgs e)
         {
-            if (Form != null && ContentPanel != null && ButtonPanel != null)
-            {
-                App.Width = (int)Form.Width;
-                App.Height = (int)Form.Height;
-            }
         }
 
         #endregion
@@ -102,14 +97,22 @@ namespace DynamicInterfaceBuilder.Core.Form
             Window form = new()
             {
                 Title = App.Title,
-                Width = App.Width,
-                Height = App.Height,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = App.AdvancedProperties.AllowResize ? ResizeMode.CanResize : ResizeMode.NoResize,
-                FontFamily = App.StyleProperties.FontFamily,
-                FontSize = App.StyleProperties.FontSize,
+                FontFamily = Constants.Default.FontFamily,
+                FontSize = Constants.Default.FontSize,
                 Style = (System.Windows.Style)Application.Current.Resources["CustomWindowStyle"]
             };
+
+            if (App.Width != null && App.Width > 0)
+            {
+                form.Width = (double)App.Width;
+            }
+
+            if (App.Height != null && App.Height > 0)
+            {
+                form.Height = (double)App.Height;
+            }
 
             // Set icon if provided
             if (!string.IsNullOrEmpty(App.Icon))
@@ -209,7 +212,7 @@ namespace DynamicInterfaceBuilder.Core.Form
                 {
                     if (element is FrameworkElement control)
                     {
-                        control.Margin = new Thickness(App.StyleProperties.Spacing, App.StyleProperties.Spacing, App.StyleProperties.Spacing, 0);
+                        control.Margin = new Thickness(Constants.Default.Spacing, Constants.Default.Spacing, Constants.Default.Spacing, 0);
                     }
                 }
             };
@@ -433,29 +436,29 @@ namespace DynamicInterfaceBuilder.Core.Form
 
         public void AdjustControls(bool initial = false)
         {
-            if (ContentPanel == null)
-                return;
+            // if (ContentPanel == null)
+            //     return;
 
-            double availableWidth = ContentPanel.ActualWidth;;
+            // double availableWidth = ContentPanel.ActualWidth;;
 
-            if (double.IsNaN(availableWidth) || availableWidth <= 0)
-            {
-                availableWidth = App.Width - ((App.StyleProperties.Spacing != 0 ? App.StyleProperties.Spacing : 1) * 2 + 20);
-            }
+            // if (double.IsNaN(availableWidth) || availableWidth <= 0)
+            // {
+            //     availableWidth = App.Width - ((Constants.Default.Spacing != 0 ? Constants.Default.Spacing : 1) * 2 + 20);
+            // }
 
-            if (IsScrollbarVisible())
-            {
-                availableWidth -= SystemParameters.VerticalScrollBarWidth + 2;
-            }
+            // if (IsScrollbarVisible())
+            // {
+            //     availableWidth -= SystemParameters.VerticalScrollBarWidth + 2;
+            // }
 
-            foreach (var element in App.FormElements.Values)
-            {
-                if (element.PanelControl is FrameworkElement ctrl)
-                {
-                    ctrl.Width = availableWidth;
-                    ctrl.MinWidth = availableWidth;
-                }
-            }
+            // foreach (var element in App.FormElements.Values)
+            // {
+            //     if (element.PanelControl is FrameworkElement ctrl)
+            //     {
+            //         ctrl.Width = availableWidth;
+            //         ctrl.MinWidth = availableWidth;
+            //     }
+            // }
         }
 
         #endregion

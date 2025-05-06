@@ -15,7 +15,6 @@ namespace DynamicInterfaceBuilder.Core.Form
         public string? Description { get; set; }
         public string? Tooltip { get; set; }
         public bool Valid { get; set; } = true;
-        public StyleProperties StyleProperties { get; set; } = new();
         
         [JsonIgnore]
         public FormElementBase? Parent { get; protected set; }
@@ -57,16 +56,6 @@ namespace DynamicInterfaceBuilder.Core.Form
         
         public void InheritStyle()
         {
-            if (Parent != null)
-            {
-                // Inherit style from parent element
-                StyleProperties = ObjectHelper.Clone(Parent.StyleProperties);
-            }
-            else if (App != null)
-            {
-                // If no parent, inherit from App's StyleProperties
-                StyleProperties = ObjectHelper.Clone(App.StyleProperties);
-            }
         }
 
         public abstract object? BuildElement();

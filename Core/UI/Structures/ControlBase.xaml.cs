@@ -2,7 +2,7 @@
 
 namespace DynamicInterfaceBuilder.Core.UI.Structures
 {
-    public partial class Controls
+    public partial class ControlsBase
     {
         private void CloseWindow_Event(object sender, RoutedEventArgs e)
         {

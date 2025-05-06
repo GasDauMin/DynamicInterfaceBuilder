@@ -4,11 +4,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.UI.Enums;
+using System.IO;
+using System.Windows.Markup;
+using System.Collections;
 
 namespace DynamicInterfaceBuilder.Core.Managers
 {
     public class ThemeManager : AppBase
     {
+        private static readonly List<ResourceDictionary> _customDictionaries = new();
+
         public ThemeManager(App application) : base(application)
         {
             Init();
@@ -30,8 +35,18 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 });
                 resources.MergedDictionaries.Add(new ResourceDictionary
                 {
-                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Structures/Controls.xaml", UriKind.Absolute)
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Structures/ControlBase.xaml", UriKind.Absolute)
                 });
+                resources.MergedDictionaries.Add(new ResourceDictionary
+                {
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Structures/ControlStyles.xaml", UriKind.Absolute)
+                });
+
+                // Add any existing custom dictionaries
+                foreach (var dict in _customDictionaries)
+                {
+                    resources.MergedDictionaries.Add(dict);
+                }
 
                 System.Windows.Application.Current.Resources = resources;
             }
@@ -54,6 +69,23 @@ namespace DynamicInterfaceBuilder.Core.Managers
             set => Application.Current.Resources.MergedDictionaries[1] = value;
         }
 
+        private static ResourceDictionary ControlBase
+        {
+            get => Application.Current.Resources.MergedDictionaries[2];
+            set => Application.Current.Resources.MergedDictionaries[2] = value;
+        }        
+
+        private static ResourceDictionary ControlStyles
+        {
+            get => Application.Current.Resources.MergedDictionaries[3];
+            set => Application.Current.Resources.MergedDictionaries[3] = value;
+        }
+
+        public static object GetResource(object key)
+        {
+            return ThemeDictionary[key];
+        }
+
         public static void SetTheme(ThemeType theme)
         {
             string themeName = theme.GetName();
@@ -61,8 +93,6 @@ namespace DynamicInterfaceBuilder.Core.Managers
             {
                 return;
             }
-
-            //CurrentTheme = theme;
 
             ThemeDictionary = new ResourceDictionary() { Source = new Uri($"Core/UI/Themes/{themeName}.xaml", UriKind.Relative) };
             ControlColours = new ResourceDictionary() { Source = new Uri("Core/UI/Structures/ControlColours.xaml", UriKind.Relative) };
@@ -72,19 +102,66 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
         private static void RefreshControls()
         {
-            // This seems to be faster than reloading the whole file, and it also seems to work
             Collection<ResourceDictionary> merged = Application.Current.Resources.MergedDictionaries;
             ResourceDictionary dictionary = merged[2];
+
             merged.RemoveAt(2);
             merged.Insert(2, dictionary);
 
-            // If the above doesn't work then fall back to this
-            // Application.Current.Resources.MergedDictionaries[2] = new ResourceDictionary() { Source = new Uri("Themes/Controls.xaml", UriKind.Relative) };
+            ClearCustomDictionaries();
+            AddCustomDictionaries();
         }
 
-        public static object GetResource(object key)
+        public static void AddCustomDictionaries()
         {
-            return ThemeDictionary[key];
+            foreach (var dict in _customDictionaries)
+            {
+                Application.Current.Resources.MergedDictionaries.Add(dict);
+            }
+        }
+
+        public static void ClearCustomDictionaries()
+        {
+            foreach (var dict in _customDictionaries.ToList())
+            {
+                Application.Current.Resources.MergedDictionaries.Remove(dict);
+            }
+            _customDictionaries.Clear();
+        }
+
+        public static void AddCustomDictionary(ResourceDictionary dictionary)
+        {
+            ArgumentNullException.ThrowIfNull(dictionary);
+
+            _customDictionaries.Add(dictionary);
+            Application.Current.Resources.MergedDictionaries.Add(dictionary);
+        }
+
+        public static void RemoveCustomDictionary(ResourceDictionary dictionary)
+        {
+            ArgumentNullException.ThrowIfNull(dictionary);
+
+            if (_customDictionaries.Remove(dictionary))
+            {
+                Application.Current.Resources.MergedDictionaries.Remove(dictionary);
+            }
+        }
+
+        public static void LoadCustomDictionary(string xamlPath)
+        {
+            try
+            {
+                var dictionary = new ResourceDictionary
+                {
+                    Source = new Uri(xamlPath, UriKind.RelativeOrAbsolute)
+                };
+                AddCustomDictionary(dictionary);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load custom theme dictionary: {ex.Message}");
+                throw;
+            }
         }
 
         public static SolidColorBrush? GetBrush(string name)

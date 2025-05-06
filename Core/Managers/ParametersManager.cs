@@ -295,20 +295,16 @@ namespace DynamicInterfaceBuilder.Core.Managers
                     
                 try
                 {
-                    var (property, targetObject) = GetPropertyFromPath(element.StyleProperties, propertyPath);
-
-                    if (property != null && property.CanWrite && targetObject != null)
+                    // Convert the style property to a resource key
+                    string resourceKey = $"Default{propertyPath}";
+                    if (Application.Current.Resources.Contains(resourceKey))
                     {
-                        object? convertedValue = TypeConversionHelper.ConvertValueToType(entry.Value, property.PropertyType);
-                        
-                        if (convertedValue != null)
-                        {
-                            property.SetValue(targetObject, convertedValue);
-                        }
+                        // Set the resource value
+                        Application.Current.Resources[resourceKey] = entry.Value;
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine($"Property {propertyPath} not found on StyleProperties");
+                        System.Diagnostics.Debug.WriteLine($"Resource key {resourceKey} not found in application resources");
                     }
                 }
                 catch (Exception ex)

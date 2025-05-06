@@ -12,7 +12,6 @@ namespace DynamicInterfaceBuilder.Core.Constants
         #region Default Application Constants
 
         public const ThemeType Theme = ThemeType.Default;
-        public const string Title = "Dynamic Interface Builder";
         public const int MaxMessageLines = 4;
         public const bool AutoSaveConfig = true;
         public const bool AutoLoadConfig = true;
@@ -33,8 +32,9 @@ namespace DynamicInterfaceBuilder.Core.Constants
 
         // Form style defaults
 
-        public const int Width = 700;
-        public const int Height = 400;
+        public static readonly string? Title = "Dynamic Interface Builder";
+        public static readonly int? Width = 0;
+        public static readonly int? Height = 0;
         public static readonly FontWeight FontWeight = FontWeights.Normal;
         public static readonly FontFamily FontFamily = new("Segoe UI Emoji");
         public static readonly double FontSize = 12.0;

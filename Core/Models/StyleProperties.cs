@@ -81,6 +81,9 @@ namespace DynamicInterfaceBuilder.Core.Models
         public StyleProperties()
         {
             Init();
+
+            FontFamily = Default.FontFamily;
+            GroupFontFamily = Default.FontFamily;
         }
         
         #endregion

@@ -31,12 +31,17 @@ namespace DynamicInterfaceBuilder.Core.Form
         }
         private static T? TryConvertValue<U>(object? value)
         {
+            if (value == null)
+                return default;
+                
             try
             {
-                return (T?)Convert.ChangeType(value, typeof(U));
+                // Convert to the actual target type T, not the method type parameter U
+                return (T?)Convert.ChangeType(value, typeof(T));
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Conversion error: {ex.Message}. Attempted to convert {value?.GetType().Name ?? "null"} to {typeof(T).Name}");
                 return default;
             }
         }
@@ -81,7 +86,7 @@ namespace DynamicInterfaceBuilder.Core.Form
 
                 if (ValueControl is Control control)
                 {
-                    StyleHelper.ApplyValueControlStyles(control, StyleProperties);
+                    ApplyValueControlStyles(control);
                 }
 
                 if (ValueControl is TextBox textBox)
@@ -103,7 +108,7 @@ namespace DynamicInterfaceBuilder.Core.Form
                 
                 if (PanelControl is Control control)
                 {
-                    StyleHelper.ApplyPanelControlStyles(control, StyleProperties);
+                    ApplyPanelControlStyles(control);
                 }
                 
                 return true;
@@ -120,7 +125,7 @@ namespace DynamicInterfaceBuilder.Core.Form
                 
                 if (LabelControl is Control control)
                 {
-                    StyleHelper.ApplyLabelControlStyles(control, StyleProperties);
+                    ApplyLabelControlStyles(control);
                 }
 
                 return true;
@@ -152,7 +157,7 @@ namespace DynamicInterfaceBuilder.Core.Form
             if (ValueControl is Control control)
             {
                 StyleHelper.ResetControlStyle(control);
-                StyleHelper.ApplyValueControlStyles(control, StyleProperties);
+                ApplyValueControlStyles(control);
             }
             
             if (ValueControl is TextBox textBox)
@@ -166,7 +171,7 @@ namespace DynamicInterfaceBuilder.Core.Form
             if (LabelControl is Control control)
             {
                 StyleHelper.ResetControlStyle(control);
-                StyleHelper.ApplyLabelControlStyles(control, StyleProperties);
+                ApplyLabelControlStyles(control);
             }
         }
 
@@ -175,7 +180,7 @@ namespace DynamicInterfaceBuilder.Core.Form
             if (PanelControl is Control control)
             {
                 StyleHelper.ResetControlStyle(control);
-                StyleHelper.ApplyPanelControlStyles(control, StyleProperties);
+                ApplyPanelControlStyles(control);
             }
         }
 
@@ -224,7 +229,7 @@ namespace DynamicInterfaceBuilder.Core.Form
                 if (allowAlertControl && !Valid)
                 {   
                     alertControl!.ToolTip += (alertControl!.ToolTip.ToString() == String.Empty ? "" : General.EndLine) + tooltipValue;         
-                    StyleHelper.ApplyValueControlAlertStyle(alertControl, StyleProperties);
+                    ApplyValueControlAlertStyle(alertControl);
                 }
             }
 
@@ -242,5 +247,30 @@ namespace DynamicInterfaceBuilder.Core.Form
         }
 
         #endregion
+
+        protected void ApplyValueControlStyles(Control control)
+        {
+            StyleHelper.ApplyValueControlStyles(control);
+        }
+
+        protected void ApplyPanelControlStyles(Control control)
+        {
+            StyleHelper.ApplyPanelControlStyles(control);
+        }
+
+        protected void ApplyLabelControlStyles(Control control)
+        {
+            StyleHelper.ApplyLabelControlStyles(control);
+        }
+
+        protected void ApplyButtonControlStyles(Control control)
+        {
+            StyleHelper.ApplyButtonControlStyles(control);
+        }
+
+        protected void ApplyValueControlAlertStyle(Control control)
+        {
+            StyleHelper.ApplyValueControlAlertStyle(control);
+        }
     }
 }

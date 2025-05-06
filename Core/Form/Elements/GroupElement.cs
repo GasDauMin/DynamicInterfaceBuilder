@@ -35,23 +35,23 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             };
             
             // Add group header if label is provided and ShowHeader is true
-            if (StyleProperties.GroupShowHeader && !string.IsNullOrEmpty(Label))
+            if (Constants.Default.GroupShowHeader && !string.IsNullOrEmpty(Label))
             {
                 var headerBorder = new Border
                 {
                     Name = $"{Name}_HeaderBorder",
-                    Background = StyleHelper.GetColorBrush(StyleProperties.GroupHeaderBackground),
-                    CornerRadius = new CornerRadius(StyleProperties.GroupCornerRadius.TopLeft, StyleProperties.GroupCornerRadius.TopRight, 0, 0),
+                    Background = StyleHelper.GetColorBrush(Constants.Default.GroupHeaderBackground),
+                    CornerRadius = new CornerRadius(Constants.Default.GroupCornerRadius.TopLeft, Constants.Default.GroupCornerRadius.TopRight, 0, 0),
                 };
 
                 var headerContent = new TextBlock
                 {
                     Name = $"{Name}_HeaderContent",
                     Text = Label,
-                    FontWeight = StyleProperties.GroupFontWeight,
-                    FontSize = StyleProperties.GroupFontSize,
-                    Foreground = StyleHelper.GetColorBrush(StyleProperties.GroupHeaderForeground),
-                    Margin = new Thickness(StyleProperties.GroupSpacing)
+                    FontWeight = Constants.Default.GroupFontWeight,
+                    FontSize = Constants.Default.GroupFontSize,
+                    Foreground = StyleHelper.GetColorBrush(Constants.Default.GroupHeaderForeground),
+                    Margin = new Thickness(Constants.Default.GroupSpacing)
                 };
 
                 headerBorder.Child = headerContent;
@@ -61,9 +61,9 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 var headerSeparator = new Border
                 {
                     Name = $"{Name}_HeaderSeparator",
-                    BorderBrush = StyleHelper.GetColorBrush(StyleProperties.BorderColor),
-                    BorderThickness = new Thickness(0, StyleProperties.GroupBorderThickness, 0, 0),
-                    Height = StyleProperties.GroupBorderThickness
+                    BorderBrush = StyleHelper.GetColorBrush(Constants.Default.BorderColor),
+                    BorderThickness = new Thickness(0, Constants.Default.GroupBorderThickness, 0, 0),
+                    Height = Constants.Default.GroupBorderThickness
                 };
                 
                 innerContainer.Children.Add(headerSeparator);
@@ -73,8 +73,8 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             var elementsPanel = new StackPanel
             {
                 Name = $"{Name}_ElementsPanel",
-                Orientation = StyleProperties.GroupOrientation,
-                Margin = new Thickness(StyleProperties.GroupSpacing)
+                Orientation = Constants.Default.GroupOrientation,
+                Margin = new Thickness(Constants.Default.GroupSpacing)
             };
 
             // Add elements to the panel
@@ -83,13 +83,13 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             {
                 if (element.BuildElement() is UIElement control)
                 {
-                    if (StyleProperties.GroupSpacing > 0 && index > 0) // Apply margin only to non-first elements
+                    if (Constants.Default.GroupSpacing > 0 && index > 0) // Apply margin only to non-first elements
                     {
                         if (control is FrameworkElement frameworkElement)
                         {
-                            frameworkElement.Margin = StyleProperties.GroupOrientation == Orientation.Horizontal
-                                ? new Thickness(StyleProperties.GroupSpacing, 0, 0, 0)
-                                : new Thickness(0, StyleProperties.GroupSpacing, 0, 0);
+                            frameworkElement.Margin = Constants.Default.GroupOrientation == Orientation.Horizontal
+                                ? new Thickness(Constants.Default.GroupSpacing, 0, 0, 0)
+                                : new Thickness(0, Constants.Default.GroupSpacing, 0, 0);
                         }
                     }
                     elementsPanel.Children.Add(control);
@@ -101,9 +101,9 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             var elementsBorder = new Border
             {
                 Name = $"{Name}_ElementsBorder",
-                CornerRadius = StyleProperties.GroupShowHeader 
-                    ? new CornerRadius(0, 0, StyleProperties.GroupCornerRadius.BottomLeft, StyleProperties.GroupCornerRadius.BottomRight)
-                    : StyleProperties.GroupCornerRadius,
+                CornerRadius = Constants.Default.GroupShowHeader 
+                    ? new CornerRadius(0, 0, Constants.Default.GroupCornerRadius.BottomLeft, Constants.Default.GroupCornerRadius.BottomRight)
+                    : Constants.Default.GroupCornerRadius,
                 Child = elementsPanel,
             };
 
@@ -113,9 +113,9 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             var innerBorder = new Border
             {
                 Name = $"{Name}_StackBorder",
-                BorderBrush = StyleProperties.GroupShowBorder ? StyleHelper.GetColorBrush(StyleProperties.GroupBorderColor) : null,
-                BorderThickness = StyleProperties.GroupShowBorder ? new Thickness(StyleProperties.GroupBorderThickness) : new Thickness(0),
-                CornerRadius = StyleProperties.GroupCornerRadius,
+                BorderBrush = Constants.Default.GroupShowBorder ? StyleHelper.GetColorBrush(Constants.Default.GroupBorderColor) : null,
+                BorderThickness = Constants.Default.GroupShowBorder ? new Thickness(Constants.Default.GroupBorderThickness) : new Thickness(0),
+                CornerRadius = Constants.Default.GroupCornerRadius,
                 Child = innerContainer,
                 ClipToBounds = true,
             };
@@ -124,11 +124,11 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             var scrollViewer = new ScrollViewer
             {
                 Name = $"{Name}_ScrollViewer",
-                VerticalScrollBarVisibility = StyleProperties.GroupEnableVerticalScroll ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
-                HorizontalScrollBarVisibility = StyleProperties.GroupEnableHorizontalScroll ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = Constants.Default.GroupEnableVerticalScroll ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
+                HorizontalScrollBarVisibility = Constants.Default.GroupEnableHorizontalScroll ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
                 Content = innerBorder,
-                MaxHeight = StyleProperties.GroupMaxHeight > 0 ? StyleProperties.GroupMaxHeight : double.PositiveInfinity,
-                MaxWidth = StyleProperties.GroupMaxWidth > 0 ? StyleProperties.GroupMaxWidth : double.PositiveInfinity
+                MaxHeight = Constants.Default.GroupMaxHeight > 0 ? Constants.Default.GroupMaxHeight : double.PositiveInfinity,
+                MaxWidth = Constants.Default.GroupMaxWidth > 0 ? Constants.Default.GroupMaxWidth : double.PositiveInfinity
             };
             
             panel.Children.Add(scrollViewer);

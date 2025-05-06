@@ -53,13 +53,13 @@ namespace DynamicInterfaceBuilder
         #region Properties [CP]
 
         [ConfigProperty]
-        public required string Title { get; set; } = Default.Title;
+        public string? Title { get; set; } = Default.Title;
 
         [ConfigProperty]
-        public required int Width { get; set; } = Default.Width;
+        public int? Width { get; set; } = Default.Width;
         
         [ConfigProperty]
-        public required int Height { get; set; } = Default.Height;
+        public int? Height { get; set; } = Default.Height;
 
         [ConfigProperty]
         public Thickness? Margin { get; set; } = Default.Margin;
@@ -72,8 +72,6 @@ namespace DynamicInterfaceBuilder
 
         [ConfigProperty]
         public AdvancedProperties AdvancedProperties { get; set; }
-        [ConfigProperty]
-        public StyleProperties StyleProperties { get; set; }
 
         [ConfigProperty]
         public string? Icon { get; set; } = Default.Icon;
@@ -83,21 +81,20 @@ namespace DynamicInterfaceBuilder
         #region Constructors
 
         public App()
-            : this(Default.Title, Default.Width, Default.Height)
+            : this(Default.Title)
         {
         }
 
-        public App(string title = Default.Title, int width = Default.Width, int height = Default.Height)
+        public App(string? title = null, int? width = null, int? height = null)
         {
             Application = new System.Windows.Application();
-
+        
             StartupManager = new(this);
             ConfigManager = new(this);
             ParametersManager = new(this);
             ThemesManager = new(this);
 
             AdvancedProperties = new AdvancedProperties();
-            StyleProperties = new StyleProperties();
 
             MessageHelper = new(this);
             ValidationHelper = new(this);
@@ -106,9 +103,9 @@ namespace DynamicInterfaceBuilder
 
             FormBuilder = new(this);
 
-            Title = title;
-            Width = width;
-            Height = height;
+            Title ??= Default.Title;
+            Width ??= Default.Width;
+            Height ??= Default.Height;
         }
 
         #endregion
@@ -230,13 +227,12 @@ namespace DynamicInterfaceBuilder
 
             StartupProperties.Init();
             AdvancedProperties.Init();
-            StyleProperties.Init();
         }
 
         public void SaveConfiguration() => ConfigManager.SaveConfiguration(this);
         public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);
         public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
-        public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path); 
+        public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path);
         
         #endregion
     }
