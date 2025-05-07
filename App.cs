@@ -10,8 +10,8 @@ using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Managers;
 using DynamicInterfaceBuilder.Core.Models;
-using DynamicInterfaceBuilder.Core.UI.Enums;
 using Microsoft.VisualBasic;
+using DynamicInterfaceBuilder.Styles.Enums;
 
 namespace DynamicInterfaceBuilder
 {

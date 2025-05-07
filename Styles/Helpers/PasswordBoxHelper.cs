@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace DynamicInterfaceBuilder.Core.UI.Helpers
+namespace DynamicInterfaceBuilder.Styles.Helpers
 {
     public class PasswordBoxHelper
     {

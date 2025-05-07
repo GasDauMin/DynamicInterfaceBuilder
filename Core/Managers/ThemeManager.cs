@@ -3,10 +3,10 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using DynamicInterfaceBuilder.Core.Models;
-using DynamicInterfaceBuilder.Core.UI.Enums;
 using System.IO;
 using System.Windows.Markup;
 using System.Collections;
+using DynamicInterfaceBuilder.Styles.Enums;
 
 namespace DynamicInterfaceBuilder.Core.Managers
 {
@@ -27,19 +27,19 @@ namespace DynamicInterfaceBuilder.Core.Managers
             {
                 resources.MergedDictionaries.Add(new ResourceDictionary
                 {
-                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Themes/Default.xaml", UriKind.Absolute)
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Styles/Themes/Default.xaml", UriKind.Absolute)
                 });
                 resources.MergedDictionaries.Add(new ResourceDictionary
                 {
-                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Structures/ControlColours.xaml", UriKind.Absolute)
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Styles/Structures/ControlColours.xaml", UriKind.Absolute)
                 });
                 resources.MergedDictionaries.Add(new ResourceDictionary
                 {
-                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Structures/ControlBase.xaml", UriKind.Absolute)
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Styles/Structures/ControlBase.xaml", UriKind.Absolute)
                 });
                 resources.MergedDictionaries.Add(new ResourceDictionary
                 {
-                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Core/UI/Structures/ControlStyles.xaml", UriKind.Absolute)
+                    Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Styles/Structures/ControlStyles.xaml", UriKind.Absolute)
                 });
 
                 // Add any existing custom dictionaries
@@ -94,8 +94,8 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 return;
             }
 
-            ThemeDictionary = new ResourceDictionary() { Source = new Uri($"Core/UI/Themes/{themeName}.xaml", UriKind.Relative) };
-            ControlColours = new ResourceDictionary() { Source = new Uri("Core/UI/Structures/ControlColours.xaml", UriKind.Relative) };
+            ThemeDictionary = new ResourceDictionary() { Source = new Uri($"Styles/Themes/{themeName}.xaml", UriKind.Relative) };
+            ControlColours = new ResourceDictionary() { Source = new Uri("Styles/Structures/ControlColours.xaml", UriKind.Relative) };
 
             RefreshControls();
         }

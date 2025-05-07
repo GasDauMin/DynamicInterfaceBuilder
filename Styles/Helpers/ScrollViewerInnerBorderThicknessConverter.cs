@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace DynamicInterfaceBuilder.Core.UI.Helpers
+namespace DynamicInterfaceBuilder.Styles.Helpers
 {
     public class ScrollViewerInnerBorderThicknessConverter : IMultiValueConverter
     {

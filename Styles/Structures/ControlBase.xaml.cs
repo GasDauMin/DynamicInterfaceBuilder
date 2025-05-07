@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace DynamicInterfaceBuilder.Core.UI.Structures
+namespace DynamicInterfaceBuilder.Styles.Structures
 {
     public partial class ControlsBase
     {

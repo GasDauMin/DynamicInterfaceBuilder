@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace DynamicInterfaceBuilder.Core.UI.Helpers
+namespace DynamicInterfaceBuilder.Styles.Helpers
 {
     public static class MenuHelper
     {

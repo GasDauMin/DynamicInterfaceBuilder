@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace DynamicInterfaceBuilder.Core.UI.Helpers
+namespace DynamicInterfaceBuilder.Styles.Helpers
 {
     public static class TextBoxAutoSelect
     {

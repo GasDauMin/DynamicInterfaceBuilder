@@ -1,4 +1,4 @@
-﻿namespace DynamicInterfaceBuilder.Core.UI.Enums
+﻿namespace DynamicInterfaceBuilder.Styles.Enums
 {
     public enum ThemeType
     {

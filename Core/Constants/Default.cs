@@ -1,6 +1,6 @@
 using DynamicInterfaceBuilder.Core.Managers;
 using DynamicInterfaceBuilder.Core.Models;
-using DynamicInterfaceBuilder.Core.UI.Enums;
+using DynamicInterfaceBuilder.Styles.Enums;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;

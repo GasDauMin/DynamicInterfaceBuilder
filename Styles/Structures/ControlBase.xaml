@@ -1,8 +1,8 @@
-﻿<ResourceDictionary x:Class="DynamicInterfaceBuilder.Core.UI.Structures.ControlsBase"
+﻿<ResourceDictionary x:Class="DynamicInterfaceBuilder.Styles.Structures.ControlsBase"
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
-                    xmlns:a="clr-namespace:DynamicInterfaceBuilder.Core.UI.Helpers">
+                    xmlns:a="clr-namespace:DynamicInterfaceBuilder.Styles.Helpers">
     <PopupAnimation x:Key="{x:Static SystemParameters.MenuPopupAnimationKey}">Fade</PopupAnimation>
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
     <Style x:Key="FocusVisual">
