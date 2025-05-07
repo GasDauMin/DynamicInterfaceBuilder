@@ -1,4 +1,4 @@
-using DynamicInterfaceBuilder.Core.Form;
+using DynamicInterfaceBuilder.Core.Forms;
 
 namespace DynamicInterfaceBuilder.Core.Interfaces
 {

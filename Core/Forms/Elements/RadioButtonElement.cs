@@ -2,14 +2,14 @@ using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Enums;
-using DynamicInterfaceBuilder.Core.Form;
+using DynamicInterfaceBuilder.Core.Forms;
 using DynamicInterfaceBuilder.Core.Interfaces;
 using DynamicInterfaceBuilder.Core.Models;
 
-namespace DynamicInterfaceBuilder.Core.Form.Elements
+namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class ListBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.ListBox), ISelectableList<string>
+    public class RadioButtonElement(App application, string name) : FormElement<string>(application, name, FormElementType.RadioButton), ISelectableList<string>
     {
         private readonly SelectableList<string> _selectableList = new();
 
@@ -47,35 +47,39 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 SetupLabelControl(label);
             }
 
-            var listBox = new ListBox
+            var radioPanel = new StackPanel
             {
-                Name = $"{Name}_ListBox",
+                Name = $"{Name}_RadioPanel",
                 Margin = new Thickness(spacing, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Stretch
+                Orientation = Orientation.Vertical
             };
 
             if (Items != null)
             {
-                foreach (var item in Items)
-                {
-                    listBox.Items.Add(item);
-                }
-                
                 var idx = DefaultIndex >= 0 
                     ? DefaultIndex 
                     : Items.Length + DefaultIndex;
 
-                if (idx >= 0 && idx < Items.Length)
+                for (int i = 0; i < Items.Length; i++)
                 {
-                    listBox.SelectedIndex = idx;
+                    var isChecked =  idx >= 0 && idx < Items.Length && i == idx;
+                    var radioButton = new RadioButton
+                    {
+                        Name = $"{Name}_RadioButton_{i}",
+                        Content = Items[i],
+                        GroupName = Name,
+                        IsChecked = isChecked,
+                        Margin = new Thickness(2),
+                    };
+                    
+                    radioPanel.Children.Add(radioButton);
                 }
             }
 
-            Grid.SetColumn(listBox, 1);
-            panel.Children.Add(listBox);
+            Grid.SetColumn(radioPanel, 1);
+            panel.Children.Add(radioPanel);
 
-            SetupControls(listBox, panel, null);
+            SetupControls(radioPanel, panel, null);
             
             return panel;
         }

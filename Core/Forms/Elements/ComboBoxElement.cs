@@ -2,18 +2,23 @@ using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Enums;
-using DynamicInterfaceBuilder.Core.Form;
-using DynamicInterfaceBuilder.Core.Helpers;
+using DynamicInterfaceBuilder.Core.Forms;
+using DynamicInterfaceBuilder.Core.Interfaces;
 using DynamicInterfaceBuilder.Core.Models;
 
-namespace DynamicInterfaceBuilder.Core.Form.Elements
+namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class FileBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.FileBox)
+    public class ComboBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.ComboBox), ISelectableList<string>
     {
+        private readonly SelectableList<string> _selectableList = new();
+
+        public string[]? Items { get => _selectableList.Items; set => _selectableList.Items = value; }
+        public int DefaultIndex { get => _selectableList.DefaultIndex; set => _selectableList.DefaultIndex = value; }
+        public override string? DefaultValue { get => _selectableList.DefaultValue; set => _selectableList.DefaultValue = value; }
+
         public override UIElement? BuildElement()
         {
-            // Implement file box control using Grid with TextBox and Button
             var panel = new Grid
             {
                 Name = $"{Name}_Panel",
@@ -22,8 +27,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
 
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            panel.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-;
+
             bool isLabelVisible = Label != null && Label.Length > 0;
             double spacing = isLabelVisible ? Constants.Default.Spacing : 0;
 
@@ -32,7 +36,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 var label = new TextBlock
                 {
                     Name = $"{Name}_Label",
-                    Text = Label + ": ",
+                    Text = Label,
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Left
                 };
@@ -43,40 +47,35 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 SetupLabelControl(label);
             }
 
-            var textBox = new TextBox
+            var comboBox = new ComboBox
             {
-                Name = $"{Name}_FilePath",
-                Text = DefaultValue,
+                Name = $"{Name}_ComboBox",
                 Margin = new Thickness(spacing, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch
             };
 
-            Grid.SetColumn(textBox, 1);
-            panel.Children.Add(textBox);
-
-            var browseButton = new Button
+            if (Items != null)
             {
-                Name = $"{Name}_BrowseButton",
-                Content = "...",
-                Width = 30,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-
-            browseButton.Click += (s, e) =>
-            {
-                var dialog = new Microsoft.Win32.OpenFileDialog();
-                if (dialog.ShowDialog() == true)
+                foreach (var item in Items)
                 {
-                    textBox.Text = dialog.FileName;
+                    comboBox.Items.Add(item);
                 }
-            };
+                
+                var idx = DefaultIndex >= 0 
+                    ? DefaultIndex 
+                    : Items.Length + DefaultIndex;
 
-            Grid.SetColumn(browseButton, 2);
-            panel.Children.Add(browseButton);
+                if (idx >= 0 && idx < Items.Length)
+                {
+                    comboBox.SelectedIndex = idx;
+                }
+            }
 
-            SetupControls(textBox, panel, null);
+            Grid.SetColumn(comboBox, 1);
+            panel.Children.Add(comboBox);
+
+            SetupControls(comboBox, panel, null);
             
             return panel;
         }

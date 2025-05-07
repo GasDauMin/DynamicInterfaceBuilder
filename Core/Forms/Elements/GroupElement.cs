@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Enums;
-using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Interfaces;
+using DynamicInterfaceBuilder.Core.Forms;
 
-namespace DynamicInterfaceBuilder.Core.Form.Elements
+namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
     public class GroupElement(App application, string name) : FormElementBase(application, name, FormElementType.Group), IFormGroup

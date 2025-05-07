@@ -3,9 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Enums;
-using DynamicInterfaceBuilder.Core.Form;
+using DynamicInterfaceBuilder.Core.Forms;
 
-namespace DynamicInterfaceBuilder.Core.Form.Elements
+namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
     public class NumericElement(App application, string name) : FormElement<int>(application, name, FormElementType.Numeric)

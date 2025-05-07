@@ -3,12 +3,12 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using DynamicInterfaceBuilder.Core.Form;
 using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Models;
 using System.Reflection;
 using DynamicInterfaceBuilder.Core.Interfaces;
+using DynamicInterfaceBuilder.Core.Forms;
 
 namespace DynamicInterfaceBuilder.Core.Managers
 {

@@ -2,11 +2,11 @@ using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Enums;
-using DynamicInterfaceBuilder.Core.Form;
+using DynamicInterfaceBuilder.Core.Forms;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Models;
 
-namespace DynamicInterfaceBuilder.Core.Form.Elements
+namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
     public class TextBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.TextBox)

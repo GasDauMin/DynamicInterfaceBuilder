@@ -2,14 +2,14 @@ using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Enums;
-using DynamicInterfaceBuilder.Core.Form;
+using DynamicInterfaceBuilder.Core.Forms;
 using DynamicInterfaceBuilder.Core.Interfaces;
 using DynamicInterfaceBuilder.Core.Models;
 
-namespace DynamicInterfaceBuilder.Core.Form.Elements
+namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class ComboBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.ComboBox), ISelectableList<string>
+    public class ListBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.ListBox), ISelectableList<string>
     {
         private readonly SelectableList<string> _selectableList = new();
 
@@ -47,9 +47,9 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
                 SetupLabelControl(label);
             }
 
-            var comboBox = new ComboBox
+            var listBox = new ListBox
             {
-                Name = $"{Name}_ComboBox",
+                Name = $"{Name}_ListBox",
                 Margin = new Thickness(spacing, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Stretch
@@ -59,7 +59,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             {
                 foreach (var item in Items)
                 {
-                    comboBox.Items.Add(item);
+                    listBox.Items.Add(item);
                 }
                 
                 var idx = DefaultIndex >= 0 
@@ -68,14 +68,14 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
 
                 if (idx >= 0 && idx < Items.Length)
                 {
-                    comboBox.SelectedIndex = idx;
+                    listBox.SelectedIndex = idx;
                 }
             }
 
-            Grid.SetColumn(comboBox, 1);
-            panel.Children.Add(comboBox);
+            Grid.SetColumn(listBox, 1);
+            panel.Children.Add(listBox);
 
-            SetupControls(comboBox, panel, null);
+            SetupControls(listBox, panel, null);
             
             return panel;
         }

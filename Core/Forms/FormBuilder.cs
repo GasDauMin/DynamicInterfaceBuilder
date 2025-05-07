@@ -8,7 +8,7 @@ using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Managers;
 
-namespace DynamicInterfaceBuilder.Core.Form
+namespace DynamicInterfaceBuilder.Core.Forms
 {
     public class FormBuilder : AppBase
     {
@@ -94,9 +94,9 @@ namespace DynamicInterfaceBuilder.Core.Form
                 Title = App.Title,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = App.AdvancedProperties.AllowResize ? ResizeMode.CanResize : ResizeMode.NoResize,
-                FontFamily = Constants.Default.FontFamily,
-                FontSize = Constants.Default.FontSize,
-                Style = (System.Windows.Style)Application.Current.Resources["CustomWindowStyle"]
+                FontFamily = Default.FontFamily,
+                FontSize = Default.FontSize,
+                Style = (Style)Application.Current.Resources["CustomWindowStyle"]
             };
 
             if (App.Width != null && App.Width > 0)
@@ -207,7 +207,7 @@ namespace DynamicInterfaceBuilder.Core.Form
                 {
                     if (element is FrameworkElement control)
                     {
-                        control.Margin = new Thickness(Constants.Default.Spacing, Constants.Default.Spacing, Constants.Default.Spacing, 0);
+                        control.Margin = new Thickness(Default.Spacing, Default.Spacing, Default.Spacing, 0);
                     }
                 }
             };

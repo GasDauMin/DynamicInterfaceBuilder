@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
-using DynamicInterfaceBuilder.Core.Form.Elements;
+using DynamicInterfaceBuilder.Core.Forms.Elements;
 using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Managers;
 
-namespace DynamicInterfaceBuilder.Core.Form
+namespace DynamicInterfaceBuilder.Core.Forms
 {   
     public abstract class FormElement<T>(App application, string name, FormElementType type) : FormElementBase(application, name, type)
     {

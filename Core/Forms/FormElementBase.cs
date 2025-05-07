@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Interfaces;
 
-namespace DynamicInterfaceBuilder.Core.Form
+namespace DynamicInterfaceBuilder.Core.Forms
 {
     public abstract class FormElementBase : AppBase, IFormElementBase
     {   
