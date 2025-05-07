@@ -1,10 +1,9 @@
-using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Interfaces;
-using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.Constants;
 using Newtonsoft.Json;
 using DynamicInterfaceBuilder.Core.Helpers;
+using DynamicInterfaceBuilder.Core.Interfaces;
 
 namespace DynamicInterfaceBuilder.Core.Form
 {
@@ -14,12 +13,9 @@ namespace DynamicInterfaceBuilder.Core.Form
         public string? Label { get; set; }
         public string? Description { get; set; }
         public string? Tooltip { get; set; }
-        public bool Valid { get; set; } = true;
         
         [JsonIgnore]
         public FormElementBase? Parent { get; protected set; }
-
-        public List<FormElementValidationRule> ValidationRules { get; protected set; } = [];
 
         protected FormElementBase(App application, string name, FormElementType type) : base(application)
         {
@@ -61,7 +57,6 @@ namespace DynamicInterfaceBuilder.Core.Form
         public abstract object? BuildElement();
         public abstract void SetupElement();
         public abstract void ResetElement();
-        public abstract bool ValidateElement();
 
         public object? PanelControl { get; protected set; }
         public object? LabelControl { get; protected set; }

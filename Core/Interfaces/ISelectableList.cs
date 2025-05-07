@@ -1,4 +1,4 @@
-namespace DynamicInterfaceBuilder.Core.Form.Interfaces
+namespace DynamicInterfaceBuilder.Core.Interfaces
 {
     public interface ISelectableList<T>
     {

@@ -1,4 +1,4 @@
-namespace DynamicInterfaceBuilder.Core.Form.Enums
+namespace DynamicInterfaceBuilder.Core.Enums
 {
     public enum FormElementControlType
     {

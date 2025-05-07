@@ -1,13 +1,14 @@
 using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Attributes;
-using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Helpers;
-using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Form;
+using DynamicInterfaceBuilder.Core.Helpers;
+using DynamicInterfaceBuilder.Core.Models;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
-    [FormElement(true)]
+    [FormElement]
     public class TextBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.TextBox)
     {
         public override UIElement? BuildElement()
@@ -61,11 +62,6 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             SetupControls(textBox, panel, null);
 
             return panel;
-        }
-
-        public override bool ValidateRule(FormElementValidationRule rule)
-        {
-            return ValidationHelper.ValidateText(rule, ControlValue!);
         }
     }
 }

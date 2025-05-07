@@ -16,12 +16,12 @@ namespace DynamicInterfaceBuilder.Core.Models
         {
             Init();
 
-            ConfigPath = General.ConfigPropertiesFile;
+            ConfigPath = Default.ConfigPropertiesFile;
         }
 
         public void Init()
         {
-            ConfigPath = General.ConfigPropertiesFile;
+            ConfigPath = Default.ConfigPropertiesFile;
             AutoLoadConfig = Default.AutoLoadConfig;
             AutoSaveConfig = Default.AutoSaveConfig;
         }

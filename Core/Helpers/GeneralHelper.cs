@@ -1,11 +1,23 @@
 using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Models;
+using Newtonsoft.Json;
 
 namespace DynamicInterfaceBuilder.Core.Helpers
 {
-    public class WpfHelper : AppBase {
-        public WpfHelper(App application) : base(application)
+    public class GeneralHelper : AppBase {
+        public GeneralHelper(App application) : base(application)
         {
+        }
+
+        public static T Clone<T>(T source) where T : class, new()
+        {
+            if (source == null)
+                return new T();
+
+            var json = JsonConvert.SerializeObject(source);
+            var clone = JsonConvert.DeserializeObject<T>(json);
+
+            return clone ?? new T();
         }
 
         public bool IsValidColor(string color = "")

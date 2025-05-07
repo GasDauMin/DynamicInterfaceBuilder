@@ -22,6 +22,19 @@ namespace DynamicInterfaceBuilder.Core.Constants
         public const bool AllowValidationControl = true;
         public const string Icon = "";
 
+        public const string ID = "FB";
+        public const string Title = "Dynamic Interface Builder";
+        public const string Namespace = "DynamicInterfaceBuilder";
+        public const string StartupSettingsFile = "FormBuilder.startup.json";
+        public const string ConfigPropertiesFile = "FormBuilder.properties.json";
+        public const string EndLine = "\r\n";
+
+        public const bool FieldSequenceSeparate = false;
+        public const bool FieldGuidEnabled = false;
+        public const int FieldGuidSize = 4;
+        public const string FieldPrefixSeparator = "_";
+        public const string FieldDefaultPrefix = "Field";
+
         #endregion
 
         #region Default Style Constants
@@ -32,7 +45,6 @@ namespace DynamicInterfaceBuilder.Core.Constants
 
         // Form style defaults
 
-        public static readonly string? Title = "Dynamic Interface Builder";
         public static readonly int? Width = 0;
         public static readonly int? Height = 0;
         public static readonly FontWeight FontWeight = FontWeights.Normal;

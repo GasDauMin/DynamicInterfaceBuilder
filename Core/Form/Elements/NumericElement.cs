@@ -2,7 +2,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DynamicInterfaceBuilder.Core.Attributes;
-using DynamicInterfaceBuilder.Core.Form.Enums;
+using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Form;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {

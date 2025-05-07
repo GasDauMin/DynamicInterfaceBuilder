@@ -2,14 +2,13 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Attributes;
-using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Helpers;
-using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Form;
 using Microsoft.Win32;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
-    [FormElement(true)]
+    [FormElement]
     public class FolderBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.FolderBox)
     {
         public override UIElement? BuildElement()
@@ -109,11 +108,6 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             }
 
             return null;
-        }
-
-        public override bool ValidateRule(FormElementValidationRule rule)
-        {
-            return ValidationHelper.ValidateText(rule, ControlValue!);
         }
     }
 }

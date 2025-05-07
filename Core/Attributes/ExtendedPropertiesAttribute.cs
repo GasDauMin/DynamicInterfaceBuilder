@@ -1,4 +1,4 @@
-using DynamicInterfaceBuilder.Core.Form.Enums;
+using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Constants;
 
 namespace DynamicInterfaceBuilder.Core.Attributes

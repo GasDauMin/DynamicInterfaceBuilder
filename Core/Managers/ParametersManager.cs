@@ -4,12 +4,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Form;
-using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Interfaces;
-using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Models;
 using System.Reflection;
+using DynamicInterfaceBuilder.Core.Interfaces;
 
 namespace DynamicInterfaceBuilder.Core.Managers
 {
@@ -133,15 +132,6 @@ namespace DynamicInterfaceBuilder.Core.Managers
                         ParseGroupElements(group, groupElements);
                     }
                     break;
-                case "Validation":
-                    if (entry.Value is IEnumerable rules)
-                    {
-                        foreach (IDictionary rule in rules)
-                        {
-                            ParseValidationRule(element, rule);
-                        }
-                    }
-                    break;
                 case "Style":
                     if (entry.Value is IDictionary styleData)
                     {
@@ -213,47 +203,6 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
                     break;
             }        
-        }
-
-        private void ParseValidationRule(FormElementBase element, IDictionary data)
-        {
-            FormElementValidationRule validationRule = new();
-
-            foreach (DictionaryEntry entry in data)
-            {
-                switch (entry.Key.ToString())   
-                {
-                    case "Type":
-                        if (entry.Value is FormElementValidationType type)
-                        {
-                            validationRule.Type = type;
-                        }
-                        else
-                        if (entry.Value is string typeString)
-                        {
-                            if (Enum.TryParse(typeString, out FormElementValidationType parsedType))
-                            {
-                                validationRule.Type = parsedType;
-                            }
-                            else
-                            {
-                                validationRule.Type = FormElementValidationType.None;
-                            }
-                        }
-                        break;
-                    case "Value":
-                        validationRule.Value = entry.Value;
-                        break;
-                    case "Message":
-                        validationRule.Message = entry.Value as string;
-                        break;
-                    case "Runtime":
-                        validationRule.Runtime = entry.Value as bool?;
-                        break;
-                }   
-            }
-
-            element.ValidationRules.Add(validationRule);
         }
 
         private (PropertyInfo? Property, object? TargetObject) GetPropertyFromPath(object rootObject, string propertyPath)

@@ -1,4 +1,4 @@
-namespace DynamicInterfaceBuilder.Core.Form.Models
+namespace DynamicInterfaceBuilder.Core.Models
 {
     public class SelectableList<T>
     {

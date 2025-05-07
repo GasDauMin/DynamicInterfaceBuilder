@@ -1,9 +1,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Attributes;
-using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Interfaces;
-using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Form;
+using DynamicInterfaceBuilder.Core.Interfaces;
+using DynamicInterfaceBuilder.Core.Models;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
@@ -61,7 +62,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
 
                 for (int i = 0; i < Items.Length; i++)
                 {
-                    var isChecked =  (idx >= 0 && idx < Items.Length && i == idx);
+                    var isChecked =  idx >= 0 && idx < Items.Length && i == idx;
                     var radioButton = new RadioButton
                     {
                         Name = $"{Name}_RadioButton_{i}",

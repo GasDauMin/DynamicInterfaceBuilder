@@ -6,9 +6,7 @@ using System.Xml.Linq;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Form;
-using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Helpers;
-using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Managers;
 using DynamicInterfaceBuilder.Core.Models;
@@ -29,11 +27,10 @@ namespace DynamicInterfaceBuilder
 
         #region Helpers
     
-        public WpfHelper WpfHelper;
+        public GeneralHelper WpfHelper;
         public WindowsHelper WindowsHelper;
         public MessageHelper MessageHelper;
         public ThemeManager ThemesManager;
-        public ValidationHelper ValidationHelper;
 
         #endregion
 
@@ -97,7 +94,6 @@ namespace DynamicInterfaceBuilder
             AdvancedProperties = new AdvancedProperties();
 
             MessageHelper = new(this);
-            ValidationHelper = new(this);
             WindowsHelper = new(this);
             WpfHelper = new(this);
 
@@ -133,23 +129,6 @@ namespace DynamicInterfaceBuilder
             StartupManager.UpdateStartupSettings();
         }
 
-        public bool Validate()
-        {
-            MessageHelper.ResetMessage();
-
-            bool ok = true;
-
-            foreach (var element in FormElements.Values)
-            {
-                if (!element.ValidateElement())
-                {
-                    ok = false;
-                }
-            }
-
-            return ok;
-        }
-
         public string SetElementId(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -174,10 +153,8 @@ namespace DynamicInterfaceBuilder
             }
             else
             {
-                baseList.Add(General.FieldDefaultPrefix);
+                baseList.Add(Default.FieldDefaultPrefix);
             }
-
-            //..
 
             string id, guid;
             int sequence = 0;
@@ -188,16 +165,16 @@ namespace DynamicInterfaceBuilder
                 sequence++;
                 if (sequence > 1)
                 {
-                    if (General.FieldGuidEnabled)
+                    if (Default.FieldGuidEnabled)
                     {
-                        guid = General.FieldGuidSize > 0
-                            ? Guid.NewGuid().ToString("N").Substring(0, General.FieldGuidSize)
+                        guid = Default.FieldGuidSize > 0
+                            ? Guid.NewGuid().ToString("N").Substring(0, Default.FieldGuidSize)
                             : Guid.NewGuid().ToString("N");
                         list.Add(guid);
                     }
                     else
                     {
-                        if (General.FieldSequenceSeparate)
+                        if (Default.FieldSequenceSeparate)
                         {
                             list.Add(sequence.ToString());
                         }
@@ -207,10 +184,8 @@ namespace DynamicInterfaceBuilder
                         }
                     }
                 }
-                id = string.Join(General.FieldPrefixSeparator, list);
+                id = string.Join(Default.FieldPrefixSeparator, list);
             } while (FormElementIds.Exists(existingId => existingId.Equals(id, StringComparison.OrdinalIgnoreCase)));
-
-            //..
 
             return id;
         }

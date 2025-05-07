@@ -7,7 +7,6 @@ using System.Globalization;
 using DynamicInterfaceBuilder.Core.Models;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Managers;
-using DynamicInterfaceBuilder.Core.Form.Enums;
 
 namespace DynamicInterfaceBuilder.Core.Form
 {
@@ -75,11 +74,7 @@ namespace DynamicInterfaceBuilder.Core.Form
         {
             if (Form != null && Form.DialogResult == true)
             {                                
-                if (!App.Validate())
-                {                    
-                    e.Cancel = true;
-                }
-
+                // Removed validation call
                 AdjustMessageViewer();
             }
         }
@@ -198,7 +193,7 @@ namespace DynamicInterfaceBuilder.Core.Form
             // Create a panel for the content area
             StackPanel panel = new()
             {
-                Name = $"{General.ID}_Content_Panel",
+                Name = $"{Default.ID}_Content_Panel",
                 Orientation = Orientation.Vertical,
                 Width = double.NaN, // Auto width
                 Margin = new Thickness(0, 0, 0, 0),
@@ -224,14 +219,14 @@ namespace DynamicInterfaceBuilder.Core.Form
         {
             Grid panel = new()
             {
-                Name = $"{General.ID}_Message_Panel",
+                Name = $"{Default.ID}_Message_Panel",
                 Height = 100,
                 Margin = new Thickness(0),
             };
 
             RichTextBox viewer = new()
             {
-                Name = $"{General.ID}_Message_Viewer",
+                Name = $"{Default.ID}_Message_Viewer",
                 IsReadOnly = true,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
@@ -253,7 +248,7 @@ namespace DynamicInterfaceBuilder.Core.Form
 
             Label buttonX = new()
             {
-                Name = $"{General.ID}_X_Button",
+                Name = $"{Default.ID}_X_Button",
                 Content = "...",
                 FontSize = 12,
                 HorizontalAlignment = HorizontalAlignment.Center,
@@ -301,14 +296,14 @@ namespace DynamicInterfaceBuilder.Core.Form
             // Create a panel for the buttons
             Grid panel = new()
             {
-                Name = $"{General.ID}_Button_Panel",
+                Name = $"{Default.ID}_Button_Panel",
                 Height = 40,
             };
             
             // Create OK button
             Button buttonOk = new()
             {
-                Name = $"{General.ID}_Ok_Button",
+                Name = $"{Default.ID}_Ok_Button",
                 Content = "OK",
                 IsDefault = true,
                 Width = 100,
@@ -320,7 +315,7 @@ namespace DynamicInterfaceBuilder.Core.Form
             // Create Cancel button
             Button buttonCancel = new()
             {
-                Name = $"{General.ID}_Cancel_Button",
+                Name = $"{Default.ID}_Cancel_Button",
                 Content = "Cancel",
                 IsCancel = true,
                 Width = 100,
@@ -368,7 +363,7 @@ namespace DynamicInterfaceBuilder.Core.Form
                 MessageViewer.Document.Blocks.Clear();
                 MessageViewer.Document.Blocks.Add(new Paragraph(new Run(App.MessageText)));
 
-                var buttonX = MessagePanel.Children.OfType<Label>().FirstOrDefault(x => x.Name == $"{General.ID}_X_Button");
+                var buttonX = MessagePanel.Children.OfType<Label>().FirstOrDefault(x => x.Name == $"{Default.ID}_X_Button");
                 var lineCount = App.MessageText.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).Length;
                 var lineHeight = SampleLineHeight(MessageViewer);
                 var padding = 5; // Additional padding

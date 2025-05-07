@@ -4,9 +4,8 @@ using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Form.Elements;
-using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Helpers;
-using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Managers;
 
 namespace DynamicInterfaceBuilder.Core.Form
@@ -50,13 +49,11 @@ namespace DynamicInterfaceBuilder.Core.Form
 
         public override void SetupElement()
         {
-            Valid = true;   
             Tooltip = Description;
         }
 
         public override void ResetElement()
         {
-            Valid = true;
             Tooltip = Description;
         }
 
@@ -186,68 +183,6 @@ namespace DynamicInterfaceBuilder.Core.Form
 
         #endregion
 
-        #region Validation
-
-        public override bool ValidateElement()
-        {
-            Valid = true;
-
-            // Initialize validation
-
-            var attribute = GetType().GetCustomAttributes(typeof(FormElementAttribute), true).FirstOrDefault() as FormElementAttribute;
-
-            bool allowValidationControl = attribute?.AllowValidationControl ?? Default.AllowValidationControl;
-            if (allowValidationControl)
-            {
-                string tooltipValue = String.Empty;  
-
-                Control? alertControl = ValueControl as Control;
-                bool allowAlertControl = attribute?.AllowAlertControl ?? Default.AllowAlertControl;
-                
-                if (allowAlertControl)
-                {
-                    ResetElement();
-                    ResetValueControl();
-                }
-
-                // Validate rules
-
-                foreach (var rule in ValidationRules)
-                {
-                    if (!ValidateRule(rule))
-                    {
-                        Valid = false;
-                        if (rule.Message != null)
-                        {
-                            App.MessageHelper.AddMessage(rule.Message, MessageType.Error);
-                            tooltipValue += (tooltipValue == String.Empty ? "" : General.EndLine) + MessageHelper.FormatMessage(rule.Message, MessageType.Error);             
-                        }
-                        
-                    }
-                }
-
-                if (allowAlertControl && !Valid)
-                {   
-                    alertControl!.ToolTip += (alertControl!.ToolTip.ToString() == String.Empty ? "" : General.EndLine) + tooltipValue;         
-                    ApplyValueControlAlertStyle(alertControl);
-                }
-            }
-
-            return Valid;
-        }
-
-        public virtual bool ValidateRule(FormElementValidationRule rule)
-        {
-            // if (typeof(T) == typeof(string))
-            // {
-            //     //return rule.ValidateText(Value.ToString());
-            // }
-
-            return true;
-        }
-
-        #endregion
-
         protected void ApplyValueControlStyles(Control control)
         {
             StyleHelper.ApplyValueControlStyles(control);
@@ -266,11 +201,6 @@ namespace DynamicInterfaceBuilder.Core.Form
         protected void ApplyButtonControlStyles(Control control)
         {
             StyleHelper.ApplyButtonControlStyles(control);
-        }
-
-        protected void ApplyValueControlAlertStyle(Control control)
-        {
-            StyleHelper.ApplyValueControlAlertStyle(control);
         }
     }
 }

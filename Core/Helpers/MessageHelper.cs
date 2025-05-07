@@ -1,8 +1,8 @@
 using DynamicInterfaceBuilder.Core.Constants;
-using DynamicInterfaceBuilder.Core.Form.Enums;
+using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Models;
 
-namespace DynamicInterfaceBuilder.Core.Form.Helpers
+namespace DynamicInterfaceBuilder.Core.Helpers
 {
     public class MessageHelper : AppBase
     {
@@ -34,7 +34,7 @@ namespace DynamicInterfaceBuilder.Core.Form.Helpers
 
         public void AddMessage(string message, MessageType type = MessageType.None)
         {   
-            App.MessageText += (string.IsNullOrEmpty(App.MessageText) ? "" : General.EndLine) + FormatMessage(message, type);
+            App.MessageText += (string.IsNullOrEmpty(App.MessageText) ? "" : Default.EndLine) + FormatMessage(message, type);
 
             if (App.MessageType < type)
             {

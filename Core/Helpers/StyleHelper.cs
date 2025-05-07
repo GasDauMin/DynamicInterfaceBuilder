@@ -4,7 +4,7 @@ using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Managers;
 
-namespace DynamicInterfaceBuilder.Core.Form.Helpers
+namespace DynamicInterfaceBuilder.Core.Helpers
 {
     public static class StyleHelper
     {

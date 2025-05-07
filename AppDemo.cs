@@ -2,7 +2,7 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Constants;
-using DynamicInterfaceBuilder.Core.Form.Enums;
+using DynamicInterfaceBuilder.Core.Enums;
 
 namespace DynamicInterfaceBuilder
 {
@@ -51,15 +51,6 @@ namespace DynamicInterfaceBuilder
                             { "Label", "Test text box" },
                             { "Description", "Test text box description" },
                             { "DefaultValue", "" },
-                            { "Validation", new[]
-                                {
-                                    new OrderedDictionary { 
-                                        { "Type", FormElementValidationType.Required },
-                                        { "Value", true },
-                                        { "Message", "Test text box is required." }
-                                    }
-                                }
-                            },
                             // { "Style", new OrderedDictionary
                             //     {
                             //         { "ValueControl.Background", Colors.LightGray.ToString() },
@@ -80,15 +71,6 @@ namespace DynamicInterfaceBuilder
                                         { "Label", "Nested text box" },
                                         { "Value", "" },
                                         { "Description", "Nested text box description" },
-                                        { "Validation", new[]
-                                            {
-                                                new OrderedDictionary {
-                                                    { "Type", FormElementValidationType.Required },
-                                                    { "Value", true },
-                                                    { "Message", "Nested text box is required." }
-                                                }
-                                            }
-                                        }
                                     }
                                 }
                             }

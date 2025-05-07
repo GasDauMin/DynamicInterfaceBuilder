@@ -16,7 +16,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
             string assemblyLocation = Assembly.GetExecutingAssembly().Location;
             string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
             
-            StartupSettingsFile = General.StartupSettingsFile;
+            StartupSettingsFile = Default.StartupSettingsFile;
             StartupSettingsPath = Path.Combine(assemblyDirectory, StartupSettingsFile);
             
             // Load settings at initialization

@@ -1,5 +1,5 @@
 using DynamicInterfaceBuilder.Core.Form.Elements;
-using DynamicInterfaceBuilder.Core.Form.Enums;
+using DynamicInterfaceBuilder.Core.Enums;
 
 namespace DynamicInterfaceBuilder.Core.Form
 {

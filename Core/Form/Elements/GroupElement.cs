@@ -2,10 +2,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Attributes;
-using DynamicInterfaceBuilder.Core.Form.Enums;
-using DynamicInterfaceBuilder.Core.Form.Helpers;
-using DynamicInterfaceBuilder.Core.Form.Interfaces;
-using DynamicInterfaceBuilder.Core.Form.Models;
+using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Form;
+using DynamicInterfaceBuilder.Core.Models;
+using DynamicInterfaceBuilder.Core.Helpers;
+using DynamicInterfaceBuilder.Core.Interfaces;
 
 namespace DynamicInterfaceBuilder.Core.Form.Elements
 {
@@ -136,29 +137,14 @@ namespace DynamicInterfaceBuilder.Core.Form.Elements
             
             return panel;
         }
-        
-        public override bool ValidateElement()
-        {
-            bool isValid = true;
-            foreach (var element in Elements.Values)
-            {
-                if (!element.ValidateElement())
-                {
-                    isValid = false;
-                }
-            }
-            return isValid;
-        }
 
         public override void SetupElement()
         {
-            Valid = true;
             Tooltip = Description;
         }
 
         public override void ResetElement()
         {
-            Valid = true;
             Tooltip = Description;
         }
 
