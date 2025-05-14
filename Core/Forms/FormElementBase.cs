@@ -1,8 +1,6 @@
 using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Models;
-using DynamicInterfaceBuilder.Core.Constants;
 using Newtonsoft.Json;
-using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Interfaces;
 
 namespace DynamicInterfaceBuilder.Core.Forms
@@ -13,6 +11,7 @@ namespace DynamicInterfaceBuilder.Core.Forms
         public string? Label { get; set; }
         public string? Description { get; set; }
         public string? Tooltip { get; set; }
+        public List<ValidationRule> ValidationRules { get; set; } = [];
         
         [JsonIgnore]
         public FormElementBase? Parent { get; protected set; }

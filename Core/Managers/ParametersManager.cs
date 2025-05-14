@@ -12,7 +12,7 @@ using DynamicInterfaceBuilder.Core.Forms;
 
 namespace DynamicInterfaceBuilder.Core.Managers
 {
-    public class ParametersManager : AppBase {
+    public class ParametersManager(App application) : AppBase(application) {
 
         private static readonly string[] ParsingOrder = new[]
         {
@@ -24,10 +24,6 @@ namespace DynamicInterfaceBuilder.Core.Managers
         public Dictionary<string, object> Parameters { get; set; } = [];
         public Dictionary<string, FormElementBase> FormElements { get; set; } = [];
 
-        public ParametersManager(App application) : base(application)
-        {
-        }
-        
         public void ParseParameters(Dictionary<string, object> parameters)
         {
             if (parameters == null)
@@ -132,6 +128,12 @@ namespace DynamicInterfaceBuilder.Core.Managers
                         ParseGroupElements(group, groupElements);
                     }
                     break;
+                case "Validation":
+                    if (entry.Value is IDictionary validationData)
+                    {
+                        ParseValidation(element, validationData);
+                    }
+                    break;
                 case "Style":
                     if (entry.Value is IDictionary styleData)
                     {
@@ -231,6 +233,39 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
 
             return (property, currentObject);
+        }
+
+        private void ParseValidation(FormElementBase element, IDictionary validationData)
+        {
+            foreach (DictionaryEntry entry in validationData)
+            {
+                string propertyPath = entry.Key.ToString() ?? string.Empty;
+
+                if (entry.Value == null)
+                    continue;
+                    
+                try
+                {
+                    var property = element.ValidationRules.GetType().GetProperty(propertyPath);
+                    if (property != null && property.CanWrite)
+                    {
+                        object? convertedValue = TypeConversionHelper.ConvertValueToType(entry.Value, property.PropertyType);
+                        
+                        if (convertedValue != null)
+                        {
+                            property.SetValue(element.ValidationRules, convertedValue);
+                        }
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Property {propertyPath} not found on ValidationRules");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error setting validation property {propertyPath}: {ex.Message}");
+                }
+            }
         }
 
         private void ParseStyle(FormElementBase element, IDictionary styleData)
