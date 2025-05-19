@@ -1,30 +1,46 @@
 using DynamicInterfaceBuilder.Core.Forms.Elements;
 using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Forms.Validations;
+using DynamicInterfaceBuilder.Core.Models;
 
 namespace DynamicInterfaceBuilder.Core.Forms
 {
     public static class FormElementFactory
     {
-        private static readonly Dictionary<FormElementType, Func<App, string, FormElementBase>> _factories = new()
+        private static readonly Dictionary<FormElementType, Func<App, string, FormElementType, FormElementBase>> _elementFactories = new()
         {
-            { FormElementType.Group, (fb, name) => new GroupElement(fb, name) },
-            { FormElementType.TextBox, (fb, name) => new TextBoxElement(fb, name) },
-            { FormElementType.Numeric, (fb, name) => new NumericElement(fb, name) },
-            { FormElementType.CheckBox, (fb, name) => new CheckBoxElement(fb, name) },
-            { FormElementType.FileBox, (fb, name) => new FileBoxElement(fb, name) },
-            { FormElementType.FolderBox, (fb, name) => new FolderBoxElement(fb, name) },
-            { FormElementType.ListBox, (fb, name) => new ListBoxElement(fb, name) },
-            { FormElementType.ComboBox, (fb, name) => new ComboBoxElement(fb, name) },
-            { FormElementType.RadioButton, (fb, name) => new RadioButtonElement(fb, name) }
+            { FormElementType.Group, (app, name, type) => new GroupElement(app, name, type) },
+            { FormElementType.TextBox, (app, name, type) => new TextBoxElement(app, name, type) },
+            { FormElementType.Numeric, (app, name, type) => new NumericElement(app, name, type) },
+            { FormElementType.CheckBox, (app, name, type) => new CheckBoxElement(app, name, type) },
+            { FormElementType.FileBox, (app, name, type) => new FileBoxElement(app, name, type) },
+            { FormElementType.FolderBox, (app, name, type) => new FolderBoxElement(app, name, type) },
+            { FormElementType.ListBox, (app, name, type) => new ListBoxElement(app, name, type) },
+            { FormElementType.ComboBox, (app, name, type) => new ComboBoxElement(app, name, type) },
+            { FormElementType.RadioButton, (app, name, type) => new RadioButtonElement(app, name, type) }
         };
 
-        public static FormElementBase Create(FormElementType type, string name, App application)
+        private static readonly Dictionary<ValidationType, Func<App, ValidationProperties, ValidationType, FormValidationBase>> _validationFactories = new()
         {
-            if (_factories.TryGetValue(type, out var factory))
+            { ValidationType.Required, (app, prop, type) => new RequiredValidation(app, prop, type) }
+        };
+
+        public static FormElementBase CreateElement(FormElementType type, string name, App application)
+        {
+            if (_elementFactories.TryGetValue(type, out var factory))
             {
-                return factory(application, name);
+                return factory(application, name, type);
             }
-            throw new ArgumentException($"No factory registered for type {type}");
+            throw new ArgumentException($"No factory registered for element type {type}");
+        }
+
+        public static FormValidationBase CreateValidation(ValidationType type, ValidationProperties properties, App application)
+        {
+            if (_validationFactories.TryGetValue(type, out var factory))
+            {
+                return factory(application, properties, type);
+            }
+            throw new ArgumentException($"No factory registered for validation type {type}");
         }
     }    
 }

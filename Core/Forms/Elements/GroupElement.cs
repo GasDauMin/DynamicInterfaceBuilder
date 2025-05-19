@@ -11,7 +11,7 @@ using DynamicInterfaceBuilder.Core.Forms;
 namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class GroupElement(App application, string name) : FormElementBase(application, name, FormElementType.Group), IFormGroup
+    public class GroupElement(App application, string name, FormElementType type) : FormElementBase(application, name, type), IFormGroup
     {
         public Dictionary<string, FormElementBase> Elements { get; set; } = new();
         public IReadOnlyList<FormElementBase> Children => [.. Elements.Values];

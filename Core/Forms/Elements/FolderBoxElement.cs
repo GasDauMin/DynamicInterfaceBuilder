@@ -9,7 +9,7 @@ using Microsoft.Win32;
 namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class FolderBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.FolderBox)
+    public class FolderBoxElement(App application, string name, FormElementType type) : FormElement<string>(application, name, type)
     {
         public override UIElement? BuildElement()
         {

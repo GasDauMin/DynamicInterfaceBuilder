@@ -1,15 +1,11 @@
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using DynamicInterfaceBuilder.Core.Attributes;
-using DynamicInterfaceBuilder.Core.Constants;
-using DynamicInterfaceBuilder.Core.Forms.Elements;
 using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Forms.Validations;
 using DynamicInterfaceBuilder.Core.Helpers;
-using DynamicInterfaceBuilder.Core.Managers;
+using DynamicInterfaceBuilder.Core.Models;
 
 namespace DynamicInterfaceBuilder.Core.Forms
-{   
+{
     public abstract class FormElement<T>(App application, string name, FormElementType type) : FormElementBase(application, name, type)
     {
         public virtual T? DefaultValue { get; set; }
@@ -32,7 +28,7 @@ namespace DynamicInterfaceBuilder.Core.Forms
         {
             if (value == null)
                 return default;
-                
+
             try
             {
                 // Convert to the actual target type T, not the method type parameter U
@@ -84,13 +80,14 @@ namespace DynamicInterfaceBuilder.Core.Forms
                 if (ValueControl is Control control)
                 {
                     ApplyValueControlStyles(control);
+                    ApplyValueControlValidations(control);
                 }
 
                 if (ValueControl is TextBox textBox)
                 {
                     textBox.ToolTip = Tooltip;
                 }
-                
+
                 return true;
             }
 
@@ -102,12 +99,12 @@ namespace DynamicInterfaceBuilder.Core.Forms
             if (controlObject != null)
             {
                 PanelControl = controlObject;
-                
+
                 if (PanelControl is Control control)
                 {
                     ApplyPanelControlStyles(control);
                 }
-                
+
                 return true;
             }
 
@@ -119,7 +116,7 @@ namespace DynamicInterfaceBuilder.Core.Forms
             if (controlObject != null)
             {
                 LabelControl = controlObject;
-                
+
                 if (LabelControl is Control control)
                 {
                     ApplyLabelControlStyles(control);
@@ -156,7 +153,7 @@ namespace DynamicInterfaceBuilder.Core.Forms
                 StyleHelper.ResetControlStyle(control);
                 ApplyValueControlStyles(control);
             }
-            
+
             if (ValueControl is TextBox textBox)
             {
                 textBox.ToolTip = Description;
@@ -201,6 +198,10 @@ namespace DynamicInterfaceBuilder.Core.Forms
         protected void ApplyButtonControlStyles(Control control)
         {
             StyleHelper.ApplyButtonControlStyles(control);
+        }
+
+        protected void ApplyValueControlValidations(Control control)
+        {
         }
     }
 }

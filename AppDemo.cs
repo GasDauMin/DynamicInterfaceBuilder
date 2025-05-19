@@ -51,6 +51,13 @@ namespace DynamicInterfaceBuilder
                             { "Label", "Test text box" },
                             { "Description", "Test text box description" },
                             { "DefaultValue", "" },
+                            { "Validation", new OrderedDictionary
+                                {
+                                    { "Type", ValidationType.Required },
+                                    { "Value", true },
+                                    { "Message", "Test validation description" }
+                                }
+                            },
                             // { "Style", new OrderedDictionary
                             //     {
                             //         { "ValueControl.Background", Colors.LightGray.ToString() },

@@ -9,7 +9,7 @@ using DynamicInterfaceBuilder.Core.Models;
 namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class TextBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.TextBox)
+    public class TextBoxElement(App application, string name, FormElementType type) : FormElement<string>(application, name, type)
     {
         public override UIElement? BuildElement()
         {

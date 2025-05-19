@@ -9,7 +9,7 @@ using DynamicInterfaceBuilder.Core.Models;
 namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class FileBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.FileBox)
+    public class FileBoxElement(App application, string name, FormElementType type) : FormElement<string>(application, name, type)
     {
         public override UIElement? BuildElement()
         {

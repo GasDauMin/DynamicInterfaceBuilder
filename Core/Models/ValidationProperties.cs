@@ -2,7 +2,7 @@ using DynamicInterfaceBuilder.Core.Enums;
 
 namespace DynamicInterfaceBuilder.Core.Models
 {
-    public class ValidationRule
+    public class ValidationProperties
     {
         public ValidationType Type { get; set; }
         public object? Value { get; set; }

@@ -7,7 +7,7 @@ using DynamicInterfaceBuilder.Core.Forms;
 namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class CheckBoxElement(App application, string name) : FormElement<bool>(application, name, FormElementType.CheckBox)
+    public class CheckBoxElement(App application, string name, FormElementType type) : FormElement<bool>(application, name, type)
     {
         public override UIElement? BuildElement()
         {

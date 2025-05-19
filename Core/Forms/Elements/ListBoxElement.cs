@@ -9,7 +9,7 @@ using DynamicInterfaceBuilder.Core.Models;
 namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class ListBoxElement(App application, string name) : FormElement<string>(application, name, FormElementType.ListBox), ISelectableList<string>
+    public class ListBoxElement(App application, string name, FormElementType type) : FormElement<string>(application, name, type), ISelectableList<string>
     {
         private readonly SelectableList<string> _selectableList = new();
 

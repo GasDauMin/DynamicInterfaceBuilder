@@ -8,7 +8,7 @@ using DynamicInterfaceBuilder.Core.Forms;
 namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class NumericElement(App application, string name) : FormElement<int>(application, name, FormElementType.Numeric)
+    public class NumericElement(App application, string name, FormElementType type) : FormElement<int>(application, name, type)
     {
         public override UIElement? BuildElement()
         {

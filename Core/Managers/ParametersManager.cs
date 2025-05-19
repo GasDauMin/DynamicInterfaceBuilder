@@ -14,12 +14,12 @@ namespace DynamicInterfaceBuilder.Core.Managers
 {
     public class ParametersManager(App application) : AppBase(application) {
 
-        private static readonly string[] ParsingOrder = new[]
-        {
+        private static readonly string[] ParsingOrder =
+        [
             "Items",
             "DefaultIndex",
             "DefaultValue"
-        };
+        ];
 
         public Dictionary<string, object> Parameters { get; set; } = [];
         public Dictionary<string, FormElementBase> FormElements { get; set; } = [];
@@ -53,7 +53,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
             if (parameter["Type"] is not FormElementType type)   
                 return;
 
-            var element = FormElementFactory.Create(type, App.SetElementId(id), App);
+            var element = FormElementFactory.CreateElement(type, App.SetElementId(id), App);
 
             // Set parent-child relationship
             if (group is FormElementBase parentElement)
@@ -237,23 +237,27 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
         private void ParseValidation(FormElementBase element, IDictionary validationData)
         {
+            var validationProperties = new ValidationProperties();
+
+            //..
+
             foreach (DictionaryEntry entry in validationData)
             {
                 string propertyPath = entry.Key.ToString() ?? string.Empty;
 
                 if (entry.Value == null)
                     continue;
-                    
+
                 try
                 {
-                    var property = element.ValidationRules.GetType().GetProperty(propertyPath);
+                    var property = validationProperties.GetType().GetProperty(propertyPath);
                     if (property != null && property.CanWrite)
                     {
                         object? convertedValue = TypeConversionHelper.ConvertValueToType(entry.Value, property.PropertyType);
-                        
+
                         if (convertedValue != null)
                         {
-                            property.SetValue(element.ValidationRules, convertedValue);
+                            property.SetValue(validationProperties, convertedValue);
                         }
                     }
                     else
@@ -265,6 +269,14 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 {
                     System.Diagnostics.Debug.WriteLine($"Error setting validation property {propertyPath}: {ex.Message}");
                 }
+            }
+
+            //..
+
+            if (validationProperties.Type != ValidationType.None)
+            {
+                var validation = FormElementFactory.CreateValidation(validationProperties.Type, validationProperties, App);
+                element.Validations.Add(validation);
             }
         }
 

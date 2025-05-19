@@ -9,7 +9,7 @@ using DynamicInterfaceBuilder.Core.Models;
 namespace DynamicInterfaceBuilder.Core.Forms.Elements
 {
     [FormElement]
-    public class RadioButtonElement(App application, string name) : FormElement<string>(application, name, FormElementType.RadioButton), ISelectableList<string>
+    public class RadioButtonElement(App application, string name, FormElementType type) : FormElement<string>(application, name, type), ISelectableList<string>
     {
         private readonly SelectableList<string> _selectableList = new();
 

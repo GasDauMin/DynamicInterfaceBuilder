@@ -5,24 +5,20 @@ using DynamicInterfaceBuilder.Core.Interfaces;
 
 namespace DynamicInterfaceBuilder.Core.Forms
 {
-    public abstract class FormElementBase : AppBase, IFormElementBase
-    {   
-        public string Name { get; protected set; }
+    public abstract class FormElementBase(App application, string name, FormElementType type) : IAppBase, IFormElementBase
+    {
+        public App App { get; init; } = application;
+        public string Name { get; protected set; } = name;
+        public FormElementType Type { get; protected set; } = type;
+        
         public string? Label { get; set; }
         public string? Description { get; set; }
         public string? Tooltip { get; set; }
-        public List<ValidationRule> ValidationRules { get; set; } = [];
+        public List<FormValidationBase> Validations { get; set; } = [];
         
         [JsonIgnore]
         public FormElementBase? Parent { get; protected set; }
 
-        protected FormElementBase(App application, string name, FormElementType type) : base(application)
-        {
-            Name = name;
-            Type = type;
-
-            InheritStyle();
-        }
 
         public bool TrySetProperty(string propertyName, object? value)
         {
@@ -46,11 +42,6 @@ namespace DynamicInterfaceBuilder.Core.Forms
         public void SetParent(FormElementBase parent)
         {
             Parent = parent;
-            InheritStyle();
-        }
-        
-        public void InheritStyle()
-        {
         }
 
         public abstract object? BuildElement();
@@ -60,7 +51,6 @@ namespace DynamicInterfaceBuilder.Core.Forms
         public object? PanelControl { get; protected set; }
         public object? LabelControl { get; protected set; }
         public object? ValueControl { get; protected set; }
-        public FormElementType Type { get; protected set; }
 
         public abstract void SetupControls(object? PanelControl, object? LabelControl, object? ValueControl);
         public abstract bool SetupValueControl(object? control);
