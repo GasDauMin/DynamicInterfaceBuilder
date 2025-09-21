@@ -22,7 +22,17 @@ namespace DynamicInterfaceBuilder.Core.Forms
 
         private static readonly Dictionary<ValidationType, Func<App, ValidationProperties, ValidationType, FormValidationBase>> _validationFactories = new()
         {
-            { ValidationType.Required, (app, prop, type) => new RequiredValidation(app, prop, type) }
+            { ValidationType.Required, (app, prop, type) => new RequiredValidation(app, prop, type) },
+            { ValidationType.Regex, (app, prop, type) => new RegexValidation(app, prop, type) },
+            { ValidationType.Range, (app, prop, type) => new RangeValidation(app, prop, type) },
+            { ValidationType.MinLength, (app, prop, type) => new MinLengthValidation(app, prop, type) },
+            { ValidationType.MaxLength, (app, prop, type) => new MaxLengthValidation(app, prop, type) },
+            { ValidationType.OnlyNumbers, (app, prop, type) => new OnlyNumbersValidation(app, prop, type) },
+            { ValidationType.OnlyDigits, (app, prop, type) => new OnlyDigitsValidation(app, prop, type) },
+            { ValidationType.OnlyLetters, (app, prop, type) => new OnlyLettersValidation(app, prop, type) },
+            { ValidationType.OnlySpecified, (app, prop, type) => new OnlySpecifiedValidation(app, prop, type) },
+            { ValidationType.FileExists, (app, prop, type) => new FileExistsValidation(app, prop, type) },
+            { ValidationType.DirectoryExists, (app, prop, type) => new DirectoryExistsValidation(app, prop, type) }
         };
 
         public static FormElementBase CreateElement(FormElementType type, string name, App application)

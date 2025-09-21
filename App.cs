@@ -43,6 +43,7 @@ namespace DynamicInterfaceBuilder
         public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
         public List<string> FormElementIds { get; set; } = new();
         public Dictionary<string, object> Parameters { get; set; } = new();
+        public Dictionary<string, string>? ValidationErrors { get; set; } = new();
         public StartupProperties StartupProperties { get; set; } = new();
 
         #endregion

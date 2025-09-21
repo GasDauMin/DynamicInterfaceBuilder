@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Documents;
@@ -26,6 +27,9 @@ namespace DynamicInterfaceBuilder.Core.Forms
 
         public FormBuilder(App application) : base(application)
         {
+            // Set the FormBuilder reference in the App instance
+            // This allows FormElements to access the FormBuilder for message panel updates
+            application.FormBuilder = this;
         }
 
         public bool? Run()
@@ -38,6 +42,7 @@ namespace DynamicInterfaceBuilder.Core.Forms
 
             Form.Closing += HandleFormClosing;
             Form.SizeChanged += HandleFormResize;
+            Form.Loaded += HandleFormLoaded;
 
             return Form.ShowDialog();
         }
@@ -72,15 +77,69 @@ namespace DynamicInterfaceBuilder.Core.Forms
 
         private void HandleFormClosing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
+            // Allow Cancel operation to bypass validation
+            if (Form != null && Form.DialogResult == false)
+            {
+                // Clear any validation messages when canceling
+                App.MessageText = string.Empty;
+                App.MessageType = DynamicInterfaceBuilder.Core.Enums.MessageType.None;
+                return; // Allow close without validation
+            }
+            
+            // Allow X button (null DialogResult) to close without validation
+            if (Form != null && Form.DialogResult == null)
+            {
+                // Clear any validation messages when closing with X button
+                App.MessageText = string.Empty;
+                App.MessageType = DynamicInterfaceBuilder.Core.Enums.MessageType.None;
+                return; // Allow close without validation
+            }
+            
+            // Only validate for OK button (DialogResult == true)
             if (Form != null && Form.DialogResult == true)
-            {                                
-                // Removed validation call
+            {
+                if (!ValidateAllFormElements())
+                {
+                    // Cancel the close operation if validation fails
+                    e.Cancel = true;
+                    return;
+                }
+                                             
                 AdjustMessageViewer();
             }
         }
 
         private void HandleFormResize(object? sender, EventArgs e)
         {
+            // Update App Width and Height when form is resized
+            if (Form != null)
+            {
+                int newWidth = (int)Form.ActualWidth;
+                int newHeight = (int)Form.ActualHeight;
+                
+                // Only update if dimensions actually changed
+                if (App.Width != newWidth || App.Height != newHeight)
+                {
+                    App.Width = newWidth;
+                    App.Height = newHeight;
+                    
+                    // Optional: Debug output to track resize events
+                    //System.Diagnostics.Debug.WriteLine($"Form resized to: {App.Width} x {App.Height}");
+                }
+            }
+        }
+
+        private void HandleFormLoaded(object? sender, RoutedEventArgs e)
+        {
+            // Set initial App Width and Height to actual form dimensions after loading
+            if (Form != null)
+            {
+                App.Width = (int)Form.ActualWidth;
+                App.Height = (int)Form.ActualHeight;
+                
+                // Optional: Debug output to track initial size
+                //System.Diagnostics.Debug.WriteLine($"Form loaded with size: {App.Width} x {App.Height}");
+            }
         }
 
         #endregion
@@ -429,31 +488,102 @@ namespace DynamicInterfaceBuilder.Core.Forms
             }
         }
 
-        public void AdjustControls(bool initial = false)
+        #endregion
+
+        #region Validation
+
+        public bool ValidateAllFormElements()
         {
-            // if (ContentPanel == null)
-            //     return;
+            bool isValid = true;
+            
+            // Clear existing validation errors to start fresh
+            if (App.ValidationErrors == null)
+                App.ValidationErrors = new Dictionary<string, string>();
+            else
+                App.ValidationErrors.Clear();
 
-            // double availableWidth = ContentPanel.ActualWidth;;
+            // Recursively validate all elements, including nested ones
+            isValid = ValidateElementsRecursively(App.FormElements.Values);
 
-            // if (double.IsNaN(availableWidth) || availableWidth <= 0)
-            // {
-            //     availableWidth = App.Width - ((Constants.Default.Spacing != 0 ? Constants.Default.Spacing : 1) * 2 + 20);
-            // }
+            // Update the message display based on validation results
+            if (!isValid && App.ValidationErrors.Any())
+            {
+                // Combine all validation errors with proper formatting
+                var errorMessages = App.ValidationErrors.Values
+                    .Select(msg => DynamicInterfaceBuilder.Core.Helpers.MessageHelper.FormatMessage(msg, DynamicInterfaceBuilder.Core.Enums.MessageType.Error));
+                
+                App.MessageText = string.Join(Environment.NewLine, errorMessages);
+                App.MessageType = DynamicInterfaceBuilder.Core.Enums.MessageType.Error;
+                AdjustMessageViewer();
+            }
+            else 
+            {
+                // Clear any existing validation messages if validation succeeded
+                if (App.MessageType == DynamicInterfaceBuilder.Core.Enums.MessageType.Error)
+                {
+                    App.MessageText = string.Empty;
+                    App.MessageType = DynamicInterfaceBuilder.Core.Enums.MessageType.None;
+                    AdjustMessageViewer();
+                }
+            }
 
-            // if (IsScrollbarVisible())
-            // {
-            //     availableWidth -= SystemParameters.VerticalScrollBarWidth + 2;
-            // }
+            return isValid;
+        }
 
-            // foreach (var element in App.FormElements.Values)
-            // {
-            //     if (element.PanelControl is FrameworkElement ctrl)
-            //     {
-            //         ctrl.Width = availableWidth;
-            //         ctrl.MinWidth = availableWidth;
-            //     }
-            // }
+        private bool ValidateElementsRecursively(IEnumerable<FormElementBase> elements)
+        {
+            bool isValid = true;
+
+            foreach (var element in elements)
+            {
+                // Validate current element if it has validations
+                if (element.Validations.Count > 0)
+                {
+                    foreach (var validation in element.Validations)
+                    {
+                        // Get the value from the appropriate control
+                        object? value = null;
+                        
+                        if (element.ValueControl is TextBox textBox)
+                            value = textBox.Text;
+                        else if (element.ValueControl is ComboBox comboBox)
+                            value = comboBox.SelectedItem;
+                        else if (element.ValueControl is CheckBox checkBox)
+                            value = checkBox.IsChecked;
+                        else if (element.ValueControl is RadioButton radioButton)
+                            value = radioButton.IsChecked;
+                        else if (element.ValueControl is ListBox listBox)
+                            value = listBox.SelectedItem;
+                            
+                        var result = validation.Validate(value, CultureInfo.CurrentCulture);
+                        if (!result.IsValid)
+                        {
+                            isValid = false;
+                            string errorContent = result.ErrorContent?.ToString() ?? "Validation failed";
+                            string errorMessage = $"{element.Label}: {errorContent}";
+                            
+                            // Use the same validation key format as runtime validation
+                            string validationKey = $"{element.Name}_{validation.Type}";
+                            if (App.ValidationErrors != null)
+                            {
+                                App.ValidationErrors[validationKey] = errorMessage;
+                            }
+                        }
+                    }
+                }
+
+                // Recursively validate nested elements (for groups and other container elements)
+                if (element is DynamicInterfaceBuilder.Core.Interfaces.IFormGroup groupElement)
+                {
+                    // For group elements, get their child elements and validate recursively
+                    if (!ValidateElementsRecursively(groupElement.Children))
+                    {
+                        isValid = false;
+                    }
+                }
+            }
+
+            return isValid;
         }
 
         #endregion

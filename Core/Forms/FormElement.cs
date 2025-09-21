@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Forms.Validations;
@@ -202,6 +203,126 @@ namespace DynamicInterfaceBuilder.Core.Forms
 
         protected void ApplyValueControlValidations(Control control)
         {
+            // For WPF validation, we need to create a proper binding to a data source
+            // rather than binding a control to itself which causes circular references
+            
+            // Only apply validation rules if we have validations to apply
+            if (!Validations.Any())
+                return;
+
+            // Apply validation through direct event handling rather than binding
+            // This avoids the circular binding issue while still providing validation
+            
+            // Add runtime validation for immediate feedback
+            foreach (FormValidationBase validation in Validations)
+            {
+                // Add appropriate event handlers based on control type for real-time validation
+                if (control is TextBox textBox)
+                {
+                    textBox.TextChanged += (s, e) => ValidateControl(textBox, validation);
+                    textBox.LostFocus += (s, e) => ValidateControl(textBox, validation);
+                }
+                else if (control is ComboBox comboBox)
+                {
+                    comboBox.SelectionChanged += (s, e) => ValidateControl(comboBox, validation);
+                }
+                else if (control is CheckBox checkBox)
+                {
+                    checkBox.Checked += (s, e) => ValidateControl(checkBox, validation);
+                    checkBox.Unchecked += (s, e) => ValidateControl(checkBox, validation);
+                }
+                else if (control is RadioButton radioButton)
+                {
+                    radioButton.Checked += (s, e) => ValidateControl(radioButton, validation);
+                    radioButton.Unchecked += (s, e) => ValidateControl(radioButton, validation);
+                }
+                else if (control is ListBox listBox)
+                {
+                    listBox.SelectionChanged += (s, e) => ValidateControl(listBox, validation);
+                }
+            }
+        }
+        
+        private void ValidateControl(Control control, FormValidationBase validation)
+        {
+            object? value = null;
+            
+            // Extract value based on control type
+            if (control is TextBox textBox)
+                value = textBox.Text;
+            else if (control is ComboBox comboBox)
+                value = comboBox.SelectedItem;
+            else if (control is CheckBox checkBox)
+                value = checkBox.IsChecked;
+            else if (control is RadioButton radioButton)
+                value = radioButton.IsChecked;
+            else if (control is ListBox listBox)
+                value = listBox.SelectedItem;
+            
+            // Perform validation
+            var result = validation.Validate(value, System.Globalization.CultureInfo.CurrentCulture);
+            
+            // Create a unique validation message key for this specific validation
+            string validationKey = $"{Name}_{validation.Type}";
+            
+            if (!result.IsValid)
+            {
+                // Use message panel for validation errors
+                if (!string.IsNullOrEmpty(result.ErrorContent?.ToString()))
+                {
+                    // Format and display the validation error using the MessageHelper
+                    string errorMessage = $"{Label}: {result.ErrorContent}";
+                    
+                    // Store validation errors in a dictionary for better management
+                    if (App.ValidationErrors == null)
+                        App.ValidationErrors = new Dictionary<string, string>();
+                    
+                    App.ValidationErrors[validationKey] = errorMessage;
+                    
+                    // Update the message text with all current validation errors
+                    UpdateValidationMessages();
+                }
+            }
+            else
+            {
+                // Clear this specific validation error
+                if (App.ValidationErrors?.ContainsKey(validationKey) == true)
+                {
+                    App.ValidationErrors.Remove(validationKey);
+                    
+                    // Update the message text with remaining validation errors
+                    UpdateValidationMessages();
+                }
+            }
+        }
+        
+        private void UpdateValidationMessages()
+        {
+            if (App.ValidationErrors == null || !App.ValidationErrors.Any())
+            {
+                // Clear validation messages if there are no errors
+                if (App.MessageType == DynamicInterfaceBuilder.Core.Enums.MessageType.Error && 
+                    (App.MessageText?.Contains("❌") == true))
+                {
+                    App.MessageText = string.Empty;
+                    App.MessageType = DynamicInterfaceBuilder.Core.Enums.MessageType.None;
+                }
+            }
+            else
+            {
+                // Combine all validation errors
+                var errorMessages = App.ValidationErrors.Values
+                    .Select(msg => DynamicInterfaceBuilder.Core.Helpers.MessageHelper.FormatMessage(msg, DynamicInterfaceBuilder.Core.Enums.MessageType.Error));
+                
+                App.MessageText = string.Join(Environment.NewLine, errorMessages);
+                App.MessageType = DynamicInterfaceBuilder.Core.Enums.MessageType.Error;
+            }
+            
+            // If the FormBuilder instance is available, adjust the message viewer immediately
+            if (App.FormBuilder?.MessageViewer != null)
+            {
+                App.FormBuilder.AdjustMessageViewer();
+            }
         }
     }
 }

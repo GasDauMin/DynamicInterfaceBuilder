@@ -94,8 +94,8 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 return;
             }
 
-            ThemeDictionary = new ResourceDictionary() { Source = new Uri($"Styles/Themes/{themeName}.xaml", UriKind.Relative) };
-            ControlColours = new ResourceDictionary() { Source = new Uri("Styles/Structures/ControlColours.xaml", UriKind.Relative) };
+            ThemeDictionary = new ResourceDictionary() { Source = new Uri($"pack://application:,,,/DynamicInterfaceBuilder;component/Styles/Themes/{themeName}.xaml", UriKind.Absolute) };
+            ControlColours = new ResourceDictionary() { Source = new Uri("pack://application:,,,/DynamicInterfaceBuilder;component/Styles/Structures/ControlColours.xaml", UriKind.Absolute) };
 
             RefreshControls();
         }

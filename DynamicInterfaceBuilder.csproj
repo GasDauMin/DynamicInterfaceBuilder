@@ -18,6 +18,9 @@
   <ItemGroup>
     <Resource Include="Resources\Icons\App1.ico" />
     <Resource Include="Resources\Icons\App2.ico" />
+    <Resource Include="Styles\Themes\*.xaml" />
+    <Resource Include="Styles\Structures\ControlColours.xaml" />
+    <Resource Include="Styles\Structures\ControlStyles.xaml" />
   </ItemGroup>
 
   <!-- 

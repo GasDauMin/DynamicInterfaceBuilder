@@ -55,7 +55,8 @@ namespace DynamicInterfaceBuilder
                                 {
                                     { "Type", ValidationType.Required },
                                     { "Value", true },
-                                    { "Message", "Test validation description" }
+                                    { "Message", "Test validation description" },
+                                    { "Runtime", true }
                                 }
                             },
                             // { "Style", new OrderedDictionary
@@ -78,6 +79,14 @@ namespace DynamicInterfaceBuilder
                                         { "Label", "Nested text box" },
                                         { "Value", "" },
                                         { "Description", "Nested text box description" },
+                                        { "Validation", new OrderedDictionary
+                                            {
+                                                { "Type", ValidationType.Required },
+                                                { "Value", true },
+                                                { "Message", "Another test validation description" },
+                                                { "Runtime", true }
+                                            }
+                                        },
                                     }
                                 }
                             }
