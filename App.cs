@@ -85,7 +85,8 @@ namespace DynamicInterfaceBuilder
 
         public App(string? title = null, int? width = null, int? height = null)
         {
-            Application = new System.Windows.Application();
+            // Reuse existing Application instance or create new one if none exists
+            Application = System.Windows.Application.Current ?? new System.Windows.Application();
         
             StartupManager = new(this);
             ConfigManager = new(this);

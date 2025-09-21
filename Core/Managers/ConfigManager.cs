@@ -145,17 +145,16 @@ namespace DynamicInterfaceBuilder.Core.Managers
             return type.GetCustomAttribute<ExtendedPropertiesAttribute>() != null;
         }
         
-        // Helper to get the full path from AdvancedProperties.ConfigPath
+        // Helper to get the full path from StartupProperties.ConfigPath
         private string GetFullConfigPath(DynamicInterfaceBuilder.App app)
         {
             string configPath = app.StartupProperties.ConfigPath;
             
-            // If the path is not absolute, make it relative to the assembly directory
+            // If the path is not absolute, make it relative to the current working directory
             if (!Path.IsPathRooted(configPath))
             {
-                string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-                string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
-                configPath = Path.Combine(assemblyDirectory, configPath);
+                string workingDirectory = Directory.GetCurrentDirectory();
+                configPath = Path.Combine(workingDirectory, configPath);
             }
             
             return configPath;

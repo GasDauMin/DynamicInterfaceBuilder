@@ -1,0 +1,15 @@
+{
+  "Title": "Validation Test Application",
+  "Width": 643,
+  "Height": 481,
+  "Margin": "0,0,0,0",
+  "Padding": "0,0,0,0",
+  "Theme": 0,
+  "AdvancedProperties": {
+    "AdjustLabels": true,
+    "ReverseButtons": true,
+    "AllowResize": true,
+    "MaxMessageLines": 4
+  },
+  "Icon": ""
+}

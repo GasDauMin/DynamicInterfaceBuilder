@@ -13,11 +13,10 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
         public StartupManager(DynamicInterfaceBuilder.App application) : base(application)
         {
-            string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? AppDomain.CurrentDomain.BaseDirectory;
+            string workingDirectory = Directory.GetCurrentDirectory();
             
             StartupSettingsFile = Default.StartupSettingsFile;
-            StartupSettingsPath = Path.Combine(assemblyDirectory, StartupSettingsFile);
+            StartupSettingsPath = Path.Combine(workingDirectory, StartupSettingsFile);
             
             // Load settings at initialization
             LoadStartupSettings();
