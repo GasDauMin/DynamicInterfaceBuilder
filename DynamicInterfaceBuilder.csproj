@@ -35,5 +35,12 @@
     <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ProjectDir)" />
   </Target> 
   -->
+
+  <!-- Copy FormBuilder.style.xaml to output directory if it exists -->
+  <Target Name="CopyStyleFile" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$(ProjectDir)FormBuilder.style.xaml" 
+          DestinationFolder="$(TargetDir)" 
+          Condition="Exists('$(ProjectDir)FormBuilder.style.xaml')" />
+  </Target>
   
 </Project> 

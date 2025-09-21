@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DynamicInterfaceBuilder.Core.Enums;
+using DynamicInterfaceBuilder.Core.Forms.Elements;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Models;
 using System.Reflection;
@@ -103,6 +104,12 @@ namespace DynamicInterfaceBuilder.Core.Managers
                     break;
                 case "Description":
                     element.Description = entry.Value as string;
+                    break;
+                case "GroupName":
+                    if (element is GroupElement groupElement && entry.Value is string groupName)
+                    {
+                        groupElement.GroupName = groupName;
+                    }
                     break;
                 case "Value":
                 case "DefaultValue":

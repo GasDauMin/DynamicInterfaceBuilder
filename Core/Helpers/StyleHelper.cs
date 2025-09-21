@@ -84,7 +84,7 @@ namespace DynamicInterfaceBuilder.Core.Helpers
             }
         }
         
-        private static bool TryFindResource<T>(string key, out T? resource) where T : class
+        public static bool TryFindResource<T>(string key, out T? resource) where T : class
         {
             resource = null;
             try

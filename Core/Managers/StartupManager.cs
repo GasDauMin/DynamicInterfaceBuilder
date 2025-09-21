@@ -49,6 +49,12 @@ namespace DynamicInterfaceBuilder.Core.Managers
                         {
                             app.StartupProperties.ConfigPath = settings.ConfigPath;
                         }
+                        
+                        // Load style path if provided
+                        if (!string.IsNullOrEmpty(settings.StylePath))
+                        {
+                            app.StartupProperties.StylePath = settings.StylePath;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -77,7 +83,8 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 {
                     AutoLoadConfig = app.StartupProperties.AutoLoadConfig,
                     AutoSaveConfig = app.StartupProperties.AutoSaveConfig,
-                    ConfigPath = app.StartupProperties.ConfigPath
+                    ConfigPath = app.StartupProperties.ConfigPath,
+                    StylePath = app.StartupProperties.StylePath
                 };
                 
                 string json = JsonConvert.SerializeObject(settings, Formatting.Indented);
@@ -97,7 +104,7 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
         }
         
-        public void UpdateStartupSettings(bool? autoLoad = null, bool? autoSave = null, string? configPath = null)
+        public void UpdateStartupSettings(bool? autoLoad = null, bool? autoSave = null, string? configPath = null, string? stylePath = null)
         {
             var app = (DynamicInterfaceBuilder.App)App;
             
@@ -109,6 +116,9 @@ namespace DynamicInterfaceBuilder.Core.Managers
                 
             if (configPath != null)
                 app.StartupProperties.ConfigPath = configPath;
+                
+            if (stylePath != null)
+                app.StartupProperties.StylePath = stylePath;
                 
             SaveStartupSettings();
         }

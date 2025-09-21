@@ -1,5 +1,6 @@
 {
   "ConfigPath": "FormBuilder.properties.json",
+  "StylePath": "FormBuilder.style.xaml",
   "AutoLoadConfig": true,
   "AutoSaveConfig": true
 }

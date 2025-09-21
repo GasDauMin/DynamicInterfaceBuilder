@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Forms.Validations;
+using DynamicInterfaceBuilder.Core.Forms.Elements;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Models;
 
@@ -183,7 +184,46 @@ namespace DynamicInterfaceBuilder.Core.Forms
 
         protected void ApplyValueControlStyles(Control control)
         {
+            // Apply default styles first
             StyleHelper.ApplyValueControlStyles(control);
+            
+            // Apply group-specific styles if available
+            ApplyGroupSpecificStyles(control);
+        }
+
+        protected void ApplyGroupSpecificStyles(Control control)
+        {
+            // Check if this element is within a named group
+            var groupName = GetParentGroupName();
+            if (!string.IsNullOrEmpty(groupName))
+            {
+                // Try to find group-specific style (e.g., "NestedGroup.TextBox")
+                string groupStyleKey = $"{groupName}.{control.GetType().Name}";
+                if (StyleHelper.TryFindResource(groupStyleKey, out Style? groupStyle) && groupStyle != null)
+                {
+                    control.Style = groupStyle;
+                    System.Diagnostics.Debug.WriteLine($"Applied group style '{groupStyleKey}' to control '{control.Name}'");
+                }
+            }
+        }
+
+        protected string? GetParentGroupName()
+        {
+            // Walk up the parent chain to find a group with a GroupName
+            var current = Parent;
+            while (current != null)
+            {
+                if (current is GroupElement group)
+                {
+                    // Check if this group has a GroupName property set
+                    if (!string.IsNullOrEmpty(group.GroupName))
+                    {
+                        return group.GroupName;
+                    }
+                }
+                current = current.Parent;
+            }
+            return null;
         }
 
         protected void ApplyPanelControlStyles(Control control)

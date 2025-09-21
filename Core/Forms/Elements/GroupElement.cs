@@ -16,6 +16,11 @@ namespace DynamicInterfaceBuilder.Core.Forms.Elements
         public Dictionary<string, FormElementBase> Elements { get; set; } = new();
         public IReadOnlyList<FormElementBase> Children => [.. Elements.Values];
 
+        /// <summary>
+        /// Optional group name for styling and identification purposes
+        /// </summary>
+        public string? GroupName { get; set; }
+
         public void AddChild(FormElementBase child)
         {
             Elements[child.Name] = child;

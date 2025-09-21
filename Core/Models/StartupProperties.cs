@@ -8,6 +8,7 @@ namespace DynamicInterfaceBuilder.Core.Models
     public class StartupProperties : IProperties
     {
         public string ConfigPath { get; set; }
+        public string StylePath { get; set; }
         
         public bool AutoLoadConfig { get; set; }
         public bool AutoSaveConfig { get; set; }
@@ -17,11 +18,13 @@ namespace DynamicInterfaceBuilder.Core.Models
             Init();
 
             ConfigPath = Default.ConfigPropertiesFile;
+            StylePath = Default.StyleFile;
         }
 
         public void Init()
         {
             ConfigPath = Default.ConfigPropertiesFile;
+            StylePath = Default.StyleFile;
             AutoLoadConfig = Default.AutoLoadConfig;
             AutoSaveConfig = Default.AutoSaveConfig;
         }

@@ -27,6 +27,7 @@ namespace DynamicInterfaceBuilder.Core.Constants
         public const string Namespace = "DynamicInterfaceBuilder";
         public const string StartupSettingsFile = "FormBuilder.startup.json";
         public const string ConfigPropertiesFile = "FormBuilder.properties.json";
+        public const string StyleFile = "FormBuilder.style.xaml";
         public const string EndLine = "\r\n";
 
         public const bool FieldSequenceSeparate = false;

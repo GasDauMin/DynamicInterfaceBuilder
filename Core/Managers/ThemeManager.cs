@@ -48,6 +48,9 @@ namespace DynamicInterfaceBuilder.Core.Managers
                     resources.MergedDictionaries.Add(dict);
                 }
 
+                // Try to load custom style file from working directory
+                LoadWorkingDirectoryStyleFile(resources, (DynamicInterfaceBuilder.App)App);
+
                 System.Windows.Application.Current.Resources = resources;
             }
             catch (Exception ex)
@@ -201,6 +204,54 @@ namespace DynamicInterfaceBuilder.Core.Managers
         public static BitmapImage? GetApplicationIcon()
         {
             return Application.Current.Resources["ApplicationIcon"] as BitmapImage;
+        }
+
+        /// <summary>
+        /// Loads a custom style file from the working directory or from the StylePath specified in startup settings
+        /// to allow project-specific style overrides.
+        /// </summary>
+        /// <param name="resources">The resource dictionary to add the custom styles to</param>
+        /// <param name="app">The application instance to get StylePath from startup settings</param>
+        private static void LoadWorkingDirectoryStyleFile(ResourceDictionary resources, DynamicInterfaceBuilder.App app)
+        {
+            try
+            {
+                string workingDirectory = Directory.GetCurrentDirectory();
+                
+                // Use StylePath from startup settings, or fall back to default
+                string styleFileName = !string.IsNullOrEmpty(app.StartupProperties.StylePath) 
+                    ? app.StartupProperties.StylePath 
+                    : "FormBuilder.style.xaml";
+                
+                string customStylePath = Path.IsPathRooted(styleFileName)
+                    ? styleFileName  // Use absolute path if provided
+                    : Path.Combine(workingDirectory, styleFileName);  // Combine with working directory if relative
+                
+                if (File.Exists(customStylePath))
+                {
+                    System.Diagnostics.Debug.WriteLine($"Loading custom style file: {customStylePath}");
+                    
+                    // Load the XAML file as a ResourceDictionary
+                    using (var fileStream = new FileStream(customStylePath, FileMode.Open, FileAccess.Read))
+                    {
+                        var customStyle = (ResourceDictionary)XamlReader.Load(fileStream);
+                        if (customStyle != null)
+                        {
+                            resources.MergedDictionaries.Add(customStyle);
+                            System.Diagnostics.Debug.WriteLine($"Successfully loaded custom style file with {customStyle.Count} resources");
+                        }
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"No custom style file found at: {customStylePath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to load working directory style file: {ex.Message}");
+                // Don't throw - custom styles are optional
+            }
         }
     }
 }
