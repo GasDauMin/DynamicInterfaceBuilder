@@ -141,6 +141,12 @@ namespace DynamicInterfaceBuilder.Core.Managers
                         ParseValidation(element, validationData);
                     }
                     break;
+                case "Validations":
+                    if (entry.Value is IEnumerable validations)
+                    {
+                        ParseValidations(element, validations);
+                    }
+                    break;
                 case "Style":
                     if (entry.Value is IDictionary styleData)
                     {
@@ -240,6 +246,14 @@ namespace DynamicInterfaceBuilder.Core.Managers
             }
 
             return (property, currentObject);
+        }
+
+        private void ParseValidations(FormElementBase element, IEnumerable validations)
+        {
+            foreach (IDictionary validationData in validations)
+            {
+                ParseValidation(element, validationData);
+            }
         }
 
         private void ParseValidation(FormElementBase element, IDictionary validationData)
