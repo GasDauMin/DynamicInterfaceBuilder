@@ -215,6 +215,8 @@ namespace DynamicInterfaceBuilder.Core.Managers
                         selectableList.Items = items;
                     else if (entry.Value is List<string> itemList)
                         selectableList.Items = itemList.ToArray();
+                    else if (entry.Value is object[] objArray)
+                        selectableList.Items = objArray.Select(o => o?.ToString() ?? string.Empty).ToArray();
 
                     break;
             }        

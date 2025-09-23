@@ -86,7 +86,7 @@ namespace DynamicInterfaceBuilder
         public App(string? title = null, int? width = null, int? height = null)
         {
             // Reuse existing Application instance or create new one if none exists
-            Application = System.Windows.Application.Current ?? new System.Windows.Application();
+            Application = System.Windows.Application.Current ?? new System.Windows.Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         
             StartupManager = new(this);
             ConfigManager = new(this);
