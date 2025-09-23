@@ -100,40 +100,5 @@ try {
 catch {
     Write-Host "Error running the application: $_" -ForegroundColor Red
 }
-finally {
-    # Cleanup
-    Write-Host "Performing cleanup..."
-    
-    # Remove event handlers if they exist using reflection
-    $appType = $application.GetType()
-    $events = $appType.GetEvents()
-    
-    foreach ($event in $events) {
-        $fieldName = "Event$($event.Name)"
-        $field = $appType.GetField($fieldName, [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Instance)
-        if ($field -ne $null) {
-            $field.SetValue($application, $null)
-        }
-    }
-    
-    # Clear strong references
-    if ($application.FormBuilder -ne $null) {
-        # Try to explicitly shutdown if possible
-        $shutdownMethod = $application.FormBuilder.GetType().GetMethod("Dispose")
-        if ($shutdownMethod -ne $null) {
-            $shutdownMethod.Invoke($application.FormBuilder, $null)
-        }
-    }
-    
-    # Set to null to allow garbage collection
-    $application = $null
-    
-    # Force garbage collection multiple times
-    [System.GC]::Collect()
-    [System.GC]::WaitForPendingFinalizers()
-    [System.GC]::Collect()
-    
-    Write-Host "Cleanup completed."
-}
 
 Write-Host "Application execution completed."
