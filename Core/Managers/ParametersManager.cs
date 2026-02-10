@@ -82,6 +82,9 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
             element.SetupElement();
 
+            // Register element in the central Elements collection
+            App.Elements[id] = element;
+
             if (group != null)
             {
                 group.Elements[id] = element;      

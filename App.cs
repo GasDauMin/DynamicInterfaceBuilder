@@ -3,12 +3,14 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
+using System.Linq;
 using DynamicInterfaceBuilder.Core.Attributes;
 using DynamicInterfaceBuilder.Core.Constants;
 using DynamicInterfaceBuilder.Core.Enums;
 using DynamicInterfaceBuilder.Core.Helpers;
 using DynamicInterfaceBuilder.Core.Managers;
 using DynamicInterfaceBuilder.Core.Models;
+using DynamicInterfaceBuilder.Core.Interfaces;
 using Microsoft.VisualBasic;
 using DynamicInterfaceBuilder.Styles.Enums;
 using DynamicInterfaceBuilder.Core.Forms;
@@ -41,6 +43,7 @@ namespace DynamicInterfaceBuilder
         public string? MessageText{get; set;} = string.Empty;
         public MessageType MessageType { get; set; } = MessageType.None;
         public Dictionary<string, FormElementBase> FormElements { get; set; } = new();
+        public Dictionary<string, FormElementBase> Elements { get; set; } = new();
         public List<string> FormElementIds { get; set; } = new();
         public Dictionary<string, object> Parameters { get; set; } = new();
         public Dictionary<string, string>? ValidationErrors { get; set; } = new();
@@ -195,6 +198,7 @@ namespace DynamicInterfaceBuilder
         public void ResetDefaults()
         {
             Parameters.Clear();
+            Elements.Clear();
 
             Title = Default.Title;
             Width = Default.Width;
@@ -210,6 +214,70 @@ namespace DynamicInterfaceBuilder
         public void SaveConfiguration(string path) => ConfigManager.SaveConfiguration(this, path);
         public void LoadConfiguration() => ConfigManager.LoadConfiguration(this);
         public void LoadConfiguration(string path) => ConfigManager.LoadConfiguration(this, path);
+
+        /// <summary>
+        /// Finds an element by ID using the central Elements collection.
+        /// </summary>
+        /// <param name="id">The element ID to search for</param>
+        /// <returns>The FormElementBase if found, otherwise null</returns>
+        public FormElementBase? GetElement(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return null;
+
+            return Elements.TryGetValue(id, out var element) ? element : null;
+        }
+
+        /// <summary>
+        /// Finds an element by ID and returns its ControlValue property.
+        /// </summary>
+        /// <param name="id">The element ID to search for</param>
+        /// <returns>The ControlValue of the element if found, otherwise null</returns>
+        public object? GetElementValue(string id)
+        {
+            var element = GetElement(id);
+            if (element == null)
+                return null;
+
+            // Use reflection to get ControlValue property
+            var controlValueProperty = element.GetType().GetProperty("ControlValue");
+            return controlValueProperty?.GetValue(element);
+        }
+
+        /// <summary>
+        /// Universal method to get elements with flexible filtering options.
+        /// </summary>
+        /// <param name="includeTypes">Filter to include only specific types (null = all types)</param>
+        /// <param name="excludeTypes">Filter to exclude specific types (null = no exclusions)</param>
+        /// <param name="predicate">Custom filter predicate (null = no custom filter)</param>
+        /// <returns>A list of filtered FormElementBase elements</returns>
+        public List<FormElementBase> GetElements(
+            FormElementType[]? includeTypes = null,
+            FormElementType[]? excludeTypes = null,
+            Func<FormElementBase, bool>? predicate = null)
+        {
+            var query = Elements.Values.AsEnumerable();
+
+            // Apply include filter
+            if (includeTypes != null && includeTypes.Length > 0)
+            {
+                query = query.Where(e => includeTypes.Contains(e.Type));
+            }
+
+            // Apply exclude filter
+            if (excludeTypes != null && excludeTypes.Length > 0)
+            {
+                query = query.Where(e => !excludeTypes.Contains(e.Type));
+            }
+
+            // Apply custom predicate
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            return query.ToList();
+        }
         
         #endregion
     }

@@ -105,16 +105,15 @@ namespace DynamicInterfaceBuilder
                             { "Label", "Test Button" },
                             { "Description", "Click to execute action" },
                             { "Action", new Action<App>((app) => {
-                                app.MessageText = "Button clicked! Current values:\n";
-                                foreach (var element in app.FormElements.Values)
+                                app.MessageText = "Button clicked! All values:\n\n";
+                                
+                                var elements = app.GetElements(predicate: e => e.ValueControl != null);
+                                foreach (var element in elements)
                                 {
-                                    if (element.Label != null)
-                                    {
-                                        var valueProperty = element.GetType().GetProperty("ControlValue");
-                                        var value = valueProperty?.GetValue(element);
-                                        app.MessageText += $"- {element.Label}: {value}\n";
-                                    }
+                                    var value = app.GetElementValue(element.Name);
+                                    app.MessageText += $"{element.Name}: {value}\n";
                                 }
+                                
                                 app.MessageType = MessageType.Info;
                                 app.FormBuilder?.AdjustMessageViewer();
                             }) }

@@ -87,7 +87,16 @@ $application.Parameters["TestGroup"] = @{
             Description = "Click to display current values"
             Action = {
                 param($app)
-                $app.MessageText = "Button clicked!`n"
+                $app.MessageText = "Button clicked! All values:`n`n"
+                
+                # Get elements that have ValueControl (exclude groups and buttons)
+                $elements = $app.GetElements($null, $null, $null) | Where-Object { $_.ValueControl -ne $null }
+                
+                foreach ($element in $elements) {
+                    $value = $app.GetElementValue($element.Name)
+                    $app.MessageText += "$($element.Name): $value`n"
+                }
+                
                 $app.MessageType = [DynamicInterfaceBuilder.Core.Enums.MessageType]::Info
                 $app.FormBuilder.AdjustMessageViewer()
             }

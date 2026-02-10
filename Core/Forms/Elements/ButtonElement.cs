@@ -158,30 +158,15 @@ namespace DynamicInterfaceBuilder.Core.Forms.Elements
 
         public override void SetupControls(object? valueControl, object? panelControl, object? labelControl)
         {
-            if (valueControl != null)
-            {
-                SetupValueControl(valueControl);
-            }
-
             if (panelControl != null)
             {
                 SetupPanelControl(panelControl);
-            }
-
-            if (labelControl != null)
-            {
-                SetupLabelControl(labelControl);
             }
         }
 
         public override bool SetupValueControl(object? control)
         {
-            if (control != null)
-            {
-                ValueControl = control;
-                return true;
-            }
-            return false;
+            return false; // Buttons don't have value controls
         }
 
         public override bool SetupPanelControl(object? control)
@@ -196,24 +181,20 @@ namespace DynamicInterfaceBuilder.Core.Forms.Elements
 
         public override bool SetupLabelControl(object? control)
         {
-            if (control != null)
-            {
-                LabelControl = control;
-                return true;
-            }
-            return false;
+            return false; // Buttons don't have label controls
         }
 
         public override void ResetControls(bool doResetValueControl, bool doResetPanelControl, bool doResetLabelControl)
         {
-            if (doResetValueControl) ResetValueControl();
-            if (doResetPanelControl) ResetPanelControl();
-            if (doResetLabelControl) ResetLabelControl();
+            if (doResetPanelControl && PanelControl != null)
+            {
+                ResetPanelControl();
+            }
         }
 
         public override void ResetValueControl()
         {
-            ValueControl = null;
+            // Buttons don't have value controls
         }
 
         public override void ResetPanelControl()
@@ -223,7 +204,7 @@ namespace DynamicInterfaceBuilder.Core.Forms.Elements
 
         public override void ResetLabelControl()
         {
-            LabelControl = null;
+            // Buttons don't have label controls
         }
     }
 }
