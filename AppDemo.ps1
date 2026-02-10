@@ -80,6 +80,17 @@ $application.Parameters["TestGroup"] = @{
             Description = "Test combobox description"
             DefaultValue = "Item 3"
             Items = @("Item 1", "Item 2", "Item 3")
+        },
+        @{
+            Type = [DynamicInterfaceBuilder.Core.Enums.FormElementType]::Button
+            Label = "Test Button"
+            Description = "Click to display current values"
+            Action = {
+                param($app)
+                $app.MessageText = "Button clicked!`n"
+                $app.MessageType = [DynamicInterfaceBuilder.Core.Enums.MessageType]::Info
+                $app.FormBuilder.AdjustMessageViewer()
+            }
         }
     )
 }

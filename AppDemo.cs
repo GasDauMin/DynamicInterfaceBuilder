@@ -98,6 +98,26 @@ namespace DynamicInterfaceBuilder
                             { "Description", "Test combobox description" },
                             { "DefaultValue", "Item 3" },
                             { "Items", new[] { "Item 1", "Item 2", "Item 3" } }
+                        },
+                        new OrderedDictionary
+                        {
+                            { "Type", FormElementType.Button },
+                            { "Label", "Test Button" },
+                            { "Description", "Click to execute action" },
+                            { "Action", new Action<App>((app) => {
+                                app.MessageText = "Button clicked! Current values:\n";
+                                foreach (var element in app.FormElements.Values)
+                                {
+                                    if (element.Label != null)
+                                    {
+                                        var valueProperty = element.GetType().GetProperty("ControlValue");
+                                        var value = valueProperty?.GetValue(element);
+                                        app.MessageText += $"- {element.Label}: {value}\n";
+                                    }
+                                }
+                                app.MessageType = MessageType.Info;
+                                app.FormBuilder?.AdjustMessageViewer();
+                            }) }
                         }
                     }
                 }

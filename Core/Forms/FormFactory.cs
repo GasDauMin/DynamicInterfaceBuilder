@@ -17,7 +17,8 @@ namespace DynamicInterfaceBuilder.Core.Forms
             { FormElementType.FolderBox, (app, name, type) => new FolderBoxElement(app, name, type) },
             { FormElementType.ListBox, (app, name, type) => new ListBoxElement(app, name, type) },
             { FormElementType.ComboBox, (app, name, type) => new ComboBoxElement(app, name, type) },
-            { FormElementType.RadioButton, (app, name, type) => new RadioButtonElement(app, name, type) }
+            { FormElementType.RadioButton, (app, name, type) => new RadioButtonElement(app, name, type) },
+            { FormElementType.Button, (app, name, type) => new ButtonElement(app, name, type) }
         };
 
         private static readonly Dictionary<ValidationType, Func<App, ValidationProperties, ValidationType, FormValidationBase>> _validationFactories = new()

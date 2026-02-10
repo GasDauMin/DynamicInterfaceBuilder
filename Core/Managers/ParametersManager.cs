@@ -153,6 +153,12 @@ namespace DynamicInterfaceBuilder.Core.Managers
                         ParseStyle(element, styleData);
                     }
                     break;
+                case "Action":
+                    if (element is ButtonElement buttonElement)
+                    {
+                        buttonElement.Value = entry.Value;
+                    }
+                    break;
             }
         }
 
@@ -184,12 +190,26 @@ namespace DynamicInterfaceBuilder.Core.Managers
 
         private void ParseDefaultValue(FormElementBase element, DictionaryEntry entry)
         {
+            // For ButtonElement, use the Value property instead of DefaultValue
+            if (element is ButtonElement buttonElement)
+            {
+                buttonElement.Value = entry.Value;
+                return;
+            }
+
             if (entry.Value is string valueString)
                 element.TrySetProperty("DefaultValue", valueString);
             else if (entry.Value is int valueInteger)
                 element.TrySetProperty("DefaultValue", valueInteger);
             else if (entry.Value is bool valueBoolean)
                 element.TrySetProperty("DefaultValue", valueBoolean);
+            else if (entry.Value is Action<App> actionValue)
+                element.TrySetProperty("DefaultValue", actionValue);
+            else if (entry.Value is Delegate delegateValue)
+                element.TrySetProperty("DefaultValue", delegateValue);
+            else
+                // Try to set the value directly for any other type
+                element.TrySetProperty("DefaultValue", entry.Value);
         }
 
         private void ParseSelectableList(FormElementBase element, DictionaryEntry entry)

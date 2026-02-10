@@ -11,6 +11,7 @@ namespace DynamicInterfaceBuilder.Core.Enums
         FileBox,
         FolderBox,
         ListBox,
+        Button,
     }
 
     public static class FormElementTypeExtension
